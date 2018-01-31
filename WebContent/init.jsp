@@ -342,14 +342,14 @@
 		for(int i=0;i<cmp.size();i++){
 			CostumeData tdata = cmp.get(i);
 			if(tdata.CostumeId==costumeid){
-				pstmt = conn.prepareStatement("update user_skindata set equip = 0 where charid = ? and uid = ?");
+				pstmt = conn.prepareStatement("update user_skindata set equip = 0 where uid = ? and charid = ?");
 				pstmt.setString(1, tdata.ChId);
 				pstmt.setString(2,userid);
 				pstmt.executeUpdate();
 				break;
 			}
 		}
-		pstmt = conn.prepareStatement("update user_skindata set equip = 1 where CostumeId = ? and uid = ?");
+		pstmt = conn.prepareStatement("update user_skindata set equip = 1 where uid = ? and costumeId = ?");
 		pstmt.setInt(1, costumeid);
 		pstmt.setString(2,userid);
 		if(pstmt.executeUpdate()>0){
@@ -375,13 +375,13 @@
 	}else if(cmd.equals("setcustomname")){
 		String charid = request.getParameter("charid");
 		String name = request.getParameter("chname");
-		pstmt = conn.prepareStatement("select idx from user_chname where charid = ? and uid = ?");
+		pstmt = conn.prepareStatement("select idx from user_chname where uid = ? and charid = ?");
 		pstmt.setString(1,charid);
 		pstmt.setString(2, userid);
 		rs = pstmt.executeQuery();
 		if(rs.next()){
 			//update
-			pstmt = conn.prepareStatement("update from user_chname set name = ? where charid = ? and uid = ?");
+			pstmt = conn.prepareStatement("update from user_chname set name = ? where uid = ? and charid = ?");
 			pstmt.setString(1, name);
 			pstmt.setString(2, charid);
 			pstmt.setString(3, userid);
@@ -442,7 +442,7 @@
 		String Storyid = request.getParameter("StoryId");
 		int episodenum = Integer.valueOf(request.getParameter("episodenum"));
 		System.out.println("Story id is :"+Storyid+", episodenum is :"+episodenum);
-		pstmt = conn.prepareStatement("select Episode_num from user_story where Story_id = ? and UID = ?");
+		pstmt = conn.prepareStatement("select Episode_num from user_story where uid = ? and story_id = ?");
 		pstmt.setString(1, Storyid);
 		pstmt.setString(2, userid);
 		rs = pstmt.executeQuery();

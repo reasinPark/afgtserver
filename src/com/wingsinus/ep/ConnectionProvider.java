@@ -20,7 +20,7 @@ public class ConnectionProvider {
 		Connection conn = null;		
 
 		String DB_URL = "jdbc:mysql://localhost:3306/"+dbname;
-		//이곳에서 바꾸면 됩니다. 
+		//이곳에서 바꾸면 됩니다.
 //		String DB_URL = "jdbc:mysql://localhost:3306/textIsland?" +
 //					"useUnicode=true&characterEncoding=utf8";
 		//String dbUser = "wings00";
