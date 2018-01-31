@@ -343,15 +343,15 @@
 			CostumeData tdata = cmp.get(i);
 			if(tdata.CostumeId==costumeid){
 				pstmt = conn.prepareStatement("update user_skindata set equip = 0 where uid = ? and charid = ?");
-				pstmt.setString(1, tdata.ChId);
-				pstmt.setString(2,userid);
+				pstmt.setString(1, userid);
+				pstmt.setString(2,tdata.ChId);
 				pstmt.executeUpdate();
 				break;
 			}
 		}
 		pstmt = conn.prepareStatement("update user_skindata set equip = 1 where uid = ? and costumeId = ?");
-		pstmt.setInt(1, costumeid);
-		pstmt.setString(2,userid);
+		pstmt.setString(1, userid);
+		pstmt.setInt(2,costumeid);
 		if(pstmt.executeUpdate()>0){
 			ret.put("success",1);
 			LogManager.writeNorLog(userid, "success", cmd, "null","null", 0);
@@ -376,15 +376,15 @@
 		String charid = request.getParameter("charid");
 		String name = request.getParameter("chname");
 		pstmt = conn.prepareStatement("select idx from user_chname where uid = ? and charid = ?");
-		pstmt.setString(1,charid);
-		pstmt.setString(2, userid);
+		pstmt.setString(1,userid);
+		pstmt.setString(2, charid);
 		rs = pstmt.executeQuery();
 		if(rs.next()){
 			//update
 			pstmt = conn.prepareStatement("update user_chname set name = ? where uid = ? and charid = ?");
 			pstmt.setString(1, name);
-			pstmt.setString(2, charid);
-			pstmt.setString(3, userid);
+			pstmt.setString(2, userid);
+			pstmt.setString(3, charid);
 			if(pstmt.executeUpdate()>0){
 				ret.put("success", 1);
 				//update log
@@ -443,8 +443,8 @@
 		int episodenum = Integer.valueOf(request.getParameter("episodenum"));
 		System.out.println("Story id is :"+Storyid+", episodenum is :"+episodenum);
 		pstmt = conn.prepareStatement("select Episode_num from user_story where uid = ? and story_id = ?");
-		pstmt.setString(1, Storyid);
-		pstmt.setString(2, userid);
+		pstmt.setString(1, userid);
+		pstmt.setString(2, Storyid);
 		rs = pstmt.executeQuery();
 		int counter = 0;
 		
