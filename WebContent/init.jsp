@@ -381,7 +381,7 @@
 		rs = pstmt.executeQuery();
 		if(rs.next()){
 			//update
-			pstmt = conn.prepareStatement("update from user_chname set name = ? where uid = ? and charid = ?");
+			pstmt = conn.prepareStatement("update user_chname set name = ? where uid = ? and charid = ?");
 			pstmt.setString(1, name);
 			pstmt.setString(2, charid);
 			pstmt.setString(3, userid);
