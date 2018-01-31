@@ -454,7 +454,7 @@
 			int tmpepisode = rs.getInt(1);
 			if(tmpepisode<episodenum){
 				//episode update
-				pstmt = conn.prepareStatement("update user_story set Episode_num = ? where UID = ? and Stroy_id = ?");
+				pstmt = conn.prepareStatement("update user_story set Episode_num = ? where UID = ? and Story_id = ?");
 				pstmt.setInt(1,episodenum);
 				pstmt.setString(2, userid);
 				pstmt.setString(3, Storyid);
