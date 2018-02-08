@@ -68,7 +68,7 @@
 		pstmt.setInt(1, getgem);
 		pstmt.setInt(2, getticket);
 		pstmt.setString(3, userid);
-		if(pstmt.executeUpdate()>1){
+		if(pstmt.executeUpdate()>0){
 			ret.put("success", 1);
 		}else{
 			ret.put("success", 0);
