@@ -31,7 +31,7 @@ public class shopManager {
 		try{
 			conn = ConnectionProvider.getConnection("afgt");
 			
-			pstmt = conn.prepareStatement("select id,type,title,price,gem,ticket");
+			pstmt = conn.prepareStatement("select id,type,title,price,gem,ticket from shop_item");
 			
 			rs = pstmt.executeQuery();
 			while(rs.next()){
