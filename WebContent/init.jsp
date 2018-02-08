@@ -18,6 +18,10 @@
 <%@ page import="com.wingsinus.ep.CostumeData" %>
 <%@ page import="com.wingsinus.ep.BannerManager" %>
 <%@ page import="com.wingsinus.ep.LogManager" %>
+<%@ page import="com.wingsinus.ep.ChdataManager" %>
+<%@ page import="com.wingsinus.ep.ChlistManager" %>
+<%@ page import="com.wingsinus.ep.ObdataManager" %>
+<%@ page import="com.wingsinus.ep.SoundtableManager" %>
 <%
 	request.setCharacterEncoding("UTF-8");
 	// test log
@@ -40,13 +44,17 @@
 	JSONObject ret = new JSONObject();
 	
 	String cmd = request.getParameter("cmd");
-	
+		
 	if (cmd.equals("registuser")){
 		//regist user log
 		JSONArray jlist = new JSONArray();
 		JSONArray elist = new JSONArray();
 		JSONArray blist = new JSONArray();
 		JSONArray clist = new JSONArray();
+		JSONArray cdlist = new JSONArray();
+		JSONArray cllist = new JSONArray();
+		JSONArray olist = new JSONArray();
+		JSONArray slist = new JSONArray();
 		
 		pstmt = conn.prepareStatement("insert into user_regist (UUID) values(?)");		
 		
@@ -55,6 +63,9 @@
 		pstmt.setString(1, uuid);
 		
 		int r = pstmt.executeUpdate();
+		
+		// csv Test parameter by Hong-Min
+		String csvserver = request.getParameter("csvserver");
 		
 		if(r == 1){
 			pstmt = conn.prepareStatement("select * from user_regist where UUID = ?");
@@ -129,6 +140,62 @@
 							data.put("imgname",tmpB.Imgname);
 							blist.add(data);
 						}
+						
+						// chdata, chlist, obdata, soundtable 를 서버에서 받아오기.
+						if (csvserver.equals("on")){
+							
+							ArrayList<ChdataManager> chdmp = ChdataManager.getDataAll();
+							for(int i=0;i<chdmp.size();i++){
+								ChdataManager tmpCh = chdmp.get(i);
+								JSONObject data = new JSONObject();
+								data.put("id", tmpCh.id);
+								data.put("type", tmpCh.type);
+								data.put("spinename", tmpCh.spinename);
+								data.put("skinname", tmpCh.skinname);
+								data.put("describe", tmpCh.describe);
+								cdlist.add(data);
+							}
+							
+							ArrayList<ChlistManager> chlmp = ChlistManager.getDataAll();
+							for(int i=0;i<chlmp.size();i++){
+								ChlistManager tmpCl = chlmp.get(i);
+								JSONObject data = new JSONObject();
+								data.put("id", tmpCl.id);
+								data.put("name", tmpCl.name);
+								data.put("hid", tmpCl.hid);
+								data.put("bid", tmpCl.bid);
+								data.put("oid", tmpCl.oid);
+								data.put("portrait", tmpCl.portrait);
+								cllist.add(data);
+							}
+							
+							ArrayList<ObdataManager> omp = ObdataManager.getDataAll();
+							for(int i=0;i<omp.size();i++){
+								ObdataManager tmpO = omp.get(i);
+								JSONObject data = new JSONObject();
+								data.put("id", tmpO.id);
+								data.put("type", tmpO.type);
+								data.put("name", tmpO.name);
+								data.put("texture", tmpO.texture);
+								data.put("image", tmpO.image);
+								olist.add(data);
+							}
+							
+							ArrayList<SoundtableManager> stmp = SoundtableManager.getDataAll();
+							for(int i=0;i<stmp.size();i++){
+								SoundtableManager tmpS = stmp.get(i);
+								JSONObject data = new JSONObject();
+								data.put("soundid", tmpS.soundid);
+								data.put("timer", tmpS.timer);
+								slist.add(data);
+							}
+	
+							ret.put("chdatalist", cdlist);
+							ret.put("chlistlist", cllist);
+							ret.put("obdatalist", olist);
+							ret.put("soundtablelist", slist);
+						}// end of csvserver.equal("on")
+						
 						ret.put("costumedata",clist);
 						ret.put("bannerlist", blist);
 						ret.put("episodelist",elist);
@@ -163,9 +230,17 @@
 		JSONArray elist = new JSONArray();
 		JSONArray blist = new JSONArray();
 		JSONArray clist = new JSONArray();
+		JSONArray cdlist = new JSONArray();
+		JSONArray cllist = new JSONArray();
+		JSONArray olist = new JSONArray();
+		JSONArray slist = new JSONArray();
 		
 		rs = pstmt.executeQuery();
 		System.out.println("rs count "+userid);
+		
+		// csv Test parameter by Hong-Min
+		String csvserver = request.getParameter("csvserver");
+		
 		if(rs.next()){
 			System.out.print("rs count ");
 			freeticket = rs.getInt("freeticket");
@@ -230,6 +305,60 @@
 				data.put("imgname",tmpB.Imgname);
 				blist.add(data);
 			}
+			
+			// chdata, chlist, obdata, soundtable 를 서버에서 받아오기.
+			if (csvserver.equals("on")){
+				
+				System.out.println("get csv from server!!");
+				
+				ArrayList<ChdataManager> chdmp = ChdataManager.getDataAll();
+				for(int i=0;i<chdmp.size();i++){
+					ChdataManager tmpCh = chdmp.get(i);
+					JSONObject data = new JSONObject();
+					data.put("id", tmpCh.id);
+					data.put("type", tmpCh.type);
+					data.put("spinename", tmpCh.spinename);
+					data.put("skinname", tmpCh.skinname);
+					data.put("describe", tmpCh.describe);
+					System.out.println("id is : "+tmpCh.id+", type is : "+tmpCh.type+", spinename is : "+tmpCh.spinename+", skinename is : "+tmpCh.skinname+"describe is : "+tmpCh.describe);
+					cdlist.add(data);
+				}
+				
+				ArrayList<ChlistManager> chlmp = ChlistManager.getDataAll();
+				for(int i=0;i<chlmp.size();i++){
+					ChlistManager tmpCl = chlmp.get(i);
+					JSONObject data = new JSONObject();
+					data.put("id", tmpCl.id);
+					data.put("name", tmpCl.name);
+					data.put("hid", tmpCl.hid);
+					data.put("bid", tmpCl.bid);
+					data.put("oid", tmpCl.oid);
+					data.put("portrait", tmpCl.portrait);
+					cllist.add(data);
+				}
+				
+				ArrayList<ObdataManager> omp = ObdataManager.getDataAll();
+				for(int i=0;i<omp.size();i++){
+					ObdataManager tmpO = omp.get(i);
+					JSONObject data = new JSONObject();
+					data.put("id", tmpO.id);
+					data.put("type", tmpO.type);
+					data.put("name", tmpO.name);
+					data.put("texture", tmpO.texture);
+					data.put("image", tmpO.image);
+					olist.add(data);
+				}
+				
+				ArrayList<SoundtableManager> stmp = SoundtableManager.getDataAll();
+				for(int i=0;i<stmp.size();i++){
+					SoundtableManager tmpS = stmp.get(i);
+					JSONObject data = new JSONObject();
+					data.put("soundid", tmpS.soundid);
+					data.put("timer", tmpS.timer);
+					slist.add(data);
+				}
+			}// end of csvserver.equal("on")
+			
 			LogManager.writeNorLog(userid, "success", cmd, "null","null", 0);
 		}else{
 			LogManager.writeNorLog(userid, "fail", cmd, "null","null", 0);
@@ -272,6 +401,15 @@
 			cdata.put("name",rs.getString(2));
 			namelist.add(cdata);
 		}
+		
+		// chdata, chlist, obdata, soundtable 를 서버에서 받아오기.
+		if (csvserver.equals("on")){
+			System.out.println("csvserver : " + csvserver);
+			ret.put("chdatalist", cdlist);
+			ret.put("chlistlist", cllist);
+			ret.put("obdatalist", olist);
+			ret.put("soundtablelist", slist);
+		}// end of csvserver.equals("on")
 		
 		ret.put("namelist",namelist);
 		ret.put("userstorylist",storylist);
