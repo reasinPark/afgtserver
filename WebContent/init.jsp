@@ -127,6 +127,9 @@
 							data.put("EpisodeNum", tmpE.Episode_num);
 							data.put("EpisodeName", tmpE.Episode_name);
 							data.put("filename", tmpE.csvfilename);
+							data.put("ticket", tmpE.ticket);
+							data.put("gem", tmpE.gem);
+							data.put("purchaseinfo", tmpE.purchaseinfo);
 							elist.add(data);
 						}
 						
@@ -292,6 +295,9 @@
 				data.put("EpisodeNum", tmpE.Episode_num);
 				data.put("EpisodeName", tmpE.Episode_name);
 				data.put("filename", tmpE.csvfilename);
+				data.put("ticket", tmpE.ticket);
+				data.put("gem", tmpE.gem);
+				data.put("purchaseinfo", tmpE.purchaseinfo);
 				elist.add(data);
 			}
 			

@@ -12,6 +12,9 @@ public class EpisodeList {
 	public String csvfilename;
 	public int Episode_num;
 	public String Episode_name;
+	public int ticket;
+	public int gem;
+	public int purchaseinfo;
 
 	private static ArrayList<EpisodeList> list = null;
 	
@@ -26,7 +29,7 @@ public class EpisodeList {
 		try{
 			conn = ConnectionProvider.getConnection("afgt");
 			
-			pstmt = conn.prepareStatement("select Story_id,episode_num,episode_name,csvfilename from episode");
+			pstmt = conn.prepareStatement("select Story_id,episode_num,episode_name,csvfilename,ticket,gem,purchaseinfo from episode");
 			
 			rs = pstmt.executeQuery();
 			while(rs.next()){
@@ -36,6 +39,9 @@ public class EpisodeList {
 				data.Episode_num = rs.getInt(idx++);
 				data.Episode_name = rs.getString(idx++);
 				data.csvfilename = rs.getString(idx++);
+				data.ticket = rs.getInt(idx++);
+				data.gem = rs.getInt(idx++);
+				data.purchaseinfo = rs.getInt(idx++);
 				list.add(data);
 			}
 		}finally{
