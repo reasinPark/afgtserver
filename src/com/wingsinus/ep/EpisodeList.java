@@ -15,8 +15,12 @@ public class EpisodeList {
 	public int ticket;
 	public int gem;
 	public int purchaseinfo;
+	public int reward_gem;
+	public int reward_ticket;
 
 	private static ArrayList<EpisodeList> list = null;
+	
+	private static HashMap<Integer,EpisodeList> hash = null;
 	
 	public EpisodeList(){
 		
@@ -29,7 +33,7 @@ public class EpisodeList {
 		try{
 			conn = ConnectionProvider.getConnection("afgt");
 			
-			pstmt = conn.prepareStatement("select Story_id,episode_num,episode_name,csvfilename,ticket,gem,purchaseinfo from episode");
+			pstmt = conn.prepareStatement("select Story_id,episode_num,episode_name,csvfilename,ticket,gem,purchaseinfo,reward_gem,reward_ticket from episode");
 			
 			rs = pstmt.executeQuery();
 			while(rs.next()){
@@ -42,6 +46,8 @@ public class EpisodeList {
 				data.ticket = rs.getInt(idx++);
 				data.gem = rs.getInt(idx++);
 				data.purchaseinfo = rs.getInt(idx++);
+				data.reward_gem = rs.getInt(idx++);
+				data.reward_ticket = rs.getInt(idx++);
 				list.add(data);
 			}
 		}finally{
@@ -68,4 +74,13 @@ public class EpisodeList {
 			return null;
 		return list;
 	}
+	
+
+	public static EpisodeList getData(int epinum) throws SQLException{
+		checkDataInit();
+		if(hash == null || hash.size() < 1)
+			return null;
+		return hash.get(epinum);
+	}
+	
 }

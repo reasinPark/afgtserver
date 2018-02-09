@@ -614,9 +614,25 @@
 				pstmt.setInt(1,episodenum);
 				pstmt.setString(2, userid);
 				pstmt.setString(3, Storyid);
-				if(pstmt.executeUpdate()==1){
-					ret.put("success",1);
-					LogManager.writeNorLog(userid, "sucess", cmd, "null","null", 0);
+				int checker = pstmt.executeUpdate();
+				System.out.println("upd ate checker is :"+checker+ "uid is :"+userid);
+				if(checker==1){
+					System.out.println("step 1");
+					EpisodeList data = EpisodeList.getData(episodenum);
+					pstmt = conn.prepareStatement("update user set freeticket = freeticket + ?, freegem = freegem + ? where uid = ?");
+					pstmt.setInt(1, data.reward_ticket);
+					pstmt.setInt(2, data.reward_gem);
+					pstmt.setString(3, userid);
+					System.out.println("reward ticket is :"+data.reward_ticket+", gem is :"+data.reward_gem);
+					if(pstmt.executeUpdate()==1){
+						ret.put("success", 1);
+						System.out.println("success update");
+						LogManager.writeNorLog(userid, "sucess_reward", cmd, "null","null", 0);	
+					}else{
+						System.out.println("success fail");
+						ret.put("success", 0);
+						LogManager.writeNorLog(userid, "fail_reward", cmd, "null","null", 0);
+					}
 				}else{
 					ret.put("success",0);
 					LogManager.writeNorLog(userid, "fail", cmd, "null","null", 0);
@@ -633,10 +649,22 @@
 			pstmt.setString(2, Storyid);
 			pstmt.setInt(3, episodenum);
 			int checker = pstmt.executeUpdate();
-			System.out.println("checker is :"+checker);
+			System.out.println("checker is :"+checker+ "uid is :"+userid);
 			if(checker==1){
-				ret.put("success",1);
-				LogManager.writeNorLog(userid, "sucess_insert", cmd, "null","null", 0);
+				EpisodeList data = EpisodeList.getData(episodenum);
+				pstmt = conn.prepareStatement("update user set freeticket = freeticket + ?, freegem = freegem + ? where uid = ?");
+				pstmt.setInt(1, data.reward_ticket);
+				pstmt.setInt(2, data.reward_gem);
+				pstmt.setString(3, userid);
+				checker = pstmt.executeUpdate();
+				System.out.println("input another checker : "+checker);
+				if(checker==1){
+					ret.put("success", 1);
+					LogManager.writeNorLog(userid, "sucess_reward", cmd, "null","null", 0);	
+				}else{
+					ret.put("success", 0);
+					LogManager.writeNorLog(userid, "fail_reward", cmd, "null","null", 0);
+				}
 			}else{
 				ret.put("success",0);
 				LogManager.writeNorLog(userid, "fail_insert", cmd, "null","null", 0);
