@@ -577,6 +577,18 @@
 			LogManager.writeNorLog(userid, "fail", cmd, "null","null", 0);
 		}	
 	}
+	else if(cmd.equals("cashrefresh")){
+		pstmt = conn.prepareStatement("select freeticket,cashticket,freegem,cashgem from user where uid = ?");
+		pstmt.setString(1,userid);
+		rs = pstmt.executeQuery();
+		if(rs.next()){
+			ret.put("gem",(rs.getInt(3)+rs.getInt(4)));
+			ret.put("ticket",(rs.getInt(1)+rs.getInt(2)));
+			ret.put("success",1);
+		}else{
+			ret.put("success",0);
+		}		
+	}
 	else if(cmd.equals("episodeend")){
 		//episode 다 읽음 처리 log action
 		//user의 해당 스토리의 해당 에피소드 다 읽음 처리
