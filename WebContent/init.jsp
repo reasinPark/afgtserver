@@ -685,7 +685,22 @@
 		
 		ret.put("userstorylist",storylist);
 	}
-	
+	else if(cmd.equals("buyepisode")){
+		String Storyid = request.getParameter("StoryId");
+		int episodenum = Integer.valueOf(request.getParameter("episodenum"));
+		int ticketValue = Integer.valueOf(request.getParameter("ticket"));
+		pstmt = conn.prepareStatement("update user set cashticket = cashticket - ? where uid = ?");
+		pstmt.setInt(1, ticketValue);
+		pstmt.setString(2, userid);
+		
+		if(pstmt.executeUpdate()==1){
+			ret.put("success",1);
+			LogManager.writeNorLog(userid, "sucess", cmd, "null","null", 0);
+		}else{
+			ret.put("success",0);
+			LogManager.writeNorLog(userid, "fail", cmd, "null","null", 0);
+		}
+	}
 	
 	out.print(ret.toString());
 	
