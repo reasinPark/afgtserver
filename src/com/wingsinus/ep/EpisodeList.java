@@ -49,6 +49,7 @@ public class EpisodeList {
 				data.reward_gem = rs.getInt(idx++);
 				data.reward_ticket = rs.getInt(idx++);
 				list.add(data);
+				hash.put(data.Episode_num, data);
 			}
 		}finally{
 			JdbcUtil.close(conn);
@@ -58,14 +59,16 @@ public class EpisodeList {
 	}
 	
 	private static synchronized void checkDataInit() throws SQLException{
-		if(list == null){
+		if(list == null||hash == null){
 			list = new ArrayList<EpisodeList>();
+			hash = new HashMap<Integer,EpisodeList>();
 			initData();
 		}
 	}
 	
 	public static void EpisodeListReset(){
 		list = null;
+		hash = null;
 	}
 	
 	public static ArrayList<EpisodeList> getDataAll() throws SQLException{

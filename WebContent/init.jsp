@@ -619,11 +619,11 @@
 				if(checker==1){
 					System.out.println("step 1");
 					EpisodeList data = EpisodeList.getData(episodenum);
+					System.out.println("reward ticket is :"+data.reward_ticket+", gem is :"+data.reward_gem);
 					pstmt = conn.prepareStatement("update user set freeticket = freeticket + ?, freegem = freegem + ? where uid = ?");
 					pstmt.setInt(1, data.reward_ticket);
 					pstmt.setInt(2, data.reward_gem);
 					pstmt.setString(3, userid);
-					System.out.println("reward ticket is :"+data.reward_ticket+", gem is :"+data.reward_gem);
 					if(pstmt.executeUpdate()==1){
 						ret.put("success", 1);
 						System.out.println("success update");
