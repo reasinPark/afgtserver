@@ -385,7 +385,7 @@
 		
 		
 		// 유저 이야기 읽은 정보 로드
-		pstmt = conn.prepareStatement("select Story_id,Episode_num from user_story where UID = ?");
+		pstmt = conn.prepareStatement("select Story_id,Episode_num,lately_num from user_story where UID = ?");
 		pstmt.setString(1,userid);
 		JSONArray storylist = new JSONArray();
 		rs = pstmt.executeQuery();
@@ -393,6 +393,7 @@
 			JSONObject data = new JSONObject();
 			data.put("StoryID",rs.getString(1));
 			data.put("EpisodeNum",rs.getInt(2));
+			data.put("LatelyNum",rs.getInt(3));
 			storylist.add(data);
 		}
 		
@@ -589,6 +590,44 @@
 			ret.put("success",0);
 		}		
 	}
+	else if(cmd.equals("episodestart")){
+		String Storyid = request.getParameter("StoryId");
+		int episodenum = Integer.valueOf(request.getParameter("episodenum"));
+		pstmt = conn.prepareStatement("select Episode_num from user_story where uid = ? and story_id = ?");
+		pstmt.setString(1, userid);
+		pstmt.setString(2, Storyid);
+		rs = pstmt.executeQuery();
+		
+		if(rs.next()){
+			//lately update
+			pstmt = conn.prepareStatement("update user_story set lately_num = ? where UID = ? and Story_id = ?");
+			pstmt.setInt(1,episodenum);
+			pstmt.setString(2, userid);
+			pstmt.setString(3, Storyid);
+			if(pstmt.executeUpdate()==1) {
+				ret.put("success", 1);
+				LogManager.writeNorLog(userid, "sucess_lately", cmd, "null","null", 0);	
+			}
+			else {
+				ret.put("success", 0);
+				LogManager.writeNorLog(userid, "fail_lately", cmd, "null","null", 0);
+			}
+		}else{
+			//lately insert
+			pstmt = conn.prepareStatement("insert into user_story (UID,Story_id,Episode_num,dir_num,view_date,lately_num) values(?,?,0,0,now(),?)");
+			pstmt.setString(1, userid);
+			pstmt.setString(2, Storyid);
+			pstmt.setInt(3, episodenum);
+			if(pstmt.executeUpdate()==1) {
+				ret.put("success", 1);
+				LogManager.writeNorLog(userid, "sucess_lately", cmd, "null","null", 0);	
+			}
+			else {
+				ret.put("success", 0);
+				LogManager.writeNorLog(userid, "fail_lately", cmd, "null","null", 0);
+			}
+		}
+	}
 	else if(cmd.equals("episodeend")){
 		//episode 다 읽음 처리 log action
 		//user의 해당 스토리의 해당 에피소드 다 읽음 처리
@@ -644,10 +683,11 @@
 		}else{
 			//episode insert
 			System.out.println("rs is not here Story id is :"+Storyid+", episodenum is :"+episodenum);
-			pstmt = conn.prepareStatement("insert into user_story (UID,Story_id,Episode_num,dir_num,view_date) values(?,?,?,0,now())");
+			pstmt = conn.prepareStatement("insert into user_story (UID,Story_id,Episode_num,dir_num,view_date,lately_num) values(?,?,?,0,now(),?)");
 			pstmt.setString(1, userid);
 			pstmt.setString(2, Storyid);
 			pstmt.setInt(3, episodenum);
+			pstmt.setInt(4, episodenum);
 			int checker = pstmt.executeUpdate();
 			System.out.println("checker is :"+checker+ "uid is :"+userid);
 			if(checker==1){
@@ -672,7 +712,7 @@
 		}
 		
 		// 유저 이야기 읽은 정보 로드
-		pstmt = conn.prepareStatement("select Story_id,Episode_num from user_story where UID = ?");
+		pstmt = conn.prepareStatement("select Story_id,Episode_num,lately_num from user_story where UID = ?");
 		pstmt.setString(1,userid);
 		JSONArray storylist = new JSONArray();
 		rs = pstmt.executeQuery();
@@ -680,6 +720,7 @@
 			JSONObject data = new JSONObject();
 			data.put("StoryID",rs.getString(1));
 			data.put("EpisodeNum",rs.getInt(2));
+			data.put("LatelyNum",rs.getInt(3));
 			storylist.add(data);
 		}
 		

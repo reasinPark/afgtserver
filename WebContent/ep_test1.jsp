@@ -73,6 +73,7 @@
 			data.put("category_id", 10000);//category 10000 is my read
 			data.put("imgname", tmp.imgname);
 			data.put("recommend", tmp.recommend);
+			data.put("totalcount", tmp.totalcount);
 			retlist.add(data);
 		}
 		
@@ -87,6 +88,7 @@
 			data.put("category_id", tmp.category_id);
 			data.put("imgname", tmp.imgname);
 			data.put("recommend", tmp.recommend);
+			data.put("totalcount", tmp.totalcount);
 			retlist.add(data);
 		}
 		timeInObj.put("Story", retlist);
