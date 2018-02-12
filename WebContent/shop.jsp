@@ -52,6 +52,17 @@
 			slist.add(data);
 		}
 		ret.put("shopdata", slist);
+		pstmt = conn.prepareStatement("select freegem,cashgem,freeticket,cashticket from user where uid = ?");
+		pstmt.setString(1, userid);
+		rs = pstmt.executeQuery();
+		System.out.println("update query and return checker");
+		if(rs.next()){
+			int gemsum = rs.getInt(1)+rs.getInt(2);
+			int ticketsum = rs.getInt(3)+rs.getInt(4);
+			System.out.println("gem is :"+gemsum+", ticket is :"+ticketsum);
+			ret.put("ticket",ticketsum);
+			ret.put("gem",gemsum);
+		}
 		LogManager.writeNorLog(userid, "success", cmd, "null", "null", 0);
 	}
 	else if(cmd.equals("buyitem")){
@@ -65,10 +76,19 @@
 		
 		// 유저 아이템 증가
 		pstmt = conn.prepareStatement("update user set cashticket = cashticket + ?, cashgem = cashgem + ? where uid = ?");
-		pstmt.setInt(1, getgem);
-		pstmt.setInt(2, getticket);
+		pstmt.setInt(1, getticket);
+		pstmt.setInt(2, getgem);
 		pstmt.setString(3, userid);
 		if(pstmt.executeUpdate()>0){
+			pstmt = conn.prepareStatement("select freegem,cashgem,freeticket,cashticket from user where uid = ?");
+			pstmt.setString(1, userid);
+			rs = pstmt.executeQuery();
+			if(rs.next()){
+				int gemsum = rs.getInt(1)+rs.getInt(2);
+				int ticketsum = rs.getInt(3)+rs.getInt(4);
+				ret.put("ticket",ticketsum);
+				ret.put("gem",gemsum);
+			}
 			ret.put("success", 1);
 		}else{
 			ret.put("success", 0);
