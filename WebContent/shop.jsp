@@ -88,6 +88,8 @@
 				int ticketsum = rs.getInt(3)+rs.getInt(4);
 				ret.put("ticket",ticketsum);
 				ret.put("gem",gemsum);
+				ret.put("addticket",getticket);
+				ret.put("addgem",getgem);
 			}
 			ret.put("success", 1);
 		}else{
