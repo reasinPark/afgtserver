@@ -391,7 +391,7 @@
 		
 		
 		// 유저 이야기 읽은 정보 로드
-		pstmt = conn.prepareStatement("select Story_id,Episode_num,lately_num from user_story where UID = ?");
+		pstmt = conn.prepareStatement("select Story_id,Episode_num,lately_num,buy_num from user_story where UID = ?");
 		pstmt.setString(1,userid);
 		JSONArray storylist = new JSONArray();
 		rs = pstmt.executeQuery();
@@ -400,6 +400,7 @@
 			data.put("StoryID",rs.getString(1));
 			data.put("EpisodeNum",rs.getInt(2));
 			data.put("LatelyNum",rs.getInt(3));
+			data.put("BuyNum",rs.getInt(4));
 			storylist.add(data);
 		}
 		
@@ -599,31 +600,52 @@
 	else if(cmd.equals("episodestart")){
 		String Storyid = request.getParameter("StoryId");
 		int episodenum = Integer.valueOf(request.getParameter("episodenum"));
-		pstmt = conn.prepareStatement("select Episode_num from user_story where uid = ? and story_id = ?");
+		pstmt = conn.prepareStatement("select buy_num from user_story where uid = ? and story_id = ?");
 		pstmt.setString(1, userid);
 		pstmt.setString(2, Storyid);
 		rs = pstmt.executeQuery();
 		
 		if(rs.next()){
-			//lately update
-			pstmt = conn.prepareStatement("update user_story set lately_num = ? where UID = ? and Story_id = ?");
-			pstmt.setInt(1,episodenum);
-			pstmt.setString(2, userid);
-			pstmt.setString(3, Storyid);
-			if(pstmt.executeUpdate()==1) {
-				ret.put("success", 1);
-				LogManager.writeNorLog(userid, "sucess_lately", cmd, "null","null", 0);	
+			int buynum = rs.getInt(1);
+			
+			// 처음 구매해서 buy_num 값 갱신 
+			if(buynum < episodenum) {
+				pstmt = conn.prepareStatement("update user_story set lately_num = ?, buy_num = ? where UID = ? and Story_id = ?");
+				pstmt.setInt(1,episodenum);
+				pstmt.setInt(2,episodenum);
+				pstmt.setString(3, userid);
+				pstmt.setString(4, Storyid);
+				if(pstmt.executeUpdate()==1) {
+					ret.put("success", 1);
+					LogManager.writeNorLog(userid, "sucess_buyepi", cmd, "null","null", 0);	
+				}
+				else {
+					ret.put("success", 0);
+					LogManager.writeNorLog(userid, "fail_buyepi", cmd, "null","null", 0);
+				}
 			}
+			// 이미 구매해서 lately_num 값만 갱신
 			else {
-				ret.put("success", 0);
-				LogManager.writeNorLog(userid, "fail_lately", cmd, "null","null", 0);
+				pstmt = conn.prepareStatement("update user_story set lately_num = ? where UID = ? and Story_id = ?");
+				pstmt.setInt(1,episodenum);
+				pstmt.setString(2, userid);
+				pstmt.setString(3, Storyid);
+				if(pstmt.executeUpdate()==1) {
+					ret.put("success", 1);
+					LogManager.writeNorLog(userid, "sucess_lately", cmd, "null","null", 0);	
+				}
+				else {
+					ret.put("success", 0);
+					LogManager.writeNorLog(userid, "fail_lately", cmd, "null","null", 0);
+				}
 			}
 		}else{
 			//lately insert
-			pstmt = conn.prepareStatement("insert into user_story (UID,Story_id,Episode_num,dir_num,view_date,lately_num) values(?,?,0,0,now(),?)");
+			pstmt = conn.prepareStatement("insert into user_story (UID,Story_id,Episode_num,dir_num,view_date,lately_num,buy_num) values(?,?,0,0,now(),?,?)");
 			pstmt.setString(1, userid);
 			pstmt.setString(2, Storyid);
 			pstmt.setInt(3, episodenum);
+			pstmt.setInt(4, episodenum);
 			if(pstmt.executeUpdate()==1) {
 				ret.put("success", 1);
 				LogManager.writeNorLog(userid, "sucess_lately", cmd, "null","null", 0);	
@@ -635,7 +657,7 @@
 		}
 		
 		// 유저 이야기 읽은 정보 로드
-		pstmt = conn.prepareStatement("select Story_id,Episode_num,lately_num from user_story where UID = ?");
+		pstmt = conn.prepareStatement("select Story_id,Episode_num,lately_num,buy_num from user_story where UID = ?");
 		pstmt.setString(1,userid);
 		JSONArray storylist = new JSONArray();
 		rs = pstmt.executeQuery();
@@ -644,6 +666,7 @@
 			data.put("StoryID",rs.getString(1));
 			data.put("EpisodeNum",rs.getInt(2));
 			data.put("LatelyNum",rs.getInt(3));
+			data.put("BuyNum",rs.getInt(4));
 			storylist.add(data);
 		}
 				
@@ -733,7 +756,7 @@
 		}
 		
 		// 유저 이야기 읽은 정보 로드
-		pstmt = conn.prepareStatement("select Story_id,Episode_num,lately_num from user_story where UID = ?");
+		pstmt = conn.prepareStatement("select Story_id,Episode_num,lately_num,buy_num from user_story where UID = ?");
 		pstmt.setString(1,userid);
 		JSONArray storylist = new JSONArray();
 		rs = pstmt.executeQuery();
@@ -742,6 +765,7 @@
 			data.put("StoryID",rs.getString(1));
 			data.put("EpisodeNum",rs.getInt(2));
 			data.put("LatelyNum",rs.getInt(3));
+			data.put("BuyNum",rs.getInt(4));
 			storylist.add(data);
 		}
 		
