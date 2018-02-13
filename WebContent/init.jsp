@@ -130,6 +130,9 @@
 							data.put("ticket", tmpE.ticket);
 							data.put("gem", tmpE.gem);
 							data.put("purchaseinfo", tmpE.purchaseinfo);
+							data.put("rewardgem", tmpE.reward_gem);
+							data.put("rewardticket", tmpE.reward_ticket);
+							data.put("rewardinfo", tmpE.rewardinfo);
 							elist.add(data);
 						}
 						
@@ -298,6 +301,9 @@
 				data.put("ticket", tmpE.ticket);
 				data.put("gem", tmpE.gem);
 				data.put("purchaseinfo", tmpE.purchaseinfo);
+				data.put("rewardgem", tmpE.reward_gem);
+				data.put("rewardticket", tmpE.reward_ticket);
+				data.put("rewardinfo", tmpE.rewardinfo);
 				elist.add(data);
 			}
 			

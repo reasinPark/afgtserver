@@ -17,6 +17,7 @@ public class EpisodeList {
 	public int purchaseinfo;
 	public int reward_gem;
 	public int reward_ticket;
+	public int rewardinfo;
 
 	private static ArrayList<EpisodeList> list = null;
 	
@@ -33,7 +34,7 @@ public class EpisodeList {
 		try{
 			conn = ConnectionProvider.getConnection("afgt");
 			
-			pstmt = conn.prepareStatement("select Story_id,episode_num,episode_name,csvfilename,ticket,gem,purchaseinfo,reward_gem,reward_ticket from episode");
+			pstmt = conn.prepareStatement("select Story_id,episode_num,episode_name,csvfilename,ticket,gem,purchaseinfo,reward_gem,reward_ticket,rewardinfo from episode");
 			
 			rs = pstmt.executeQuery();
 			while(rs.next()){
@@ -48,6 +49,7 @@ public class EpisodeList {
 				data.purchaseinfo = rs.getInt(idx++);
 				data.reward_gem = rs.getInt(idx++);
 				data.reward_ticket = rs.getInt(idx++);
+				data.rewardinfo = rs.getInt(idx++);
 				list.add(data);
 				hash.put(data.Episode_num, data);
 			}
