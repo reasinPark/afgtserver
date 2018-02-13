@@ -633,6 +633,21 @@
 				LogManager.writeNorLog(userid, "fail_lately", cmd, "null","null", 0);
 			}
 		}
+		
+		// 유저 이야기 읽은 정보 로드
+		pstmt = conn.prepareStatement("select Story_id,Episode_num,lately_num from user_story where UID = ?");
+		pstmt.setString(1,userid);
+		JSONArray storylist = new JSONArray();
+		rs = pstmt.executeQuery();
+		while(rs.next()){
+			JSONObject data = new JSONObject();
+			data.put("StoryID",rs.getString(1));
+			data.put("EpisodeNum",rs.getInt(2));
+			data.put("LatelyNum",rs.getInt(3));
+			storylist.add(data);
+		}
+				
+		ret.put("userstorylist",storylist);
 	}
 	else if(cmd.equals("episodeend")){
 		//episode 다 읽음 처리 log action
