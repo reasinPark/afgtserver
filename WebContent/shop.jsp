@@ -49,6 +49,8 @@
 			data.put("price",smpD.price);
 			data.put("gem",smpD.gem);
 			data.put("ticket", smpD.ticket);
+			data.put("PID_android", smpD.PID_android);
+			data.put("PID_ios", smpD.PID_ios);
 			slist.add(data);
 		}
 		ret.put("shopdata", slist);
