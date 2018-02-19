@@ -69,12 +69,14 @@
 	}
 	else if(cmd.equals("buyitem")){
 		int shopid = Integer.valueOf(request.getParameter("shopid"));
+		String ident = request.getParameter("ident");
 		
 		shopManager data = shopManager.getData(shopid);
 		int getgem = data.gem;
 		int getticket = data.ticket;
 		
 		//결재 성공여부 확인(따로 확인안함) 
+		LogManager.writeNorLog(userid, "success", cmd, ident, "null", 0);
 		
 		// 유저 아이템 증가
 		pstmt = conn.prepareStatement("update user set cashticket = cashticket + ?, cashgem = cashgem + ? where uid = ?");
