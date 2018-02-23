@@ -144,6 +144,8 @@
 							data.put("title", tmpB.Title);
 							data.put("text", tmpB.Text);
 							data.put("imgname",tmpB.Imgname);
+							data.put("type",tmpB.type);
+							data.put("callid",tmpB.callid);
 							blist.add(data);
 						}
 						
@@ -315,12 +317,13 @@
 				data.put("title", tmpB.Title);
 				data.put("text", tmpB.Text);
 				data.put("imgname",tmpB.Imgname);
+				data.put("type",tmpB.type);
+				data.put("callid",tmpB.callid);
 				blist.add(data);
 			}
 			
 			// chdata, chlist, obdata, soundtable 를 서버에서 받아오기.
 			if (csvserver.equals("on")){
-				
 				System.out.println("get csv from server!!");
 				
 				ArrayList<ChdataManager> chdmp = ChdataManager.getDataAll();

@@ -18,6 +18,10 @@
 <%@ page import="com.wingsinus.ep.CostumeData" %>
 <%@ page import="com.wingsinus.ep.BannerManager" %>
 <%@ page import="com.wingsinus.ep.LogManager" %>
+<%@ page import="com.wingsinus.ep.ChdataManager" %>
+<%@ page import="com.wingsinus.ep.ChlistManager" %>
+<%@ page import="com.wingsinus.ep.ObdataManager" %>
+<%@ page import="com.wingsinus.ep.SoundtableManager" %>
 <%
 	request.setCharacterEncoding("UTF-8");
 	// test log
@@ -35,11 +39,11 @@
 		System.out.println("facebook login command");
 		
 		String token = request.getParameter("token");
-		
+				
 		pstmt = conn.prepareStatement("select uid from user where token = ? and service = 'Facebook'");
 		pstmt.setString(1, token);
 		rs = pstmt.executeQuery();
-		
+
 		if(rs.next()){
 			// 이전에 facebook 연동을 한 유저라면
 			String exist_uid = rs.getString(1);
@@ -59,17 +63,61 @@
 		}
 		else {
 			// 이전에 facebook 연동을 한 적 없는 유저라면
-			pstmt = conn.prepareStatement("update user set token = ?, service = 'Facebook' where uid = ?");
-			pstmt.setString(1, token);
-			pstmt.setString(2, userid);
-			
-			if(pstmt.executeUpdate()>0){
-				LogManager.writeNorLog(userid, "success", cmd, "null","null", 0);
+			if(userid.equals("nil")){
+				// 신규 유저 라면 
+				pstmt = conn.prepareStatement("insert into user_regist (UUID) values(?)");
+
+				String uuid = UUID.randomUUID().toString().replaceAll("-", "");
+				
+				pstmt.setString(1, uuid);
+
+				int r = pstmt.executeUpdate();
+				if(r==1){
+					pstmt = conn.prepareStatement("select * from user_regist where UUID = ?");
+					pstmt.setString(1, uuid);
+					rs = pstmt.executeQuery();
+					int check = 0;
+					while(rs.next()){
+						check++;
+						String uid = String.valueOf(rs.getInt("UID"));
+						if(check>1){
+							System.out.println("-- making uid error --");
+							ret.put("error", 1);
+							LogManager.writeNorLog(uid, "fail", cmd, "null","null", 0);
+							break;
+						}else{
+							pstmt = conn.prepareStatement("insert into user (uid,token,service) values(?,?,'Facebook')");
+							pstmt.setString(1, uid);
+							pstmt.setString(2, token);
+							r = pstmt.executeUpdate();
+							if(r == 1){
+								ret.put("uid", uid);
+								LogManager.writeNorLog(uid, "success", cmd, "null","null", 0);
+							}else{
+								ret.put("error",2);
+								LogManager.writeNorLog(uid, "fail2", cmd, "null","null", 0);
+								System.out.println("--insert error -- ");
+							}
+						}
+					}
+					
+				}
+				
 			}else{
-				LogManager.writeNorLog(userid, "fail", cmd, "null","null", 0);
+				// 신규 유저가 아니라면 
+				pstmt = conn.prepareStatement("update user set token = ?, service = 'Facebook' where uid = ?");
+				pstmt.setString(1, token);
+				pstmt.setString(2, userid);
+				
+				if(pstmt.executeUpdate()>0){
+					LogManager.writeNorLog(userid, "success", cmd, "null","null", 0);
+				}else{
+					LogManager.writeNorLog(userid, "fail", cmd, "null","null", 0);
+				}
 			}
 		}
 	}
+	
 	
 	out.print(ret.toString());
 	

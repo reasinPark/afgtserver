@@ -12,6 +12,8 @@ public class BannerManager {
 	public String Title;
 	public String Text;
 	public String Imgname;
+	public String type;
+	public String callid;
 	
 	private static ArrayList<BannerManager> list = null;
 	
@@ -26,7 +28,7 @@ public class BannerManager {
 		try{
 			conn = ConnectionProvider.getConnection("afgt");
 			
-			pstmt = conn.prepareStatement("select Newmark,Title,Text,imgname from bannerdata where Sort > 0 order by Sort");
+			pstmt = conn.prepareStatement("select Newmark,Title,Text,imgname,type,callid from bannerdata where Sort > 0 order by Sort");
 			
 			rs = pstmt.executeQuery();
 			while(rs.next()){
@@ -36,6 +38,8 @@ public class BannerManager {
 				data.Title = rs.getString(idx++);
 				data.Text = rs.getString(idx++);
 				data.Imgname = rs.getString(idx++);
+				data.type = rs.getString(idx++);
+				data.callid = rs.getString(idx++);
 				list.add(data);
 			}
 		}finally{
