@@ -712,6 +712,7 @@
 					pstmt.setString(3, userid);
 					if(pstmt.executeUpdate()==1){
 						ret.put("success", 1);
+						ret.put("reward", 1);
 						System.out.println("success update");
 						LogManager.writeNorLog(userid, "sucess_reward", cmd, "null","null", 0);	
 					}else{
@@ -747,6 +748,7 @@
 				System.out.println("input another checker : "+checker);
 				if(checker==1){
 					ret.put("success", 1);
+					ret.put("reward", 1);
 					LogManager.writeNorLog(userid, "sucess_reward", cmd, "null","null", 0);	
 				}else{
 					ret.put("success", 0);
