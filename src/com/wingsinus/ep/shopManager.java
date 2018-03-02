@@ -17,6 +17,7 @@ public class shopManager {
 	public int ticket;
 	public String PID_android;
 	public String PID_ios;
+	public int price_ios;
 	
 	private static ArrayList<shopManager> list = null;
 	
@@ -33,7 +34,7 @@ public class shopManager {
 		try{
 			conn = ConnectionProvider.getConnection("afgt");
 			
-			pstmt = conn.prepareStatement("select id,type,title,price,gem,ticket,PID_android,PID_ios from shop_item");
+			pstmt = conn.prepareStatement("select id,type,title,price,gem,ticket,PID_android,PID_ios,price_ios from shop_item");
 			
 			rs = pstmt.executeQuery();
 			while(rs.next()){
@@ -47,6 +48,7 @@ public class shopManager {
 				data.ticket = rs.getInt(idx++);
 				data.PID_android = rs.getString(idx++);
 				data.PID_ios = rs.getString(idx++);
+				data.price_ios = rs.getInt(idx++);
 				list.add(data);
 				hash.put(data.shop_id, data);
 			}

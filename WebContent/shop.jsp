@@ -51,6 +51,7 @@
 			data.put("ticket", smpD.ticket);
 			data.put("PID_android", smpD.PID_android);
 			data.put("PID_ios", smpD.PID_ios);
+			data.put("price_ios",smpD.price_ios);
 			slist.add(data);
 		}
 		ret.put("shopdata", slist);
