@@ -234,6 +234,7 @@
 		int cashgem = 0;
 		int ticket = 0;
 		int gem = 0;
+		String service = "";
 		JSONArray jlist = new JSONArray();
 		JSONArray elist = new JSONArray();
 		JSONArray blist = new JSONArray();
@@ -258,6 +259,7 @@
 			cashgem = rs.getInt("cashgem");
 			ticket = freeticket + cashticket;
 			gem = freegem + cashgem;
+			service = rs.getString("service");
 			
 			ArrayList<CostumeData> cmp = CostumeData.getDataAll();
 			for(int i=0;i<cmp.size();i++){
@@ -439,6 +441,7 @@
 		ret.put("ticketgentime",gentime);
 		ret.put("gem",gem);
 		ret.put("nowtime",now);
+		ret.put("service", service);
 	}else if(cmd.equals("buyskin")){
 		//user skin buy logaction
 		
