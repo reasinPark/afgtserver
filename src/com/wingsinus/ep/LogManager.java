@@ -12,7 +12,7 @@ public class LogManager {
 		ResultSet rs = null;
 		Connection conn = null;
 		try{
-			conn = ConnectionProvider.getConnection("afgt");
+			conn = ConnectionProvider.getConnection("logdb");
 			
 			pstmt = conn.prepareStatement("insert into log_action (uid,action_type,action_name,item,point,count) values(?,?,?,?,?,?)");
 			
@@ -41,7 +41,7 @@ public class LogManager {
 		ResultSet rs = null;
 		Connection conn = null;
 		try{
-			conn = ConnectionProvider.getConnection("afgt");
+			conn = ConnectionProvider.getConnection("logdb");
 			
 			pstmt = conn.prepareStatement("insert into log_cash (uid,r_getcash,f_getcash,r_havecash,f_havecash) values(?,?,?,?,?)");
 			
