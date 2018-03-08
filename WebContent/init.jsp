@@ -61,7 +61,6 @@
 		String uuid = UUID.randomUUID().toString().replaceAll("-", "");
 		
 		pstmt.setString(1, uuid);
-		
 		int r = pstmt.executeUpdate();
 		
 		// csv Test parameter by Hong-Min
@@ -437,7 +436,7 @@
 		ret.put("bannerlist", blist);
 		ret.put("episodelist",elist);
 		ret.put("categorylist",jlist);
-		ret.put("freeticket", ticket);
+		ret.put("ticket", ticket);
 		ret.put("ticketgentime",gentime);
 		ret.put("gem",gem);
 		ret.put("nowtime",now);
@@ -714,6 +713,9 @@
 					pstmt.setInt(2, data.reward_gem);
 					pstmt.setString(3, userid);
 					if(pstmt.executeUpdate()==1){
+						if (data.reward_ticket > 0) {
+							ret.put("getticket", 1);
+						}
 						ret.put("success", 1);
 						ret.put("reward", 1);
 						System.out.println("success update");
@@ -750,6 +752,9 @@
 				checker = pstmt.executeUpdate();
 				System.out.println("input another checker : "+checker);
 				if(checker==1){
+					if (data.reward_ticket > 0) {
+						ret.put("getticket", 1);
+					}
 					ret.put("success", 1);
 					ret.put("reward", 1);
 					LogManager.writeNorLog(userid, "sucess_reward", cmd, "null","null", 0);	
@@ -783,16 +788,67 @@
 		String Storyid = request.getParameter("StoryId");
 		int episodenum = Integer.valueOf(request.getParameter("episodenum"));
 		int ticketValue = Integer.valueOf(request.getParameter("ticket"));
+		long ticketGenTime = 0;
 		pstmt = conn.prepareStatement("update user set cashticket = cashticket - ? where uid = ?");
 		pstmt.setInt(1, ticketValue);
 		pstmt.setString(2, userid);
 		
 		if(pstmt.executeUpdate()==1){
 			ret.put("success",1);
+
 			LogManager.writeNorLog(userid, "sucess", cmd, "null","null", 0);
+			
+			pstmt = conn.prepareStatement("select freeticket, cashticket from user where uid = ?");
+			pstmt.setString(1,userid);
+
+			rs = pstmt.executeQuery();
+			
+			while(rs.next()){
+				if (rs.getInt(1)+rs.getInt(2) == 0) {
+					pstmt = conn.prepareStatement("update user set ticketgentime = date_add(now(), interval 2 day) where uid = ?");
+					pstmt.setString(1, userid);
+					
+					if(pstmt.executeUpdate()==1){
+						LogManager.writeNorLog(userid, "sucess_set_gentime", cmd, "null","null", 0);
+						
+						pstmt = conn.prepareStatement("select ticketgentime,now() from user where uid = ?");
+						pstmt.setString(1,userid);
+						
+						rs = pstmt.executeQuery();
+						
+						if(rs.next()){
+							ticketGenTime = rs.getTimestamp(1).getTime()/1000;
+							now = rs.getTimestamp(2).getTime()/1000;
+							ret.put("ticketgentime", ticketGenTime);
+							ret.put("nowtime", now);
+							ret.put("timecheck", 1);
+						}
+					}
+					else {
+						LogManager.writeNorLog(userid, "fail_set_gentime", cmd, "null","null", 0);
+					}
+				}
+				else {
+					ret.put("timecheck", 0);
+				}
+			}
+			
 		}else{
 			ret.put("success",0);
 			LogManager.writeNorLog(userid, "fail", cmd, "null","null", 0);
+		}
+	}
+	else if(cmd.equals("ticketcharge")) {
+		pstmt = conn.prepareStatement("update user set freeticket = freeticket + 1 where uid = ?");
+		pstmt.setString(1, userid);
+		
+		if(pstmt.executeUpdate()>0){
+			LogManager.writeNorLog(userid, "success", cmd, "null","null", 0);
+			ret.put("success", 1);
+		}
+		else {
+			LogManager.writeNorLog(userid, "fail", cmd, "null","null", 0);
+			ret.put("success", 0);
 		}
 	}
 	

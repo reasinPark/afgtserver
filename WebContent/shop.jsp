@@ -91,6 +91,9 @@
 			if(rs.next()){
 				int gemsum = rs.getInt(1)+rs.getInt(2);
 				int ticketsum = rs.getInt(3)+rs.getInt(4);
+				if (ticketsum > 0) {
+					ret.put("getticket", 1);
+				}
 				ret.put("ticket",ticketsum);
 				ret.put("gem",gemsum);
 				ret.put("addticket",getticket);
@@ -100,7 +103,7 @@
 		}else{
 			ret.put("success", 0);
 		}		
-	}		
+	}
 	out.print(ret.toString());
 	
 	JdbcUtil.close(pstmt);
