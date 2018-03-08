@@ -17,7 +17,7 @@ public class shopManager {
 	public int ticket;
 	public String PID_android;
 	public String PID_ios;
-	public int price_ios;
+	public float price_ios;
 	
 	private static ArrayList<shopManager> list = null;
 	
@@ -48,7 +48,7 @@ public class shopManager {
 				data.ticket = rs.getInt(idx++);
 				data.PID_android = rs.getString(idx++);
 				data.PID_ios = rs.getString(idx++);
-				data.price_ios = rs.getInt(idx++);
+				data.price_ios = rs.getFloat(idx++);
 				list.add(data);
 				hash.put(data.shop_id, data);
 			}
