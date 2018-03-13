@@ -18,15 +18,23 @@ public class ConnectionProvider {
 	     }
 		
 		Connection conn = null;		
-
-		String DB_URL = "jdbc:mysql://localhost:3306/"+dbname;
+		
+		// live 때 사용
+		String DB_URL = "jdbc:mysql://10.33.4.205:3306/"+dbname;		
+		// test 때 사용
+		//String DB_URL = "jdbc:mysql://localhost:3306/"+dbname;
+		
 		//이곳에서 바꾸면 됩니다.
 //		String DB_URL = "jdbc:mysql://localhost:3306/textIsland?" +
 //					"useUnicode=true&characterEncoding=utf8";
 		//String dbUser = "wings00";
 		//String dbPass = "wingstudio00";	
 		String dbUser = "wings";
-		String dbPass = "WingS00!";
+		
+		// live 때 사용
+		String dbPass = "wings00";
+		// test 때 사용
+		//String dbPass = "WingS00!";
 		conn = DriverManager.getConnection(DB_URL, dbUser, dbPass);
 			
 		return conn;
