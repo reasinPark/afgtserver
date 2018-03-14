@@ -60,6 +60,7 @@
 			
 			// 기존에 uid를 가져온다.
 			ret.put("uid", exist_uid);
+			LogManager.writeNorLog(exist_uid, "success", "login", "null","null", 0);
 		}
 		else {
 			// 이전에 facebook 연동을 한 적 없는 유저라면
@@ -93,6 +94,7 @@
 							if(r == 1){
 								ret.put("uid", uid);
 								LogManager.writeNorLog(uid, "fbmake_success", cmd, "null","null", 0);
+								LogManager.writeNorLog(uid, "success", "login", "null","null", 0);
 							}else{
 								ret.put("error",2);
 								LogManager.writeNorLog(uid, "fbmake_fail2", cmd, "null","null", 0);
@@ -111,6 +113,7 @@
 				
 				if(pstmt.executeUpdate()>0){
 					LogManager.writeNorLog(userid, "fblogin_success", cmd, "null","null", 0);
+					LogManager.writeNorLog(userid, "success", "login", "null","null", 0);
 				}else{
 					LogManager.writeNorLog(userid, "fblogin_fail", cmd, "null","null", 0);
 				}
