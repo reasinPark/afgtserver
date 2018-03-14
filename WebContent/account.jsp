@@ -53,9 +53,9 @@
 			pstmt.setString(2, exist_uid);
 			
 			if(pstmt.executeUpdate()>0){
-				LogManager.writeNorLog(exist_uid, "success", cmd, "null","null", 0);
+				LogManager.writeNorLog(exist_uid, "link_success", cmd, "null","null", 0);
 			}else{
-				LogManager.writeNorLog(exist_uid, "fail", cmd, "null","null", 0);
+				LogManager.writeNorLog(exist_uid, "link_fail", cmd, "null","null", 0);
 			}
 			
 			// 기존에 uid를 가져온다.
@@ -83,7 +83,7 @@
 						if(check>1){
 							System.out.println("-- making uid error --");
 							ret.put("error", 1);
-							LogManager.writeNorLog(uid, "fail", cmd, "null","null", 0);
+							LogManager.writeNorLog(uid, "fbmake_fail", cmd, "null","null", 0);
 							break;
 						}else{
 							pstmt = conn.prepareStatement("insert into user (uid,token,service) values(?,?,'Facebook')");
@@ -92,10 +92,10 @@
 							r = pstmt.executeUpdate();
 							if(r == 1){
 								ret.put("uid", uid);
-								LogManager.writeNorLog(uid, "success", cmd, "null","null", 0);
+								LogManager.writeNorLog(uid, "fbmake_success", cmd, "null","null", 0);
 							}else{
 								ret.put("error",2);
-								LogManager.writeNorLog(uid, "fail2", cmd, "null","null", 0);
+								LogManager.writeNorLog(uid, "fbmake_fail2", cmd, "null","null", 0);
 								System.out.println("--insert error -- ");
 							}
 						}
@@ -110,9 +110,9 @@
 				pstmt.setString(2, userid);
 				
 				if(pstmt.executeUpdate()>0){
-					LogManager.writeNorLog(userid, "success", cmd, "null","null", 0);
+					LogManager.writeNorLog(userid, "fblogin_success", cmd, "null","null", 0);
 				}else{
-					LogManager.writeNorLog(userid, "fail", cmd, "null","null", 0);
+					LogManager.writeNorLog(userid, "fblogin_fail", cmd, "null","null", 0);
 				}
 			}
 		}
