@@ -56,7 +56,7 @@
 		ArrayList<StoryManager> stList = StoryManager.getDataAll();
 
 		JSONArray retlist = new JSONArray();
-		
+		/*
 		pstmt = conn.prepareStatement("select Story_id from user_story where UID = ?");
 		pstmt.setString(1, uid);
 		
@@ -76,7 +76,7 @@
 			data.put("totalcount", tmp.totalcount);
 			retlist.add(data);
 		}
-		
+		*/
 		for(int i=0;i<stList.size();i++){
 			JSONObject data = new JSONObject();
 			StoryManager tmp = stList.get(i);
