@@ -120,7 +120,94 @@
 			}
 		}
 	}
-	
+	else if(cmd.equals("email_check")){
+		System.out.println("email check command");
+		
+		pstmt = conn.prepareStatement("select uid from user where token = ? and service = 'Facebook'");
+		
+		String email = request.getParameter("email");
+		
+		pstmt = conn.prepareStatement("select uid from user where email = ? and service = 'Email'");
+		pstmt.setString(1, email);
+		rs = pstmt.executeQuery();
+		
+		if(rs.next()){
+			ret.put("exist", 1);
+		}
+		else {
+			ret.put("exist", 0);
+		}
+	}
+	else if(cmd.equals("email_login")) {
+		System.out.println("email login command");
+
+		String email = request.getParameter("email");
+		String password = request.getParameter("password");
+		
+		pstmt = conn.prepareStatement("select service from user where uid = ?");
+		
+		pstmt.setString(1, userid);
+		
+		rs = pstmt.executeQuery();
+
+		// 이전에 게스트로 가입한 유저라면
+		if(rs.next()){
+			pstmt = conn.prepareStatement("update user set service = 'Email', email = ?, password = ? where uid = ?");
+			pstmt.setString(1, email);
+			pstmt.setString(2, password);
+			pstmt.setString(3, userid);
+			
+			if(pstmt.executeUpdate()>0){
+				LogManager.writeNorLog(userid, "link_success", cmd, "null","null", 0);
+			}else{
+				LogManager.writeNorLog(userid, "link_fail", cmd, "null","null", 0);
+			}
+
+			ret.put("uid", userid);
+		}
+		// 처음 가입하는 유저
+		else {
+			pstmt = conn.prepareStatement("insert into user_regist (UUID) values(?)");
+
+			String uuid = UUID.randomUUID().toString().replaceAll("-", "");
+			
+			pstmt.setString(1, uuid);
+			
+			int r = pstmt.executeUpdate();
+			if(r==1){
+				pstmt = conn.prepareStatement("select * from user_regist where UUID = ?");
+				pstmt.setString(1, uuid);
+				rs = pstmt.executeQuery();
+				int check = 0;
+				while(rs.next()){
+					check++;
+					String uid = String.valueOf(rs.getInt("UID"));
+					if(check>1){
+						System.out.println("-- making uid error --");
+						ret.put("error", 1);
+						LogManager.writeNorLog(uid, "emmake_fail", cmd, "null","null", 0);
+						break;
+					}else{
+						pstmt = conn.prepareStatement("insert into user (uid,email,password,service) values(?,?,?,'Email')");
+						pstmt.setString(1, uid);
+						pstmt.setString(2, email);
+						pstmt.setString(3, password);
+						r = pstmt.executeUpdate();
+						if(r == 1){
+							ret.put("uid", uid);
+							LogManager.writeNorLog(uid, "emmake_success", cmd, "null","null", 0);
+							LogManager.writeNorLog(uid, "success", "login", "null","null", 0);
+						}else{
+							ret.put("error",2);
+							LogManager.writeNorLog(uid, "emmake_fail2", cmd, "null","null", 0);
+							System.out.println("--insert error -- ");
+						}
+					}
+				}
+				
+			}
+		}
+	}
 	
 	out.print(ret.toString());
 	
