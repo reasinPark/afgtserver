@@ -450,7 +450,7 @@
 		// check user already have this costume
 		
 		CostumeData data = CostumeData.getData(costumeid);
-		int usercash = data.CostumeId;
+		int usercash = data.price;
 		
 		pstmt = conn.prepareStatement("select CostumeId from user_skindata where uid = ? and CostumeId = ?");
 		pstmt.setString(1, userid);
@@ -463,19 +463,31 @@
 			//input costumeid
 			//check cash
 			//delivery result
-			pstmt = conn.prepareStatement("insert into user_skindata (CostumeId,buy_Date,use_rcash,uid,charid) values(?,now(),?,?,?)");
-			pstmt.setInt(1, costumeid);
-			pstmt.setInt(2, usercash);
-			pstmt.setString(3, userid);
-			pstmt.setString(4,data.ChId);
+			pstmt = conn.prepareStatement("update user set cashgem = cashgem - ? where uid = ?");
+			pstmt.setInt(1, usercash);
+			pstmt.setString(2, userid);
 			
 			if(pstmt.executeUpdate()==1){
-				ret.put("success",1);
-				LogManager.writeNorLog(userid, "success", cmd, "null","null", 0);
-			}else{
+				LogManager.writeNorLog(userid, "user_success", cmd, "null","null", 0);
+				
+				pstmt = conn.prepareStatement("insert into user_skindata (CostumeId,buy_Date,use_rcash,uid,charid) values(?,now(),?,?,?)");
+				pstmt.setInt(1, costumeid);
+				pstmt.setInt(2, usercash);
+				pstmt.setString(3, userid);
+				pstmt.setString(4,data.ChId);
+				
+				if(pstmt.executeUpdate()==1){
+					ret.put("success",1);
+					LogManager.writeNorLog(userid, "success", cmd, "null","null", 0);
+				}else{
+					ret.put("success",0);
+					LogManager.writeNorLog(userid, "fail_updateerror", cmd, "null","null", 0);
+				}	
+			}
+			else {
 				ret.put("success",0);
-				LogManager.writeNorLog(userid, "fail_updateerror", cmd, "null","null", 0);
-			}	
+				LogManager.writeNorLog(userid, "user_fail", cmd, "null","null", 0);
+			}
 		}
 
 		// 유저 스킨 구매 정보 로드 
@@ -849,6 +861,28 @@
 		else {
 			LogManager.writeNorLog(userid, "fail", cmd, "null","null", 0);
 			ret.put("success", 0);
+		}
+	}
+	else if(cmd.equals("checkgem")) {
+		int costumeid = Integer.valueOf(request.getParameter("costumeid"));
+
+		CostumeData data = CostumeData.getData(costumeid);
+		int price = data.price;
+
+		pstmt = conn.prepareStatement("select freegem, cashgem from user where uid = ?");
+		pstmt.setString(1, userid);
+		
+		rs = pstmt.executeQuery();
+		
+		while(rs.next()){
+			int mygem = rs.getInt(1)+rs.getInt(2);
+			
+			if (mygem < price) {
+				ret.put("success", 0);
+			}
+			else {
+				ret.put("success", 1);
+			}
 		}
 	}
 	
