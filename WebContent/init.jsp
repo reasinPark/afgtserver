@@ -499,7 +499,7 @@
 		}
 
 		// 유저 스킨 구매 정보 로드 
-		pstmt = conn.prepareStatement("select CostumeId,charid,equip,partstype from user_skindata where uid = ?");
+		pstmt = conn.prepareStatement("select CostumeId,charid,equip from user_skindata where uid = ?");
 		pstmt.setString(1, userid);
 		JSONArray skinlist = new JSONArray();
 		rs = pstmt.executeQuery();
@@ -508,7 +508,6 @@
 			cdata.put("costumeid",rs.getString(1));
 			cdata.put("charid",rs.getString(2));
 			cdata.put("equip",rs.getString(3));
-			cdata.put("partstype",rs.getString(4));
 			skinlist.add(cdata);
 		}
 		ret.put("userskinlist",skinlist);
