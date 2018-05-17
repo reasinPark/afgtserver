@@ -20,9 +20,9 @@ public class ConnectionProvider {
 		Connection conn = null;		
 		
 		// live 때 사용
-		String DB_URL = "jdbc:mysql://10.33.4.205:3306/"+dbname;		
+		//String DB_URL = "jdbc:mysql://10.33.4.205:3306/"+dbname;		
 		// test 때 사용
-		//String DB_URL = "jdbc:mysql://localhost:3306/"+dbname;
+		String DB_URL = "jdbc:mysql://localhost:3306/"+dbname;
 		
 		//이곳에서 바꾸면 됩니다.
 //		String DB_URL = "jdbc:mysql://localhost:3306/textIsland?" +
@@ -32,9 +32,9 @@ public class ConnectionProvider {
 		String dbUser = "wings";
 		
 		// live 때 사용
-		String dbPass = "wings00";
+		//String dbPass = "wings00";
 		// test 때 사용
-		//String dbPass = "WingS00!";
+		String dbPass = "WingS00!";
 		conn = DriverManager.getConnection(DB_URL, dbUser, dbPass);
 			
 		return conn;
