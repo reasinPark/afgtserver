@@ -22,6 +22,7 @@ public class EpisodeList {
 	public String director;
 	public String imgname;
 	public int likecount;
+	public String summary;
 
 	private static ArrayList<EpisodeList> list = null;
 	
@@ -38,7 +39,7 @@ public class EpisodeList {
 		try{
 			conn = ConnectionProvider.getConnection("afgt");
 			
-			pstmt = conn.prepareStatement("select Story_id,episode_num,episode_name,csvfilename,ticket,gem,purchaseinfo,reward_gem,reward_ticket,rewardinfo,writer,director,imgname,likecount from episode");
+			pstmt = conn.prepareStatement("select Story_id,episode_num,episode_name,csvfilename,ticket,gem,purchaseinfo,reward_gem,reward_ticket,rewardinfo,writer,director,imgname,likecount,summary from episode");
 			
 			rs = pstmt.executeQuery();
 			while(rs.next()){
@@ -58,6 +59,7 @@ public class EpisodeList {
 				data.director = rs.getString(idx++);
 				data.imgname = rs.getString(idx++);
 				data.likecount = rs.getInt(idx++);
+				data.summary = rs.getString(idx++);
 				list.add(data);
 				hash.put(data.Episode_num, data);
 			}

@@ -138,6 +138,7 @@
 							data.put("director", tmpE.director);
 							data.put("imgname", tmpE.imgname);
 							data.put("likecount", tmpE.likecount);
+							data.put("summary", tmpE.summary);
 							elist.add(data);
 						}
 						
@@ -319,6 +320,7 @@
 				data.put("director", tmpE.director);
 				data.put("imgname", tmpE.imgname);
 				data.put("likecount", tmpE.likecount);
+				data.put("summary", tmpE.summary);
 				elist.add(data);
 			}
 			
