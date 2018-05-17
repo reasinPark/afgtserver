@@ -103,6 +103,8 @@
 							data.put("name", cmpD.name);
 							data.put("episodeid", cmpD.episodeId);
 							data.put("storyid", cmpD.StroyId);
+							data.put("partstype",cmpD.partstype);
+							data.put("viewingame",cmpD.viewingame);
 							clist.add(data);
 						}
 						
@@ -281,6 +283,8 @@
 				data.put("name", cmpD.name);
 				data.put("episodeid", cmpD.episodeId);
 				data.put("storyid", cmpD.StroyId);
+				data.put("partstype",cmpD.partstype);
+				data.put("viewingame",cmpD.viewingame);
 				clist.add(data);
 			}
 			

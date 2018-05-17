@@ -21,6 +21,8 @@ public class CostumeData {
 	public String name;
 	public int episodeId;
 	public String StroyId;
+	public String partstype;
+	public int viewingame;
 	
 	private static ArrayList<CostumeData> list = null;
 	
@@ -37,7 +39,7 @@ public class CostumeData {
 		try{
 			conn = ConnectionProvider.getConnection("afgt");
 			
-			pstmt = conn.prepareStatement("select CostumeId,CallId,ChId,Skinname,filename,thumnailname,selectani,buyani,description,cash,name,episodeid,storyid from CostumeData");
+			pstmt = conn.prepareStatement("select CostumeId,CallId,ChId,Skinname,filename,thumnailname,selectani,buyani,description,cash,name,episodeid,storyid,partstype,viewingame from CostumeData");
 			
 			rs = pstmt.executeQuery();
 			while(rs.next()){
@@ -56,6 +58,8 @@ public class CostumeData {
 				data.name = rs.getString(idx++);
 				data.episodeId = rs.getInt(idx++);
 				data.StroyId = rs.getString(idx++);
+				data.partstype = rs.getString(idx++);
+				data.viewingame = rs.getInt(idx++);
 				list.add(data);
 				hash.put(data.CostumeId,data);
 			}
