@@ -22,6 +22,7 @@
 <%@ page import="com.wingsinus.ep.ChlistManager" %>
 <%@ page import="com.wingsinus.ep.ObdataManager" %>
 <%@ page import="com.wingsinus.ep.SoundtableManager" %>
+<%@ page import="com.wingsinus.ep.TutorialList" %>
 <%
 	request.setCharacterEncoding("UTF-8");
 	// test log
@@ -898,6 +899,20 @@
 				ret.put("success", 1);
 			}
 		}
+	}
+	else if(cmd.equals("tutorial")) {
+
+		JSONArray tlist = new JSONArray();
+		
+		ArrayList<TutorialList> emp = TutorialList.getDataAll();
+		for(int i=0;i<emp.size();i++){
+			TutorialList tmpE = emp.get(i);
+			JSONObject data = new JSONObject();
+			data.put("StoryID", tmpE.Story_id);
+			tlist.add(data);
+		}
+		
+		ret.put("tutoriallist", tlist);
 	}
 	
 	out.print(ret.toString());
