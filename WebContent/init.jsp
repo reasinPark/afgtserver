@@ -909,6 +909,7 @@
 			TutorialList tmpE = emp.get(i);
 			JSONObject data = new JSONObject();
 			data.put("StoryID", tmpE.Story_id);
+			data.put("EpisodeNum", tmpE.episode_num);
 			tlist.add(data);
 		}
 		

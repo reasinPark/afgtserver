@@ -10,6 +10,7 @@ import java.util.HashMap;
 public class TutorialList {
 	// 튜토리얼 리스트
 	public String Story_id;
+	public int episode_num;
 	
 	private static ArrayList<TutorialList> list = null;
 	
@@ -26,13 +27,14 @@ public class TutorialList {
 		try{
 			conn = ConnectionProvider.getConnection("afgt");
 			
-			pstmt = conn.prepareStatement("select Story_id from tutorial");
+			pstmt = conn.prepareStatement("select Story_id, episode_num from tutorial");
 			
 			rs = pstmt.executeQuery();
 			while(rs.next()){
 				int idx = 1;
 				TutorialList data = new TutorialList();
 				data.Story_id = rs.getString(idx++);
+				data.episode_num = rs.getInt(idx++);
 				list.add(data);
 				hash.put(data.Story_id, data);
 			}
