@@ -104,8 +104,13 @@
 							data.put("name", cmpD.name);
 							data.put("episodeid", cmpD.episodeId);
 							data.put("storyid", cmpD.StroyId);
-							data.put("partstype",cmpD.partstype);
 							data.put("viewingame",cmpD.viewingame);
+							data.put("BFilename",cmpD.BFilename);
+							data.put("BSkinname",cmpD.BSkinname);
+							data.put("FFilename",cmpD.FFilename);
+							data.put("FSkinname",cmpD.FSkinname);
+							data.put("HFilename",cmpD.HFilename);
+							data.put("HSkinname",cmpD.HSkinname);
 							clist.add(data);
 						}
 						
@@ -285,8 +290,13 @@
 				data.put("name", cmpD.name);
 				data.put("episodeid", cmpD.episodeId);
 				data.put("storyid", cmpD.StroyId);
-				data.put("partstype",cmpD.partstype);
 				data.put("viewingame",cmpD.viewingame);
+				data.put("BFilename",cmpD.BFilename);
+				data.put("BSkinname",cmpD.BSkinname);
+				data.put("FFilename",cmpD.FFilename);
+				data.put("FSkinname",cmpD.FSkinname);
+				data.put("HFilename",cmpD.HFilename);
+				data.put("HSkinname",cmpD.HSkinname);
 				clist.add(data);
 			}
 			

@@ -21,8 +21,14 @@ public class CostumeData {
 	public String name;
 	public int episodeId;
 	public String StroyId;
-	public String partstype;
 	public int viewingame;
+	public String BFilename;
+	public String BSkinname;
+	public String FFilename;
+	public String FSkinname;
+	public String HFilename;
+	public String HSkinname;
+	
 	
 	private static ArrayList<CostumeData> list = null;
 	
@@ -39,7 +45,7 @@ public class CostumeData {
 		try{
 			conn = ConnectionProvider.getConnection("afgt");
 			
-			pstmt = conn.prepareStatement("select CostumeId,CallId,ChId,Skinname,filename,thumnailname,selectani,buyani,description,cash,name,episodeid,storyid,partstype,viewingame from CostumeData");
+			pstmt = conn.prepareStatement("select CostumeId,CallId,ChId,Skinname,filename,thumnailname,selectani,buyani,description,cash,name,episodeid,storyid,viewingame,BFilename,BSkinname,FFilename,FSkinname,HFilename,HSkinname from CostumeData");
 			
 			rs = pstmt.executeQuery();
 			while(rs.next()){
@@ -58,8 +64,13 @@ public class CostumeData {
 				data.name = rs.getString(idx++);
 				data.episodeId = rs.getInt(idx++);
 				data.StroyId = rs.getString(idx++);
-				data.partstype = rs.getString(idx++);
 				data.viewingame = rs.getInt(idx++);
+				data.BFilename = rs.getString(idx++);
+				data.BSkinname = rs.getString(idx++);
+				data.FFilename = rs.getString(idx++);
+				data.FSkinname = rs.getString(idx++);
+				data.HFilename = rs.getString(idx++);
+				data.HSkinname = rs.getString(idx++);
 				list.add(data);
 				hash.put(data.CostumeId,data);
 			}
