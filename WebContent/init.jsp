@@ -841,7 +841,10 @@
 			rs = pstmt.executeQuery();
 			
 			while(rs.next()){
-				if (rs.getInt(1)+rs.getInt(2) == 0) {
+				int myticket = rs.getInt(1)+rs.getInt(2);
+				ret.put("myticket", myticket);
+				
+				if (myticket == 0) {
 					pstmt = conn.prepareStatement("update user set ticketgentime = date_add(now(), interval 2 day) where uid = ?");
 					pstmt.setString(1, userid);
 					
