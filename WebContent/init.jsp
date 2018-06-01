@@ -928,6 +928,21 @@
 		
 		ret.put("tutoriallist", tlist);
 	}
+	else if(cmd.equals("getresourceversion")){
+		JSONArray rlist = new JSONArray();
+		
+		pstmt = conn.prepareStatement("select AssetBundleName,version from AssetBundleVersion");
+		rs = pstmt.executeQuery();
+		
+		while(rs.next()){
+			JSONObject data = new JSONObject();
+			System.out.println("name is :"+rs.getString(1)+", version is :"+rs.getInt(2));
+			data.put("AssetBundleName",rs.getString(1));
+			data.put("version",rs.getInt(2));
+			rlist.add(data);
+		}
+		ret.put("resourceversion",rlist);
+	}
 	
 	out.print(ret.toString());
 	
