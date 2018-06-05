@@ -111,6 +111,8 @@
 							data.put("FSkinname",cmpD.FSkinname);
 							data.put("HFilename",cmpD.HFilename);
 							data.put("HSkinname",cmpD.HSkinname);
+							data.put("AFilename",cmpD.AFilename);
+							data.put("ASkinname",cmpD.ASkinname);
 							clist.add(data);
 						}
 						
@@ -297,6 +299,8 @@
 				data.put("FSkinname",cmpD.FSkinname);
 				data.put("HFilename",cmpD.HFilename);
 				data.put("HSkinname",cmpD.HSkinname);
+				data.put("AFilename",cmpD.AFilename);
+				data.put("ASkinname",cmpD.ASkinname);
 				clist.add(data);
 			}
 			
