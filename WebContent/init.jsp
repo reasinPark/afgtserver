@@ -475,6 +475,19 @@
 			namelist.add(cdata);
 		}
 		
+		//유저 선택지 구매 정보 로드
+		pstmt = conn.prepareStatement("select selectid,storyid,epinum from user_selectitem where uid = ?");
+		pstmt.setString(1,userid);
+		rs = pstmt.executeQuery();
+		JSONArray selectlist = new JSONArray();
+		while(rs.next()){
+			JSONObject sdata = new JSONObject();
+			sdata.put("selectid", rs.getInt(1));
+			sdata.put("storyid",rs.getString(2));
+			sdata.put("epinum", rs.getInt(3));
+			selectlist.add(sdata);
+		}
+		
 		// chdata, chlist, obdata, soundtable 를 서버에서 받아오기.
 		if (csvserver.equals("on")){
 			System.out.println("csvserver : " + csvserver);
@@ -484,6 +497,7 @@
 			ret.put("soundtablelist", slist);
 		}// end of csvserver.equals("on")
 		
+		ret.put("userselectlist",selectlist);
 		ret.put("namelist",namelist);
 		ret.put("userstorylist",storylist);
 		ret.put("userskinlist",skinlist);
@@ -914,18 +928,93 @@
 		int episodenum = Integer.valueOf(request.getParameter("episodenum"));
 		int selectid = Integer.valueOf(request.getParameter("selectid"));
 		
-		//먼저 구매내용을 처리한다. 
-		
-		
-		pstmt = conn.prepareStatement("insert into user_selectitem (uid,selectid,storyid,epinum) values(?,?,?,?)");
+		//이미 구매한 내역인지 확인한다.
+		pstmt = conn.prepareStatement("select * from use_selectitem where uid = ? and selectid = ? and storyid = ? and epinum = ?");
 		pstmt.setString(1, userid);
 		pstmt.setInt(2, selectid);
 		pstmt.setString(3, Storyid);
-		pstmt.setInt(4,episodenum);
-		if(pstmt.executeUpdate()==1){
-			
+		pstmt.setInt(4, episodenum);
+		if(rs.next()){
+			ret.put("already",1);
 		}else{
-			LogManager.writeNorLog(userid,"fail_buy_choice",cmd,"null","null",0);
+
+			//먼저 구매내용을 처리한다. 
+			//가격을 가져온다.
+			//감소를 처리한다.
+			//감소에 성공했으면 이후 처리를 시작한다.
+			
+			List<SelectItemData> slist = SelectItemData.getDataAll();
+			SelectItemData data = new SelectItemData();
+			for(int i=0;i<slist.size();i++){
+				if(slist.get(i).SelectId == selectid&&slist.get(i).StoryId == Storyid&&slist.get(i).Epinum == episodenum){
+					data = slist.get(i);
+				}
+			}
+			
+			pstmt = conn.prepareStatement("select freegem,cashgem from user where uid = ?");
+			pstmt.setString(1, userid);
+			int aftercashgem = 0;
+			int afterfreegem = 0;
+			int cashtype = 0;
+			int beshort = 0;
+			if(rs.next()){
+				int freegem = rs.getInt(1);
+				int cashgem = rs.getInt(2);
+				if(data.Price >freegem+cashgem){
+					ret.put("result", 0);//not enough gem
+				}else{
+					if(cashgem >data.Price){ // first use cashgem
+						cashtype = 1;
+						aftercashgem = cashgem - data.Price;
+					}else{ // first cash after free
+						beshort = data.Price - cashgem;
+						cashtype = 2;
+						
+						afterfreegem = freegem - beshort;
+					}
+				}
+			}
+			
+			if(cashtype==1){
+				pstmt = conn.prepareStatement("update user set cashgem = ? where uid = ?");
+				pstmt.setInt(1, aftercashgem);
+				pstmt.setString(2, userid);
+			}else if(cashtype==2){
+				pstmt = conn.prepareStatement("update user set freegem = ? , cashgem = 0 where uid = ?");
+				pstmt.setInt(1,beshort);
+				pstmt.setString(2, userid);
+			}
+			
+			if(pstmt.executeUpdate() == 1){
+				pstmt = conn.prepareStatement("insert into user_selectitem (uid,selectid,storyid,epinum) values(?,?,?,?)");
+				pstmt.setString(1, userid);
+				pstmt.setInt(2, selectid);
+				pstmt.setString(3, Storyid);
+				pstmt.setInt(4,episodenum);
+				
+				if(pstmt.executeUpdate()==1){
+					//get user_selectitem
+					//유저 선택지 구매 정보 로드
+					pstmt = conn.prepareStatement("select selectid,storyid,epinum from user_selectitem where uid = ?");
+					pstmt.setString(1,userid);
+					rs = pstmt.executeQuery();
+					JSONArray selectlist = new JSONArray();
+					while(rs.next()){
+						JSONObject sdata = new JSONObject();
+						sdata.put("selectid", rs.getInt(1));
+						sdata.put("storyid",rs.getString(2));
+						sdata.put("epinum", rs.getInt(3));
+						selectlist.add(sdata);
+					}
+					ret.put("userselectlist",selectlist);
+					ret.put("result",1);
+					
+				}else{
+					LogManager.writeNorLog(userid,"fail_buy_choice",cmd,"null","null",0);
+				}
+			}else{
+				LogManager.writeNorLog(userid,"fail_buy_choice_use_cash",cmd,"null","null",0);
+			}
 		}
 		
 	}
