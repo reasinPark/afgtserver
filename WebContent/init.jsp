@@ -22,6 +22,7 @@
 <%@ page import="com.wingsinus.ep.ChlistManager" %>
 <%@ page import="com.wingsinus.ep.ObdataManager" %>
 <%@ page import="com.wingsinus.ep.SoundtableManager" %>
+<%@ page import="com.wingsinus.ep.SelectItemData" %>
 <%@ page import="com.wingsinus.ep.TutorialList" %>
 <%
 	request.setCharacterEncoding("UTF-8");
@@ -56,6 +57,7 @@
 		JSONArray cllist = new JSONArray();
 		JSONArray olist = new JSONArray();
 		JSONArray slist = new JSONArray();
+		JSONArray sellist = new JSONArray();
 		
 		pstmt = conn.prepareStatement("insert into user_regist (UUID) values(?)");		
 		
@@ -163,6 +165,17 @@
 							blist.add(data);
 						}
 						
+						ArrayList<SelectItemData> selmp = SelectItemData.getDataAll();
+						for(int i=0;i<selmp.size();i++){
+							SelectItemData selmpS = selmp.get(i);
+							JSONObject data = new JSONObject();
+							data.put("selectid",selmpS.SelectId);
+							data.put("price",selmpS.Price);
+							data.put("storyid",selmpS.StoryId);
+							data.put("epinum",selmpS.Epinum);
+							sellist.add(data);
+						}
+						
 						// chdata, chlist, obdata, soundtable 를 서버에서 받아오기.
 						if (csvserver.equals("on")){
 							
@@ -222,6 +235,7 @@
 						ret.put("bannerlist", blist);
 						ret.put("episodelist",elist);
 						ret.put("categorylist",jlist);
+						ret.put("selectitemlist",sellist);
 						LogManager.writeNorLog(uid, "success", cmd, "null","null", 0);
 					}else{
 						ret.put("error",2);
@@ -257,6 +271,7 @@
 		JSONArray cllist = new JSONArray();
 		JSONArray olist = new JSONArray();
 		JSONArray slist = new JSONArray();
+		JSONArray sellist = new JSONArray();
 		
 		rs = pstmt.executeQuery();
 		System.out.println("rs count "+userid);
@@ -350,6 +365,17 @@
 				data.put("type",tmpB.type);
 				data.put("callid",tmpB.callid);
 				blist.add(data);
+			}
+			
+			ArrayList<SelectItemData> selmp = SelectItemData.getDataAll();
+			for(int i=0;i<selmp.size();i++){
+				SelectItemData smp = selmp.get(i);
+				JSONObject data = new JSONObject();
+				data.put("selectid",smp.SelectId);
+				data.put("price",smp.Price);
+				data.put("storyid",smp.StoryId);
+				data.put("epinum",smp.Epinum);
+				sellist.add(data);
 			}
 			
 			// chdata, chlist, obdata, soundtable 를 서버에서 받아오기.
@@ -465,6 +491,7 @@
 		ret.put("bannerlist", blist);
 		ret.put("episodelist",elist);
 		ret.put("categorylist",jlist);
+		ret.put("selectitemlist",sellist);
 		ret.put("ticket", ticket);
 		ret.put("ticketgentime",gentime);
 		ret.put("gem",gem);
@@ -881,6 +908,26 @@
 			ret.put("success",0);
 			LogManager.writeNorLog(userid, "fail", cmd, "null","null", 0);
 		}
+	}
+	else if(cmd.equals("writeuserchoice")){
+		String Storyid = request.getParameter("StoryId");
+		int episodenum = Integer.valueOf(request.getParameter("episodenum"));
+		int selectid = Integer.valueOf(request.getParameter("selectid"));
+		
+		//먼저 구매내용을 처리한다. 
+		
+		
+		pstmt = conn.prepareStatement("insert into user_selectitem (uid,selectid,storyid,epinum) values(?,?,?,?)");
+		pstmt.setString(1, userid);
+		pstmt.setInt(2, selectid);
+		pstmt.setString(3, Storyid);
+		pstmt.setInt(4,episodenum);
+		if(pstmt.executeUpdate()==1){
+			
+		}else{
+			LogManager.writeNorLog(userid,"fail_buy_choice",cmd,"null","null",0);
+		}
+		
 	}
 	else if(cmd.equals("ticketcharge")) {
 		pstmt = conn.prepareStatement("update user set freeticket = freeticket + 1 where uid = ?");
