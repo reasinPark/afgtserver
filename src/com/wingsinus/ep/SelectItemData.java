@@ -29,13 +29,19 @@ public class SelectItemData {
 			pstmt = conn.prepareStatement("select selectid,price,storyid,epinum from SelectItem");
 			
 			rs = pstmt.executeQuery();
+			System.out.println("get select item");
 			while(rs.next()){
 				int idx = 1;
 				SelectItemData data = new SelectItemData();
+				System.out.println("get select item in to while");
 				data.SelectId = rs.getInt(idx++);
-				data.StoryId = rs.getString(idx++);
+				System.out.println("test sel id "+data.SelectId);
 				data.Price = rs.getInt(idx++);
+				System.out.println("price is :"+data.Price);
+				data.StoryId = rs.getString(idx++);
+				System.out.println("story id is :"+data.StoryId);
 				data.Epinum = rs.getInt(idx++);
+				System.out.println("data from class cash is :"+data.SelectId+","+data.Price+", "+data.StoryId+","+data.Epinum);
 				list.add(data);
 			}
 		}finally{
