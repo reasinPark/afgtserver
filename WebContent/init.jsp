@@ -1100,6 +1100,82 @@
 			
 			ret.put("tutoriallist", tlist);
 		}
+		else if(cmd.equals("buyadpass")){
+			// check adpass count and date
+			int passprice = 10;
+			
+			pstmt = conn.prepareStatement("select adpass,adpasscount,freegem,cashgem from user where uid = ?");
+			pstmt.setString(1, userid);
+			
+			boolean passlive = false;
+			long livetime = 24*31*60*60;			
+			int freegem = 0;
+			int cashgem = 0;
+			
+			rs = pstmt.executeQuery();
+			if(rs.next()){
+				long adpasstime = rs.getTimestamp(1).getTime()/1000;
+				int adpasscount = rs.getInt(2);
+				freegem = rs.getInt(3);
+				cashgem = rs.getInt(4);
+				
+				if(adpasscount==1&&adpasstime+livetime>=now){
+					passlive = true;
+				}
+			}
+			
+			if(!passlive){
+				//check user gem
+				if(freegem+cashgem>=passprice){
+					int aftercash = 0;
+					int afterfree = 0;
+					if(cashgem>=passprice){
+						aftercash = cashgem-passprice;
+						afterfree = freegem;
+					}else{
+						aftercash = 0;
+						afterfree = freegem - (passprice - cashgem);
+					}
+					pstmt = conn.prepareStatement("update user set adpass = now(), adpasscount = 1, cashgem = ?, freegem = ? where uid = ?");
+					pstmt.setInt(1, aftercash);
+					pstmt.setInt(2, afterfree);
+					pstmt.setString(3, userid);
+					if(pstmt.executeUpdate()==1){
+						ret.put("result", 1);
+					}
+				}else{
+					ret.put("result",0);//not enough money
+				}
+			}else{
+				ret.put("already", 1);
+			}
+			
+			// update adpass and date
+			// send result
+		}
+		else if(cmd.equals("checkadpass")){
+			// check adpass count and date
+			pstmt = conn.prepareStatement("select adpass,adpasscount from user where uid = ?");
+			pstmt.setString(1, userid);
+			
+			boolean passlive = false;
+			long livetime = 24*31*60*60;
+			rs = pstmt.executeQuery();
+			if(rs.next()){
+				long adpasstime = rs.getTimestamp(1).getTime()/1000;
+				int adpasscount = rs.getInt(2);
+				if(adpasscount==1&&adpasstime+livetime>=now){
+					passlive = true;
+				}
+			}
+			if(passlive){
+				ret.put("result",1);
+			}else{
+				ret.put("result",0);
+			}
+			// update adpass
+			// send result
+		}
 		else if(cmd.equals("getresourceversion")){
 			JSONArray rlist = new JSONArray();
 			
