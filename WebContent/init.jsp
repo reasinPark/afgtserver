@@ -1179,6 +1179,81 @@
 			// update adpass
 			// send result
 		}
+		else if(cmd.equals("likestory")){
+			String likestory = request.getParameter("likestory");
+			int episodenum = Integer.valueOf(request.getParameter("episodenum"));
+			String storyid = request.getParameter("storyid");
+			int likenum = 0;
+			if(likestory.equals("yes")){
+				likenum = 2;
+			}else if(likestory.equals("no")){
+				likenum = 1;
+			}
+
+			JSONArray storylist = new JSONArray();
+			
+			pstmt = conn.prepareStatement("select likestory from user_story where UID = ? and Story_id = ? and Episode_num = ?");
+			pstmt.setString(1, userid);
+			pstmt.setString(2, storyid);
+			pstmt.setInt(3, episodenum);
+			if(rs.next()){
+				pstmt = conn.prepareStatement("update user_story set likestory = ? where UID = ? and Story_id = ? and Episode_num = ?");
+				pstmt.setInt(1, likenum);
+				pstmt.setString(2, userid);
+				pstmt.setString(3, storyid);
+				pstmt.setInt(4, episodenum);
+				if(pstmt.executeUpdate()==1){
+					pstmt = conn.prepareStatement("select Story_id,Episode_num,lately_num,buy_num,likestory from user_story where UID = ?");
+					pstmt.setString(1,userid);
+					rs = pstmt.executeQuery();
+					while(rs.next()){
+						JSONObject data = new JSONObject();
+						data.put("StoryID",rs.getString(1));
+						data.put("EpisodeNum",rs.getInt(2));
+						data.put("LatelyNum",rs.getInt(3));
+						data.put("BuyNum",rs.getInt(4));
+						data.put("LikeNum", rs.getInt(5));
+						storylist.add(data);
+					}
+					ret.put("storylist", storylist);
+					ret.put("result", 1);//normal progress
+				}else{
+					ret.put("result", 0);//error
+				}
+			}else{
+				//lately insert
+				pstmt = conn.prepareStatement("insert into user_story (UID,Story_id,Episode_num,view_date,dir_num,lately_num,likestory) values(?,?,?,now(),0,?,?)");
+				pstmt.setString(1, userid);
+				pstmt.setString(2, storyid);
+				pstmt.setInt(3, episodenum);
+				pstmt.setInt(4, episodenum);
+				pstmt.setInt(5, likenum);
+				if(pstmt.executeUpdate()==1) {
+					pstmt = conn.prepareStatement("select Story_id,Episode_num,lately_num,buy_num,likestory from user_story where UID = ?");
+					pstmt.setString(1,userid);
+					rs = pstmt.executeQuery();
+					while(rs.next()){
+						JSONObject data = new JSONObject();
+						data.put("StoryID",rs.getString(1));
+						data.put("EpisodeNum",rs.getInt(2));
+						data.put("LatelyNum",rs.getInt(3));
+						data.put("BuyNum",rs.getInt(4));
+						data.put("LikeNum", rs.getInt(5));
+						storylist.add(data);
+					}
+					ret.put("storylist", storylist);
+					ret.put("result", 1);//normal progress
+					LogManager.writeNorLog(userid, "sucess_lately", cmd, "null","null", 0);	
+				}
+				else {
+					ret.put("result", 0);
+					LogManager.writeNorLog(userid, "fail_lately", cmd, "null","null", 0);
+				}
+			}
+			
+			
+			
+		}
 		else if(cmd.equals("getresourceversion")){
 			JSONArray rlist = new JSONArray();
 			
