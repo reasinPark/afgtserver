@@ -1194,6 +1194,29 @@
 			}
 			ret.put("resourceversion",rlist);
 		}
+
+		else if(cmd.equals("question")) {
+			//send question
+			String email = request.getParameter("email");
+			String subject = request.getParameter("subject");
+			String contents = request.getParameter("contents");
+			
+			pstmt = conn.prepareStatement("insert into question (uid,email,subject,contents,date) values(?,?,?,?,now())");
+			pstmt.setString(1, userid);
+			pstmt.setString(2, email);
+			pstmt.setString(3, subject);
+			pstmt.setString(4, contents);
+			
+			int checker = pstmt.executeUpdate();
+			
+			if(checker==1){
+				ret.put("success", 1);
+			}
+			else {
+				ret.put("success", 0);
+				LogManager.writeNorLog(userid,"fail_question",cmd,"null","null",0);
+			}
+		}
 		
 		out.print(ret.toString());
 
