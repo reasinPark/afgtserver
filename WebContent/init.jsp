@@ -457,7 +457,7 @@
 			System.out.println("start user story in login");
 			
 			// 유저 이야기 읽은 정보 로드
-			pstmt = conn.prepareStatement("select Story_id,Episode_num,lately_num,buy_num from user_story where UID = ?");
+			pstmt = conn.prepareStatement("select Story_id,Episode_num,lately_num,buy_num,likestory from user_story where UID = ?");
 			pstmt.setString(1,userid);
 			JSONArray storylist = new JSONArray();
 			rs = pstmt.executeQuery();
@@ -467,6 +467,7 @@
 				data.put("EpisodeNum",rs.getInt(2));
 				data.put("LatelyNum",rs.getInt(3));
 				data.put("BuyNum",rs.getInt(4));
+				data.put("LikeNum", rs.getInt(5));
 				storylist.add(data);
 			}
 			
@@ -755,7 +756,7 @@
 			}
 			
 			// 유저 이야기 읽은 정보 로드
-			pstmt = conn.prepareStatement("select Story_id,Episode_num,lately_num,buy_num from user_story where UID = ?");
+			pstmt = conn.prepareStatement("select Story_id,Episode_num,lately_num,buy_num,likestory from user_story where UID = ?");
 			pstmt.setString(1,userid);
 			JSONArray storylist = new JSONArray();
 			rs = pstmt.executeQuery();
@@ -765,6 +766,7 @@
 				data.put("EpisodeNum",rs.getInt(2));
 				data.put("LatelyNum",rs.getInt(3));
 				data.put("BuyNum",rs.getInt(4));
+				data.put("LikeNum", rs.getInt(5));
 				storylist.add(data);
 			}
 					
@@ -862,7 +864,7 @@
 			}
 			
 			// 유저 이야기 읽은 정보 로드
-			pstmt = conn.prepareStatement("select Story_id,Episode_num,lately_num,buy_num from user_story where UID = ?");
+			pstmt = conn.prepareStatement("select Story_id,Episode_num,lately_num,buy_num,likestory from user_story where UID = ?");
 			pstmt.setString(1,userid);
 			JSONArray storylist = new JSONArray();
 			rs = pstmt.executeQuery();
@@ -872,6 +874,7 @@
 				data.put("EpisodeNum",rs.getInt(2));
 				data.put("LatelyNum",rs.getInt(3));
 				data.put("BuyNum",rs.getInt(4));
+				data.put("LikeNum", rs.getInt(5));
 				storylist.add(data);
 			}
 			
