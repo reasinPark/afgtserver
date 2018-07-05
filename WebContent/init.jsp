@@ -885,11 +885,43 @@
 			int episodenum = Integer.valueOf(request.getParameter("episodenum"));
 			int ticketValue = Integer.valueOf(request.getParameter("ticket"));
 			long ticketGenTime = 0;
-			pstmt = conn.prepareStatement("update user set cashticket = cashticket - ? where uid = ?");
-			pstmt.setInt(1, ticketValue);
-			pstmt.setString(2, userid);
 			
-			if(pstmt.executeUpdate()==1){
+			pstmt = conn.prepareStatement("select freeticket, cashticket from user where uid = ?");
+			pstmt.setString(1, userid);
+			rs = pstmt.executeQuery();
+			
+			int freeticket = 0;
+			int cashticket = 0;
+			boolean bugFlag = false;
+			
+			while(rs.next()){
+				freeticket = rs.getInt(1);
+				cashticket = rs.getInt(2);
+				
+				if (cashticket >= ticketValue) {
+					System.out.println("use cashticket");
+					pstmt = conn.prepareStatement("update user set cashticket = cashticket - ? where uid = ?");
+				}
+				else {
+					if(freeticket >= ticketValue){
+						System.out.println("use freeticket");
+						pstmt = conn.prepareStatement("update user set freeticket = freeticket - ? where uid = ?");
+					}
+					else {
+						bugFlag = true;
+						System.out.println("ticket error!");
+						LogManager.writeNorLog(userid, "error with ticket bug", cmd, "null","null", 0);
+					}
+				}
+			}
+			
+			if (!bugFlag) {
+				System.out.println("not bug");
+				pstmt.setInt(1, ticketValue);
+				pstmt.setString(2, userid);
+			}
+			
+			if(pstmt.executeUpdate()==1 && (!bugFlag)){
 				ret.put("success",1);
 	
 				LogManager.writeNorLog(userid, "sucess", cmd, "null","null", 0);
@@ -901,6 +933,7 @@
 				
 				while(rs.next()){
 					int myticket = rs.getInt(1)+rs.getInt(2);
+					
 					ret.put("myticket", myticket);
 					
 					if (myticket == 0) {
