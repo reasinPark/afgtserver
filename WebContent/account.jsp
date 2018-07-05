@@ -45,6 +45,8 @@
 		rs = pstmt.executeQuery();
 
 		if(rs.next()){
+			System.out.println("existing user linked facebook login start");
+			
 			// 이전에 facebook 연동을 한 유저라면
 			String exist_uid = rs.getString(1);
 			
@@ -54,15 +56,33 @@
 			
 			if(pstmt.executeUpdate()>0){
 				LogManager.writeNorLog(exist_uid, "link_success", cmd, "null","null", 0);
+				System.out.println("facebook login link success");
 			}else{
 				LogManager.writeNorLog(exist_uid, "link_fail", cmd, "null","null", 0);
+				System.out.println("facebook login link fail");
+			}
+			
+			pstmt = conn.prepareStatement("update user set active = ?, existinguid = ? where uid = ?");
+			pstmt.setInt(1, 0);
+			pstmt.setString(2, exist_uid);
+			pstmt.setString(3, userid);
+			
+			if(pstmt.executeUpdate()>0) {
+				LogManager.writeNorLog(exist_uid, "inactive_success", cmd, "null","null", 0);
+				System.out.println("facebook login inactive success");
+			}
+			else {
+				LogManager.writeNorLog(exist_uid, "inactive_fail", cmd, "null","null", 0);
+				System.out.println("facebook login inactive fail");
 			}
 			
 			// 기존에 uid를 가져온다.
 			ret.put("uid", exist_uid);
 			LogManager.writeNorLog(exist_uid, "success", "login", "null","null", 0);
+			System.out.println("existing user linked facebook login end");
 		}
 		else {
+			System.out.println("beginning user linked facebook login start");
 			// 이전에 facebook 연동을 한 적 없는 유저라면
 			if(userid.equals("nil")){
 				// 신규 유저 라면 
@@ -118,6 +138,7 @@
 					LogManager.writeNorLog(userid, "fblogin_fail", cmd, "null","null", 0);
 				}
 			}
+			System.out.println("beginning user linked facebook login end");
 		}
 	}
 	else if(cmd.equals("email_check")){
