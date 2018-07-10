@@ -35,31 +35,35 @@
 	
 	String cmd = request.getParameter("cmd");
 	
-	if(cmd.equals("facebook_login")){
-		System.out.println("facebook login command");
+	if(cmd.equals("account_login")){
+		System.out.println("OAUTH login command");
 		
 		String token = request.getParameter("token");
+		String service = request.getParameter("service");
 				
-		pstmt = conn.prepareStatement("select uid from user where token = ? and service = 'Facebook'");
+		pstmt = conn.prepareStatement("select uid from user where token = ? and service = ?");
 		pstmt.setString(1, token);
+		pstmt.setString(2, service);
+		
 		rs = pstmt.executeQuery();
 
 		if(rs.next()){
-			System.out.println("existing user linked facebook login start");
+			System.out.println("existing user linked "+service+" login start");
 			
-			// 이전에 facebook 연동을 한 유저라면
+			// 이전에 연동을 한 유저라면
 			String exist_uid = rs.getString(1);
 			
-			pstmt = conn.prepareStatement("update user set token = ?, service = 'Facebook' where uid = ?");
+			pstmt = conn.prepareStatement("update user set token = ?, service = ? where uid = ?");
 			pstmt.setString(1, token);
-			pstmt.setString(2, exist_uid);
+			pstmt.setString(2, service);
+			pstmt.setString(3, exist_uid);
 			
 			if(pstmt.executeUpdate()>0){
-				LogManager.writeNorLog(exist_uid, "link_success", cmd, "null","null", 0);
-				System.out.println("facebook login link success");
+				LogManager.writeNorLog(exist_uid, "link_success_"+service, cmd, "null","null", 0);
+				System.out.println(service + " login link success");
 			}else{
-				LogManager.writeNorLog(exist_uid, "link_fail", cmd, "null","null", 0);
-				System.out.println("facebook login link fail");
+				LogManager.writeNorLog(exist_uid, "link_fail_"+service, cmd, "null","null", 0);
+				System.out.println(service + " login link fail");
 			}
 			
 			pstmt = conn.prepareStatement("update user set active = ?, existinguid = ? where uid = ?");
@@ -68,21 +72,21 @@
 			pstmt.setString(3, userid);
 			
 			if(pstmt.executeUpdate()>0) {
-				LogManager.writeNorLog(exist_uid, "inactive_success", cmd, "null","null", 0);
-				System.out.println("facebook login inactive success");
+				LogManager.writeNorLog(userid, "inactive_success", cmd, "null","null", 0);
+				System.out.println(service + " login inactive success");
 			}
 			else {
-				LogManager.writeNorLog(exist_uid, "inactive_fail", cmd, "null","null", 0);
-				System.out.println("facebook login inactive fail");
+				LogManager.writeNorLog(userid, "inactive_fail", cmd, "null","null", 0);
+				System.out.println(service + " login inactive fail");
 			}
 			
 			// 기존에 uid를 가져온다.
 			ret.put("uid", exist_uid);
-			LogManager.writeNorLog(exist_uid, "success", "login", "null","null", 0);
-			System.out.println("existing user linked facebook login end");
+			LogManager.writeNorLog(exist_uid, "link_complete_"+service, cmd, "null","null", 0);
+			System.out.println("existing user linked "+service+" login end");
 		}
 		else {
-			System.out.println("beginning user linked facebook login start");
+			System.out.println("first start user linked "+service+" login start");
 			// 이전에 facebook 연동을 한 적 없는 유저라면
 			if(userid.equals("nil")){
 				// 신규 유저 라면 
@@ -104,20 +108,21 @@
 						if(check>1){
 							System.out.println("-- making uid error --");
 							ret.put("error", 1);
-							LogManager.writeNorLog(uid, "fbmake_fail", cmd, "null","null", 0);
+							LogManager.writeNorLog(uid, "make_uid_fail_"+service, cmd, "null","null", 0);
 							break;
 						}else{
-							pstmt = conn.prepareStatement("insert into user (uid,token,service) values(?,?,'Facebook')");
+							pstmt = conn.prepareStatement("insert into user (uid,token,service) values(?,?,?)");
 							pstmt.setString(1, uid);
 							pstmt.setString(2, token);
+							pstmt.setString(3, service);
 							r = pstmt.executeUpdate();
 							if(r == 1){
 								ret.put("uid", uid);
-								LogManager.writeNorLog(uid, "fbmake_success", cmd, "null","null", 0);
+								LogManager.writeNorLog(uid, "make_success_"+service, cmd, "null","null", 0);
 								LogManager.writeNorLog(uid, "success", "login", "null","null", 0);
 							}else{
 								ret.put("error",2);
-								LogManager.writeNorLog(uid, "fbmake_fail2", cmd, "null","null", 0);
+								LogManager.writeNorLog(uid, "make_fail_"+service, cmd, "null","null", 0);
 								System.out.println("--insert error -- ");
 							}
 						}
@@ -127,18 +132,18 @@
 				
 			}else{
 				// 신규 유저가 아니라면 
-				pstmt = conn.prepareStatement("update user set token = ?, service = 'Facebook' where uid = ?");
+				pstmt = conn.prepareStatement("update user set token = ?, service = ? where uid = ?");
 				pstmt.setString(1, token);
-				pstmt.setString(2, userid);
+				pstmt.setString(2, service);
+				pstmt.setString(3, userid);
 				
 				if(pstmt.executeUpdate()>0){
-					LogManager.writeNorLog(userid, "fblogin_success", cmd, "null","null", 0);
-					LogManager.writeNorLog(userid, "success", "login", "null","null", 0);
+					LogManager.writeNorLog(userid, "login_success_"+service, cmd, "null","null", 0);
 				}else{
-					LogManager.writeNorLog(userid, "fblogin_fail", cmd, "null","null", 0);
+					LogManager.writeNorLog(userid, "login_fail_"+service, cmd, "null","null", 0);
 				}
 			}
-			System.out.println("beginning user linked facebook login end");
+			System.out.println("first user linked "+service+" login end");
 		}
 	}
 	else if(cmd.equals("email_check")){
