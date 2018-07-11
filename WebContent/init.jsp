@@ -152,6 +152,7 @@
 								data.put("imgname", tmpE.imgname);
 								data.put("likecount", tmpE.likecount);
 								data.put("summary", tmpE.summary);
+								data.put("subtitle", tmpE.subtitle);
 								elist.add(data);
 							}
 							System.out.println("start banner manager");
@@ -354,6 +355,7 @@
 					data.put("imgname", tmpE.imgname);
 					data.put("likecount", tmpE.likecount);
 					data.put("summary", tmpE.summary);
+					data.put("subtitle", tmpE.subtitle);
 					elist.add(data);
 				}
 				System.out.println("start banner manager in login");
