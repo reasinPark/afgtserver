@@ -705,8 +705,10 @@
 				ret.put("gem",(rs.getInt(3)+rs.getInt(4)));
 				ret.put("ticket",(rs.getInt(1)+rs.getInt(2)));
 				ret.put("success",1);
+				LogManager.writeNorLog(userid, "success", cmd, "null","null", 0);
 			}else{
 				ret.put("success",0);
+				LogManager.writeNorLog(userid, "fail", cmd, "null","null", 0);
 			}		
 		}
 		else if(cmd.equals("episodestart")){
@@ -1100,16 +1102,39 @@
 			
 		}
 		else if(cmd.equals("ticketcharge")) {
-			pstmt = conn.prepareStatement("update user set freeticket = freeticket + 1 where uid = ?");
-			pstmt.setString(1, userid);
 			
-			if(pstmt.executeUpdate()>0){
-				LogManager.writeNorLog(userid, "success", cmd, "null","null", 0);
-				ret.put("success", 1);
-			}
-			else {
-				LogManager.writeNorLog(userid, "fail", cmd, "null","null", 0);
-				ret.put("success", 0);
+			long ticketGenTime = 0;
+			
+			pstmt = conn.prepareStatement("select ticketgentime,now() from user where uid = ?");
+			pstmt.setString(1,userid);
+			
+			rs = pstmt.executeQuery();
+			
+			if(rs.next()){
+				ticketGenTime = rs.getTimestamp(1).getTime()/1000;
+				now = rs.getTimestamp(2).getTime()/1000;
+				
+				if(ticketGenTime < now) {
+					System.out.println("charge success");
+					pstmt = conn.prepareStatement("update user set freeticket = freeticket + 1 where uid = ?");
+					pstmt.setString(1, userid);
+					
+					if(pstmt.executeUpdate()>0){
+						LogManager.writeNorLog(userid, "success", cmd, "null","null", 0);
+						ret.put("nocharge", 1);
+						ret.put("success", 1);
+					}
+					else {
+						LogManager.writeNorLog(userid, "fail", cmd, "null","null", 0);
+						ret.put("nocharge", 1);
+						ret.put("success", 0);
+					}
+				}
+				else {
+					System.out.println("need more time");
+					ret.put("nocharge", 0);
+					ret.put("now", now);
+				}
 			}
 		}
 		else if(cmd.equals("checkgem")) {
