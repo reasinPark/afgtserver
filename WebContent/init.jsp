@@ -1375,6 +1375,26 @@
 			}
 		}
 		
+		else if(cmd.equals("likerefresh")) {
+			JSONArray likecountlist = new JSONArray();
+			
+			pstmt = conn.prepareStatement("select Story_id, episode_num,likecount from episode");
+			rs = pstmt.executeQuery();
+			
+			while(rs.next()){
+				JSONObject data = new JSONObject();
+				data.put("StoryId",rs.getString(1));
+				data.put("EpisodeNum",rs.getInt(2));
+				data.put("LikeCount", rs.getInt(3));
+				likecountlist.add(data);
+			}
+			
+			ret.put("likecountlist", likecountlist);
+			
+			ret.put("result", 1);//normal progress
+			LogManager.writeNorLog(userid, "sucess", cmd, "null","null", 0);
+		}
+		
 		out.print(ret.toString());
 
 	}catch(Exception e){
