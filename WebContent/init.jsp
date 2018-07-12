@@ -1263,6 +1263,7 @@
 				likenum = 1;
 			}
 
+			boolean comp = false;
 			JSONArray likelist = new JSONArray();
 			System.out.println("like is :"+likestory+", "+storyid+", "+episodenum);
 			pstmt = conn.prepareStatement("select likestory from user_episodelike where uid = ? and Story_id = ? and Episode_num = ?");
@@ -1278,6 +1279,7 @@
 				pstmt.setInt(4, episodenum);
 				if(pstmt.executeUpdate()>0){
 					System.out.println("update complete");
+					comp = true;
 					pstmt = conn.prepareStatement("select Story_id,Episode_num,likestory from user_episodelike where uid = ?");
 					pstmt.setString(1,userid);
 					rs = pstmt.executeQuery();
@@ -1303,6 +1305,7 @@
 				pstmt.setInt(4, likenum);
 				if(pstmt.executeUpdate()>0) {
 					System.out.println("insert complete");
+					comp = true;
 					pstmt = conn.prepareStatement("select Story_id,Episode_num,likestory from user_episodelike where uid = ?");
 					pstmt.setString(1,userid);
 					rs = pstmt.executeQuery();
@@ -1320,6 +1323,16 @@
 				else {
 					ret.put("result", 0);
 					LogManager.writeNorLog(userid, "fail_like", cmd, "null","null", 0);
+				}
+			}
+			if(comp&&likenum==2){
+				pstmt = conn.prepareStatement("update episode set likecount = likecount + 1 where episode_num = ? and Story_id = ?");
+				pstmt.setInt(1, episodenum);
+				pstmt.setString(2, storyid);
+				if(pstmt.executeUpdate()>0){
+					LogManager.writeNorLog(userid, "compl_likeup", cmd, "null","null", 0);
+				}else{
+					LogManager.writeNorLog(userid, "fail_likeup", cmd, "null","null", 0);
 				}
 			}
 		}
