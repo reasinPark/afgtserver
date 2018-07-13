@@ -1326,7 +1326,7 @@
 				}
 			}
 			if(comp&&likenum==2){
-				pstmt = conn.prepareStatement("update episode set likecount = likecount + 1 where episode_num = ? and Story_id = ?");
+				pstmt = conn.prepareStatement("update likeview set likecount = likecount + 1 where episode_num = ? and Story_id = ?");
 				pstmt.setInt(1, episodenum);
 				pstmt.setString(2, storyid);
 				if(pstmt.executeUpdate()>0){
@@ -1378,7 +1378,7 @@
 		else if(cmd.equals("likerefresh")) {
 			JSONArray likecountlist = new JSONArray();
 			
-			pstmt = conn.prepareStatement("select Story_id, episode_num,likecount from episode");
+			pstmt = conn.prepareStatement("select Story_id, episode_num,likecount from likeview");
 			rs = pstmt.executeQuery();
 			
 			while(rs.next()){
