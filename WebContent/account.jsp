@@ -236,6 +236,9 @@
 				}
 			}
 		}
+
+		out.print(ret.toString());
+		
 	}catch(Exception e){
 		e.printStackTrace();
 	}finally{
