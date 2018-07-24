@@ -28,74 +28,179 @@
 	PreparedStatement pstmt = null;
 	Connection conn = ConnectionProvider.getConnection("afgt");
 	ResultSet rs = null;
-	
-	String userid = request.getParameter("uid");
-	
-	JSONObject ret = new JSONObject();
-	
-	String cmd = request.getParameter("cmd");
-	
-	if(cmd.equals("account_login")){
-		System.out.println("OAUTH login command");
-		
-		String token = request.getParameter("token");
-		String service = request.getParameter("service");
-				
-		pstmt = conn.prepareStatement("select uid from user where token = ? and service = ?");
-		pstmt.setString(1, token);
-		pstmt.setString(2, service);
-		
-		rs = pstmt.executeQuery();
 
-		if(rs.next()){
-			System.out.println("existing user linked "+service+" login start");
+	try{
 			
-			// 이전에 연동을 한 유저라면
-			String exist_uid = rs.getString(1);
+		String userid = request.getParameter("uid");
+		
+		JSONObject ret = new JSONObject();
+		
+		String cmd = request.getParameter("cmd");
+		
+		if(cmd.equals("account_login")){
+			System.out.println("OAUTH login command");
 			
-			pstmt = conn.prepareStatement("update user set token = ?, service = ? where uid = ?");
+			String token = request.getParameter("token");
+			String service = request.getParameter("service");
+					
+			pstmt = conn.prepareStatement("select uid from user where token = ? and service = ?");
 			pstmt.setString(1, token);
 			pstmt.setString(2, service);
-			pstmt.setString(3, exist_uid);
 			
-			if(pstmt.executeUpdate()>0){
-				LogManager.writeNorLog(exist_uid, "link_success_"+service, cmd, "null","null", 0);
-				System.out.println(service + " login link success");
-			}else{
-				LogManager.writeNorLog(exist_uid, "link_fail_"+service, cmd, "null","null", 0);
-				System.out.println(service + " login link fail");
-			}
-			
-			pstmt = conn.prepareStatement("update user set active = ?, existinguid = ? where uid = ?");
-			pstmt.setInt(1, 0);
-			pstmt.setString(2, exist_uid);
-			pstmt.setString(3, userid);
-			
-			if(pstmt.executeUpdate()>0) {
-				LogManager.writeNorLog(userid, "inactive_success", cmd, "null","null", 0);
-				System.out.println(service + " login inactive success");
+			rs = pstmt.executeQuery();
+	
+			if(rs.next()){
+				System.out.println("existing user linked "+service+" login start");
+				
+				// 이전에 연동을 한 유저라면
+				String exist_uid = rs.getString(1);
+				
+				pstmt = conn.prepareStatement("update user set token = ?, service = ? where uid = ?");
+				pstmt.setString(1, token);
+				pstmt.setString(2, service);
+				pstmt.setString(3, exist_uid);
+				
+				if(pstmt.executeUpdate()>0){
+					LogManager.writeNorLog(exist_uid, "link_success_"+service, cmd, "null","null", 0);
+					System.out.println(service + " login link success");
+				}else{
+					LogManager.writeNorLog(exist_uid, "link_fail_"+service, cmd, "null","null", 0);
+					System.out.println(service + " login link fail");
+				}
+				
+				pstmt = conn.prepareStatement("update user set active = ?, existinguid = ? where uid = ?");
+				pstmt.setInt(1, 0);
+				pstmt.setString(2, exist_uid);
+				pstmt.setString(3, userid);
+				
+				if(pstmt.executeUpdate()>0) {
+					LogManager.writeNorLog(userid, "inactive_success", cmd, "null","null", 0);
+					System.out.println(service + " login inactive success");
+				}
+				else {
+					LogManager.writeNorLog(userid, "inactive_fail", cmd, "null","null", 0);
+					System.out.println(service + " login inactive fail");
+				}
+				
+				// 기존에 uid를 가져온다.
+				ret.put("uid", exist_uid);
+				LogManager.writeNorLog(exist_uid, "link_complete_"+service, cmd, "null","null", 0);
+				System.out.println("existing user linked "+service+" login end");
 			}
 			else {
-				LogManager.writeNorLog(userid, "inactive_fail", cmd, "null","null", 0);
-				System.out.println(service + " login inactive fail");
+				System.out.println("first start user linked "+service+" login start");
+				// 이전에 facebook 연동을 한 적 없는 유저라면
+				if(userid.equals("nil")){
+					// 신규 유저 라면 
+					pstmt = conn.prepareStatement("insert into user_regist (UUID) values(?)");
+	
+					String uuid = UUID.randomUUID().toString().replaceAll("-", "");
+					
+					pstmt.setString(1, uuid);
+	
+					int r = pstmt.executeUpdate();
+					if(r==1){
+						pstmt = conn.prepareStatement("select * from user_regist where UUID = ?");
+						pstmt.setString(1, uuid);
+						rs = pstmt.executeQuery();
+						int check = 0;
+						while(rs.next()){
+							check++;
+							String uid = String.valueOf(rs.getInt("UID"));
+							if(check>1){
+								System.out.println("-- making uid error --");
+								ret.put("error", 1);
+								LogManager.writeNorLog(uid, "make_uid_fail_"+service, cmd, "null","null", 0);
+								break;
+							}else{
+								pstmt = conn.prepareStatement("insert into user (uid,token,service) values(?,?,?)");
+								pstmt.setString(1, uid);
+								pstmt.setString(2, token);
+								pstmt.setString(3, service);
+								r = pstmt.executeUpdate();
+								if(r == 1){
+									ret.put("uid", uid);
+									LogManager.writeNorLog(uid, "make_success_"+service, cmd, "null","null", 0);
+									LogManager.writeNorLog(uid, "success", "login", "null","null", 0);
+								}else{
+									ret.put("error",2);
+									LogManager.writeNorLog(uid, "make_fail_"+service, cmd, "null","null", 0);
+									System.out.println("--insert error -- ");
+								}
+							}
+						}
+						
+					}
+					
+				}else{
+					// 신규 유저가 아니라면 
+					pstmt = conn.prepareStatement("update user set token = ?, service = ? where uid = ?");
+					pstmt.setString(1, token);
+					pstmt.setString(2, service);
+					pstmt.setString(3, userid);
+					
+					if(pstmt.executeUpdate()>0){
+						LogManager.writeNorLog(userid, "login_success_"+service, cmd, "null","null", 0);
+					}else{
+						LogManager.writeNorLog(userid, "login_fail_"+service, cmd, "null","null", 0);
+					}
+				}
+				System.out.println("first user linked "+service+" login end");
 			}
-			
-			// 기존에 uid를 가져온다.
-			ret.put("uid", exist_uid);
-			LogManager.writeNorLog(exist_uid, "link_complete_"+service, cmd, "null","null", 0);
-			System.out.println("existing user linked "+service+" login end");
 		}
-		else {
-			System.out.println("first start user linked "+service+" login start");
-			// 이전에 facebook 연동을 한 적 없는 유저라면
-			if(userid.equals("nil")){
-				// 신규 유저 라면 
+		else if(cmd.equals("email_check")){
+			System.out.println("email check command");
+			
+			pstmt = conn.prepareStatement("select uid from user where token = ? and service = 'Facebook'");
+			
+			String email = request.getParameter("email");
+			
+			pstmt = conn.prepareStatement("select uid from user where email = ? and service = 'Email'");
+			pstmt.setString(1, email);
+			rs = pstmt.executeQuery();
+			
+			if(rs.next()){
+				ret.put("exist", 1);
+			}
+			else {
+				ret.put("exist", 0);
+			}
+		}
+		else if(cmd.equals("email_login")) {
+			System.out.println("email login command");
+	
+			String email = request.getParameter("email");
+			String password = request.getParameter("password");
+			
+			pstmt = conn.prepareStatement("select service from user where uid = ?");
+			
+			pstmt.setString(1, userid);
+			
+			rs = pstmt.executeQuery();
+	
+			// 이전에 게스트로 가입한 유저라면
+			if(rs.next()){
+				pstmt = conn.prepareStatement("update user set service = 'Email', email = ?, password = ? where uid = ?");
+				pstmt.setString(1, email);
+				pstmt.setString(2, password);
+				pstmt.setString(3, userid);
+				
+				if(pstmt.executeUpdate()>0){
+					LogManager.writeNorLog(userid, "link_success", cmd, "null","null", 0);
+				}else{
+					LogManager.writeNorLog(userid, "link_fail", cmd, "null","null", 0);
+				}
+	
+				ret.put("uid", userid);
+			}
+			// 처음 가입하는 유저
+			else {
 				pstmt = conn.prepareStatement("insert into user_regist (UUID) values(?)");
-
+	
 				String uuid = UUID.randomUUID().toString().replaceAll("-", "");
 				
 				pstmt.setString(1, uuid);
-
+				
 				int r = pstmt.executeUpdate();
 				if(r==1){
 					pstmt = conn.prepareStatement("select * from user_regist where UUID = ?");
@@ -108,136 +213,35 @@
 						if(check>1){
 							System.out.println("-- making uid error --");
 							ret.put("error", 1);
-							LogManager.writeNorLog(uid, "make_uid_fail_"+service, cmd, "null","null", 0);
+							LogManager.writeNorLog(uid, "emmake_fail", cmd, "null","null", 0);
 							break;
 						}else{
-							pstmt = conn.prepareStatement("insert into user (uid,token,service) values(?,?,?)");
+							pstmt = conn.prepareStatement("insert into user (uid,email,password,service) values(?,?,?,'Email')");
 							pstmt.setString(1, uid);
-							pstmt.setString(2, token);
-							pstmt.setString(3, service);
+							pstmt.setString(2, email);
+							pstmt.setString(3, password);
 							r = pstmt.executeUpdate();
 							if(r == 1){
 								ret.put("uid", uid);
-								LogManager.writeNorLog(uid, "make_success_"+service, cmd, "null","null", 0);
+								LogManager.writeNorLog(uid, "emmake_success", cmd, "null","null", 0);
 								LogManager.writeNorLog(uid, "success", "login", "null","null", 0);
 							}else{
 								ret.put("error",2);
-								LogManager.writeNorLog(uid, "make_fail_"+service, cmd, "null","null", 0);
+								LogManager.writeNorLog(uid, "emmake_fail2", cmd, "null","null", 0);
 								System.out.println("--insert error -- ");
 							}
 						}
 					}
 					
 				}
-				
-			}else{
-				// 신규 유저가 아니라면 
-				pstmt = conn.prepareStatement("update user set token = ?, service = ? where uid = ?");
-				pstmt.setString(1, token);
-				pstmt.setString(2, service);
-				pstmt.setString(3, userid);
-				
-				if(pstmt.executeUpdate()>0){
-					LogManager.writeNorLog(userid, "login_success_"+service, cmd, "null","null", 0);
-				}else{
-					LogManager.writeNorLog(userid, "login_fail_"+service, cmd, "null","null", 0);
-				}
-			}
-			System.out.println("first user linked "+service+" login end");
-		}
-	}
-	else if(cmd.equals("email_check")){
-		System.out.println("email check command");
-		
-		pstmt = conn.prepareStatement("select uid from user where token = ? and service = 'Facebook'");
-		
-		String email = request.getParameter("email");
-		
-		pstmt = conn.prepareStatement("select uid from user where email = ? and service = 'Email'");
-		pstmt.setString(1, email);
-		rs = pstmt.executeQuery();
-		
-		if(rs.next()){
-			ret.put("exist", 1);
-		}
-		else {
-			ret.put("exist", 0);
-		}
-	}
-	else if(cmd.equals("email_login")) {
-		System.out.println("email login command");
-
-		String email = request.getParameter("email");
-		String password = request.getParameter("password");
-		
-		pstmt = conn.prepareStatement("select service from user where uid = ?");
-		
-		pstmt.setString(1, userid);
-		
-		rs = pstmt.executeQuery();
-
-		// 이전에 게스트로 가입한 유저라면
-		if(rs.next()){
-			pstmt = conn.prepareStatement("update user set service = 'Email', email = ?, password = ? where uid = ?");
-			pstmt.setString(1, email);
-			pstmt.setString(2, password);
-			pstmt.setString(3, userid);
-			
-			if(pstmt.executeUpdate()>0){
-				LogManager.writeNorLog(userid, "link_success", cmd, "null","null", 0);
-			}else{
-				LogManager.writeNorLog(userid, "link_fail", cmd, "null","null", 0);
-			}
-
-			ret.put("uid", userid);
-		}
-		// 처음 가입하는 유저
-		else {
-			pstmt = conn.prepareStatement("insert into user_regist (UUID) values(?)");
-
-			String uuid = UUID.randomUUID().toString().replaceAll("-", "");
-			
-			pstmt.setString(1, uuid);
-			
-			int r = pstmt.executeUpdate();
-			if(r==1){
-				pstmt = conn.prepareStatement("select * from user_regist where UUID = ?");
-				pstmt.setString(1, uuid);
-				rs = pstmt.executeQuery();
-				int check = 0;
-				while(rs.next()){
-					check++;
-					String uid = String.valueOf(rs.getInt("UID"));
-					if(check>1){
-						System.out.println("-- making uid error --");
-						ret.put("error", 1);
-						LogManager.writeNorLog(uid, "emmake_fail", cmd, "null","null", 0);
-						break;
-					}else{
-						pstmt = conn.prepareStatement("insert into user (uid,email,password,service) values(?,?,?,'Email')");
-						pstmt.setString(1, uid);
-						pstmt.setString(2, email);
-						pstmt.setString(3, password);
-						r = pstmt.executeUpdate();
-						if(r == 1){
-							ret.put("uid", uid);
-							LogManager.writeNorLog(uid, "emmake_success", cmd, "null","null", 0);
-							LogManager.writeNorLog(uid, "success", "login", "null","null", 0);
-						}else{
-							ret.put("error",2);
-							LogManager.writeNorLog(uid, "emmake_fail2", cmd, "null","null", 0);
-							System.out.println("--insert error -- ");
-						}
-					}
-				}
-				
 			}
 		}
+	}catch(Exception e){
+		e.printStackTrace();
+	}finally{
+		
+		JdbcUtil.close(pstmt);
+		JdbcUtil.close(rs);
+		JdbcUtil.close(conn);
 	}
-	
-	out.print(ret.toString());
-	
-	JdbcUtil.close(pstmt);
-	JdbcUtil.close(rs);
-	JdbcUtil.close(conn);
 %>
