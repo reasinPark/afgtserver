@@ -11,6 +11,7 @@ public class TutorialList {
 	// 튜토리얼 리스트
 	public String Story_id;
 	public int episode_num;
+	public String summary;
 	
 	private static ArrayList<TutorialList> list = null;
 	
@@ -27,7 +28,7 @@ public class TutorialList {
 		try{
 			conn = ConnectionProvider.getConnection("afgt");
 			
-			pstmt = conn.prepareStatement("select Story_id, episode_num from tutorial");
+			pstmt = conn.prepareStatement("select Story_id, episode_num, summary from tutorial");
 			
 			rs = pstmt.executeQuery();
 			while(rs.next()){
@@ -35,6 +36,7 @@ public class TutorialList {
 				TutorialList data = new TutorialList();
 				data.Story_id = rs.getString(idx++);
 				data.episode_num = rs.getInt(idx++);
+				data.summary = rs.getString(idx++);
 				list.add(data);
 				hash.put(data.Story_id, data);
 			}
