@@ -242,7 +242,6 @@
 	}catch(Exception e){
 		e.printStackTrace();
 	}finally{
-		
 		JdbcUtil.close(pstmt);
 		JdbcUtil.close(rs);
 		JdbcUtil.close(conn);
