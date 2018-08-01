@@ -66,8 +66,8 @@
 		}
 		else {
 			System.out.println("hash error.. id : " + snuid);
+			response.sendError(HttpServletResponse.SC_FORBIDDEN);
 		}
-		
 	}catch(Exception e){
 		e.printStackTrace();
 	}finally{
