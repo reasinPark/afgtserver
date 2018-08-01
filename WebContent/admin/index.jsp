@@ -4,5 +4,6 @@
 <frameset cols="180, *" border="1px" bordercolor="green" noresize>
 	<frame src="menu.jsp" name="menu">
 	<frame src="user.jsp" name="content">
+	<frame src="tutorial.jsp" name="content">
 </frameset>
 </HTML>
