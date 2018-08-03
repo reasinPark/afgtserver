@@ -240,18 +240,18 @@
 							ret.put("episodelist",elist);
 							ret.put("categorylist",jlist);
 							ret.put("selectitemlist",sellist);
-							LogManager.writeNorLog(uid, "success", cmd, "null","null", 0);
+							LogManager.writeNorLog(uid, "success_make_uid", cmd, "null","null", 0);
 						}else{
 							ret.put("error",2);
-							LogManager.writeNorLog(uid, "fail2", cmd, "null","null", 0);
+							LogManager.writeNorLog(uid, "fail_make_uid", cmd, "null","null", 0);
 							System.out.println("--insert error -- ");
 						}
 					}
 				}
-				
+				LogManager.writeNorLog(uuid, "regist_success", cmd, "null","null", 0);
 				System.out.println("-----Regi Success-----");
 			}else{
-				
+				LogManager.writeNorLog(uuid, "regist_fail", cmd, "null","null", 0);
 				System.out.println("----Regi Fail----");
 			}
 		}else if(cmd.equals("login")){

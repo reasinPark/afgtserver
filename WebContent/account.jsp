@@ -54,6 +54,7 @@
 				
 				// 이전에 연동을 한 유저라면
 				String exist_uid = rs.getString(1);
+				LogManager.writeNorLog(exist_uid, "link_start_"+service, cmd, "null","null", 0);
 				
 				pstmt = conn.prepareStatement("update user set token = ?, service = ? where uid = ?");
 				pstmt.setString(1, token);
@@ -95,6 +96,8 @@
 					pstmt = conn.prepareStatement("insert into user_regist (UUID) values(?)");
 	
 					String uuid = UUID.randomUUID().toString().replaceAll("-", "");
+					
+					LogManager.writeNorLog(uuid, "make_uid_start_"+service, cmd, "null","null", 0);
 					
 					pstmt.setString(1, uuid);
 	
@@ -138,6 +141,7 @@
 					pstmt.setString(1, token);
 					pstmt.setString(2, service);
 					pstmt.setString(3, userid);
+					LogManager.writeNorLog(userid, "login_uid_start_"+service, cmd, "null","null", 0);
 					
 					if(pstmt.executeUpdate()>0){
 						LogManager.writeNorLog(userid, "login_success_"+service, cmd, "null","null", 0);
@@ -148,6 +152,7 @@
 				System.out.println("first user linked "+service+" login end");
 			}
 		}
+		
 		else if(cmd.equals("email_check")){
 			System.out.println("email check command");
 			
@@ -166,6 +171,7 @@
 				ret.put("exist", 0);
 			}
 		}
+		
 		else if(cmd.equals("email_login")) {
 			System.out.println("email login command");
 	
@@ -232,6 +238,8 @@
 							}
 						}
 					}
+				}
+				else {
 					
 				}
 			}
