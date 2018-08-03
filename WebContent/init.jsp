@@ -764,11 +764,11 @@
 				pstmt.setInt(4, episodenum);
 				if(pstmt.executeUpdate()==1) {
 					ret.put("success", 1);
-					LogManager.writeNorLog(userid, "sucess_lately", cmd, "null","null", 0);	
+					LogManager.writeNorLog(userid, "sucess_buyepi", cmd, "null","null", 0);	
 				}
 				else {
 					ret.put("success", 0);
-					LogManager.writeNorLog(userid, "fail_lately", cmd, "null","null", 0);
+					LogManager.writeNorLog(userid, "fail_buyepi", cmd, "null","null", 0);
 				}
 			}
 			
@@ -958,7 +958,6 @@
 						pstmt.setString(1, userid);
 						
 						if(pstmt.executeUpdate()==1){
-							LogManager.writeNorLog(userid, "sucess_set_gentime", cmd, "null","null", 0);
 							
 							pstmt = conn.prepareStatement("select ticketgentime,now() from user where uid = ?");
 							pstmt.setString(1,userid);
@@ -972,6 +971,7 @@
 								ret.put("nowtime", now);
 								ret.put("timecheck", 1);
 							}
+							LogManager.writeNorLog(userid, "sucess_set_gentime", cmd, "null","null", 0);
 						}
 						else {
 							LogManager.writeNorLog(userid, "fail_set_gentime", cmd, "null","null", 0);
@@ -1091,6 +1091,7 @@
 								System.out.println("my data is :"+rs.getInt(1)+", "+rs.getString(2)+","+rs.getInt(3));
 								selectlist.add(sdata);
 							}
+							LogManager.writeNorLog(userid,"sucess_write_userchoice",cmd,"null","null",0);
 							ret.put("userselectlist",selectlist);
 							ret.put("result",1);
 							
@@ -1199,6 +1200,7 @@
 				if(adpasscount==1&&adpasstime+livetime>=now){
 					passlive = true;
 				}
+				LogManager.writeNorLog(userid,"checkadpass",cmd,"null","null",0);
 			}
 			
 			if(!passlive){
@@ -1219,11 +1221,14 @@
 					pstmt.setString(3, userid);
 					if(pstmt.executeUpdate()==1){
 						ret.put("result", 1);
+						LogManager.writeNorLog(userid,"success_buy_adpass",cmd,"null","null",0);
 					}
 				}else{
+					LogManager.writeNorLog(userid,"fail_money",cmd,"null","null",0);
 					ret.put("result",0);//not enough money
 				}
 			}else{
+				LogManager.writeNorLog(userid,"fail_already",cmd,"null","null",0);
 				ret.put("already", 1);
 			}
 			
@@ -1273,6 +1278,7 @@
 			pstmt.setInt(3, episodenum);
 			if(rs.next()){
 				System.out.println("already have data");
+				LogManager.writeNorLog(userid,"check_like_story",cmd,"null","null",0);
 				pstmt = conn.prepareStatement("update user_episodelike set likestory = ? where uid = ? and Story_id = ? and Episode_num = ?");
 				pstmt.setInt(1, likenum);
 				pstmt.setString(2, userid);
@@ -1280,6 +1286,7 @@
 				pstmt.setInt(4, episodenum);
 				if(pstmt.executeUpdate()>0){
 					System.out.println("update complete");
+					LogManager.writeNorLog(userid,"success_like_story",cmd,"null","null",0);
 					comp = true;
 					pstmt = conn.prepareStatement("select Story_id,Episode_num,likestory from user_episodelike where uid = ?");
 					pstmt.setString(1,userid);
@@ -1294,6 +1301,7 @@
 					ret.put("userepisodelikelist", likelist);
 					ret.put("result", 1);//normal progress
 				}else{
+					LogManager.writeNorLog(userid,"faile_like_story",cmd,"null","null",0);
 					ret.put("result", 0);//error
 				}
 			}else{
@@ -1306,6 +1314,7 @@
 				pstmt.setInt(4, likenum);
 				if(pstmt.executeUpdate()>0) {
 					System.out.println("insert complete");
+					LogManager.writeNorLog(userid,"success_input_like_story",cmd,"null","null",0);
 					comp = true;
 					pstmt = conn.prepareStatement("select Story_id,Episode_num,likestory from user_episodelike where uid = ?");
 					pstmt.setString(1,userid);
