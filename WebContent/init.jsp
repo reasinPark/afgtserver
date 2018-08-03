@@ -776,6 +776,23 @@
 				}
 			}
 			
+
+			pstmt = conn.prepareStatement("select readcount from episoderead where Story_id = ? and Episode_num = ? ");
+			pstmt.setString(1, Storyid);
+			pstmt.setInt(2, episodenum);
+			rs = pstmt.executeQuery();
+			if(rs.next()){
+				pstmt = conn.prepareStatement("update episoderead set readcount = readcount + 1 where Story_id = ? and Episode_num = ?");
+				pstmt.setString(1, Storyid);
+				pstmt.setInt(2, episodenum);
+				pstmt.executeUpdate();
+			}else{
+				pstmt = conn.prepareStatement("insert into episoderead (Story_id,Episode_num) values(?,?)");
+				pstmt.setString(1, Storyid);
+				pstmt.setInt(2, episodenum);
+				pstmt.executeUpdate();
+			}
+			
 			// 유저 이야기 읽은 정보 로드
 			pstmt = conn.prepareStatement("select Story_id,Episode_num,lately_num,buy_num,likestory from user_story where UID = ?");
 			pstmt.setString(1,userid);
