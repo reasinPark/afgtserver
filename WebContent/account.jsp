@@ -54,7 +54,6 @@
 				
 				// 이전에 연동을 한 유저라면
 				String exist_uid = rs.getString(1);
-				LogManager.writeNorLog(exist_uid, "link_start_"+service, cmd, "null","null", 0);
 				
 				pstmt = conn.prepareStatement("update user set token = ?, service = ? where uid = ?");
 				pstmt.setString(1, token);
@@ -75,17 +74,16 @@
 				pstmt.setString(3, userid);
 				
 				if(pstmt.executeUpdate()>0) {
-					LogManager.writeNorLog(userid, "inactive_success", cmd, "null","null", 0);
+					LogManager.writeNorLog(userid, "inactive_success_"+service, cmd, "null","null", 0);
 					System.out.println(service + " login inactive success");
 				}
 				else {
-					LogManager.writeNorLog(userid, "inactive_fail", cmd, "null","null", 0);
+					LogManager.writeNorLog(userid, "inactive_success_"+service, cmd, "null","null", 0);
 					System.out.println(service + " login inactive fail");
 				}
 				
 				// 기존에 uid를 가져온다.
 				ret.put("uid", exist_uid);
-				LogManager.writeNorLog(exist_uid, "link_complete_"+service, cmd, "null","null", 0);
 				System.out.println("existing user linked "+service+" login end");
 			}
 			else {
@@ -96,8 +94,6 @@
 					pstmt = conn.prepareStatement("insert into user_regist (UUID) values(?)");
 	
 					String uuid = UUID.randomUUID().toString().replaceAll("-", "");
-					
-					LogManager.writeNorLog(uuid, "make_uid_start_"+service, cmd, "null","null", 0);
 					
 					pstmt.setString(1, uuid);
 	
@@ -113,7 +109,7 @@
 							if(check>1){
 								System.out.println("-- making uid error --");
 								ret.put("error", 1);
-								LogManager.writeNorLog(uid, "make_uid_fail_"+service, cmd, "null","null", 0);
+								LogManager.writeNorLog(uid, "make_uid_fail_" + service, cmd, "null","null", 0);
 								break;
 							}else{
 								pstmt = conn.prepareStatement("insert into user (uid,token,service) values(?,?,?)");
@@ -123,11 +119,11 @@
 								r = pstmt.executeUpdate();
 								if(r == 1){
 									ret.put("uid", uid);
-									LogManager.writeNorLog(uid, "make_success_"+service, cmd, "null","null", 0);
+									LogManager.writeNorLog(uid, "make_success_" + service, cmd, "null","null", 0);
 									LogManager.writeNorLog(uid, "success", "login", "null","null", 0);
 								}else{
 									ret.put("error",2);
-									LogManager.writeNorLog(uid, "make_fail_"+service, cmd, "null","null", 0);
+									LogManager.writeNorLog(uid, "make_fail_" + service, cmd, "null","null", 0);
 									System.out.println("--insert error -- ");
 								}
 							}
@@ -141,12 +137,11 @@
 					pstmt.setString(1, token);
 					pstmt.setString(2, service);
 					pstmt.setString(3, userid);
-					LogManager.writeNorLog(userid, "login_uid_start_"+service, cmd, "null","null", 0);
 					
 					if(pstmt.executeUpdate()>0){
-						LogManager.writeNorLog(userid, "login_success_"+service, cmd, "null","null", 0);
+						LogManager.writeNorLog(userid, "login_success_" + service, cmd, "null","null", 0);
 					}else{
-						LogManager.writeNorLog(userid, "login_fail_"+service, cmd, "null","null", 0);
+						LogManager.writeNorLog(userid, "login_fail_" + service, cmd, "null","null", 0);
 					}
 				}
 				System.out.println("first user linked "+service+" login end");

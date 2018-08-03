@@ -107,8 +107,8 @@
 		//timeInObj.put("month", "0");
 		//timeInObj.put("day", "0");
 		
-		LogManager.writeNorLog(uid, "load_story_success", cmd, "null","null", 0);
 		//get user story load log
+		LogManager.writeNorLog(uid, "load_story_success", cmd, "null","null", 0);
 		out.print(timeInObj.toString());
 	}catch(Exception e){
 		e.printStackTrace();

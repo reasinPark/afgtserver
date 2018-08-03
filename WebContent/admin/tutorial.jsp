@@ -58,6 +58,9 @@
 		<form target="result_frame" method="post" name="update_form" id="item_form" action="tutorial_update.jsp">
 			<table border="1" style="border-style:solid;">
 				<tr>
+					<td>스토리 아이디가 하나라도 0이면 튜토리얼을 스킵합니다.</td>
+				</tr>
+				<tr>
 					<td>스토리 아이디</td>
 					<td>에피소드 번호</td>
 					<td>튜토리얼 소개</td>

@@ -58,14 +58,17 @@
 			pstmt.setString(2, snuid);
 			
 			if(pstmt.executeUpdate()>0){
-				System.out.println("success reward gem .. id: " + snuid + " / currency: " + currency);
+				System.out.println("success reward gem .. id: " + snuid + " / currency: " + currency + " in iOS");
+				LogManager.writeNorLog(snuid, "reward_success", "tapjoy_ios", "null","null", 0);
 			}
 			else {
-				System.out.println("failed reward gem .. id: " + snuid + " / currency: " + currency);
+				System.out.println("failed reward gem .. id: " + snuid + " / currency: " + currency+ " in iOS");
+				LogManager.writeNorLog(snuid, "reward_fail", "tapjoy_ios", "null","null", 0);
 			}
 		}
 		else {
-			System.out.println("hash error.. id : " + snuid);
+			System.out.println("verifier error.. id : " + snuid + " in iOS");
+			LogManager.writeNorLog(snuid, "verifier_error", "tapjoy_ios", "null","null", 0);
 			response.sendError(HttpServletResponse.SC_FORBIDDEN);
 		}
 	}catch(Exception e){
