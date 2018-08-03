@@ -77,9 +77,10 @@
 				pstmt.setString(1, uuid);
 				rs = pstmt.executeQuery();
 				int check = 0;
+				String uid = null;
 				while(rs.next()){
 					check++;
-					String uid = String.valueOf(rs.getInt("UID"));
+					uid = String.valueOf(rs.getInt("UID"));
 					if(check>1){
 						System.out.println("-- making uid error --");
 						ret.put("error", 1);
@@ -248,10 +249,10 @@
 						}
 					}
 				}
-				LogManager.writeNorLog(uuid, "regist_success", cmd, "null","null", 0);
+				LogManager.writeNorLog(uid, "regist_success", cmd, "null","null", 0);
 				System.out.println("-----Regi Success-----");
 			}else{
-				LogManager.writeNorLog(uuid, "regist_fail", cmd, "null","null", 0);
+				LogManager.writeNorLog("null", "regist_fail", cmd, "null","null", 0);
 				System.out.println("----Regi Fail----");
 			}
 		}else if(cmd.equals("login")){
