@@ -24,6 +24,11 @@
 			<a href="tutorial.jsp" target="content">튜토리얼 작품 수정</a>
 		</td>
 	</tr>
+	<tr>
+		<td>
+			<a href="storyupload.jsp" target="content">스토리 파일 업로드</a>
+		</td>
+	</tr>
 </table>
 </body>
 </html>

@@ -5,5 +5,6 @@
 	<frame src="menu.jsp" name="menu">
 	<frame src="user.jsp" name="content">
 	<frame src="tutorial.jsp" name="content">
+	<frame src="storyupload.jsp" name="content">
 </frameset>
 </HTML>

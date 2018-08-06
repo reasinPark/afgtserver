@@ -9,6 +9,9 @@ import java.sql.*;
 //DB연결을 담당하는 클래스입니다.
 public class ConnectionProvider {
 	
+	// 0 이면 test, 1이면 live
+	public static int afgt_build_ver = 0;
+	
 	public static Connection getConnection(String dbname) throws SQLException {
 		 try {
              Class.forName("com.mysql.jdbc.Driver");
@@ -19,17 +22,21 @@ public class ConnectionProvider {
 		
 		Connection conn = null;		
 		
-		// live 때 사용
-		//String DB_URL = "jdbc:mysql://10.33.4.205:3306/"+dbname;		
-		// test 때 사용
-		String DB_URL = "jdbc:mysql://localhost:3306/"+dbname;
-		
 		String dbUser = "wings";
+		String dbPass = "";
+		String DB_URL = "";
 		
-		// live 때 사용
-		//String dbPass = "wings00";
-		// test 때 사용
-		String dbPass = "WingS00!";
+		// test
+		if(afgt_build_ver == 0) {
+			DB_URL = "jdbc:mysql://localhost:3306/"+dbname;
+			dbPass = "WingS00!";
+		}
+		// live
+		else if(afgt_build_ver == 1){
+			DB_URL = "jdbc:mysql://10.33.4.205:3306/"+dbname;	
+			dbPass = "wings00";
+		}
+		
 		conn = DriverManager.getConnection(DB_URL, dbUser, dbPass);
 			
 		return conn;
