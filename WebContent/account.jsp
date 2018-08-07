@@ -120,7 +120,6 @@
 								if(r == 1){
 									ret.put("uid", uid);
 									LogManager.writeNorLog(uid, "make_success_" + service, cmd, "null","null", 0);
-									LogManager.writeNorLog(uid, "success", "login", "null","null", 0);
 								}else{
 									ret.put("error",2);
 									LogManager.writeNorLog(uid, "make_fail_" + service, cmd, "null","null", 0);
@@ -128,11 +127,13 @@
 								}
 							}
 						}
-						
+					}
+					else {
+						LogManager.writeNorLog("null", "make_uuid_fail", cmd, "null","null", 0);
 					}
 					
 				}else{
-					// 신규 유저가 아니라면 
+					// Guest 일 때
 					pstmt = conn.prepareStatement("update user set token = ?, service = ? where uid = ?");
 					pstmt.setString(1, token);
 					pstmt.setString(2, service);
