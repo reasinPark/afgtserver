@@ -36,20 +36,20 @@ public class LogManager {
 		}
 	}
 	
-	public static boolean writeCashLog(String uid, int r_get, int f_get, int r_have,int f_have) throws SQLException{
+	public static boolean writeCashLog(String uid, int have_fticket, int have_cticket, int have_fgem,int have_cgem) throws SQLException{
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
 		Connection conn = null;
 		try{
 			conn = ConnectionProvider.getConnection("logdb");
 			
-			pstmt = conn.prepareStatement("insert into log_cash (uid,r_getcash,f_getcash,r_havecash,f_havecash) values(?,?,?,?,?)");
+			pstmt = conn.prepareStatement("insert into log_cash (uid,have_freeticket,have_cashticket,have_freegem,have_cashgem) values(?,?,?,?,?)");
 			
 			pstmt.setString(1, uid);
-			pstmt.setInt(2, r_get);
-			pstmt.setInt(3, f_get);
-			pstmt.setInt(4, r_have);
-			pstmt.setInt(5, f_have);
+			pstmt.setInt(2, have_fticket);
+			pstmt.setInt(3, have_cticket);
+			pstmt.setInt(4, have_fgem);
+			pstmt.setInt(5, have_cgem);
 			
 			int r = pstmt.executeUpdate();
 			if(r == 1){
