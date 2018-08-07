@@ -83,6 +83,15 @@
 			for(int i=0;i<stList.size();i++){
 				JSONObject data = new JSONObject();
 				StoryManager tmp = stList.get(i);
+				int viewcount = 0;
+				pstmt = conn.prepareStatement("select sum(readcount) from episoderead where Story_id = ?");
+				pstmt.setString(1, tmp.Story_id);
+				
+				rs = pstmt.executeQuery();
+				if(rs.next()){
+					viewcount = rs.getInt(1);
+				}
+				
 				data.put("Story_id", tmp.Story_id);
 				data.put("csvfilename", tmp.csvfilename);
 				data.put("title", tmp.title);
@@ -93,6 +102,7 @@
 				data.put("recommend", tmp.recommend);
 				data.put("totalcount", tmp.totalcount);
 				data.put("director", tmp.diretor);
+				data.put("viewcount", viewcount);
 				retlist.add(data);
 			}
 			timeInObj.put("Story", retlist);
