@@ -92,6 +92,7 @@
 				data.put("imgname", tmp.imgname);
 				data.put("recommend", tmp.recommend);
 				data.put("totalcount", tmp.totalcount);
+				data.put("director", tmp.diretor);
 				retlist.add(data);
 			}
 			timeInObj.put("Story", retlist);

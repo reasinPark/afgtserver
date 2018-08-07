@@ -19,6 +19,7 @@ public class StoryManager {
 	public String imgname;
 	public int recommend;
 	public int totalcount;
+	public String diretor;
 	
 	private static ArrayList<StoryManager> list = null;
 	
@@ -35,7 +36,7 @@ public class StoryManager {
 		try{
 			conn = ConnectionProvider.getConnection("afgt");
 			
-			pstmt = conn.prepareStatement("select Story_id, csvfilename, title, writer, summary, category_id, imgname, recommend, totalcount from story");
+			pstmt = conn.prepareStatement("select Story_id, csvfilename, title, writer, summary, category_id, imgname, recommend, totalcount, director from story");
 			
 			rs = pstmt.executeQuery();
 			while(rs.next()){
@@ -50,6 +51,7 @@ public class StoryManager {
 				data.imgname = rs.getString(idx++);
 				data.recommend = rs.getInt(idx++);
 				data.totalcount = rs.getInt(idx++);
+				data.diretor = rs.getString(idx++);
 				list.add(data);
 				hash.put(data.Story_id, data);
 			}
