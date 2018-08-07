@@ -23,17 +23,15 @@
 		}
 		
 		Enumeration files = mr.getFileNames();
-
-		out.println("file size : " + request.getContentLength() + "<br>");
 		
 		while(files.hasMoreElements()) {
-			String file1 = (String)files.nextElement();
-			String systemName = mr.getFilesystemName(file1);
-			fileSize = file1.length();
-			fileType = mr.getContentType(file1);
+			String file = (String)files.nextElement();
+			String systemName = mr.getFilesystemName(file);
+			fileSize = file.length();
+			fileType = mr.getContentType(file);
+			
+			%> <%=systemName%> 업로드 완료! <br> <%
 		}
-		
-		
 		
 	} catch(Exception e) {
 		%>
