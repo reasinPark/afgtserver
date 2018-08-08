@@ -564,30 +564,60 @@
 				//input costumeid
 				//check cash
 				//delivery result
-				pstmt = conn.prepareStatement("update user set cashgem = cashgem - ? where uid = ?");
-				pstmt.setInt(1, usercash);
-				pstmt.setString(2, userid);
+				int freegem = 0;
+				int cashgem = 0;
+				boolean bugFlag = false;
 				
-				if(pstmt.executeUpdate()==1){
-					LogManager.writeNorLog(userid, "user_success", cmd, "null","null", 0);
+				pstmt = conn.prepareStatement("select freegem, cashgem from user where uid = ?");
+				pstmt.setString(1, userid);
+				rs = pstmt.executeQuery();
+				
+				while(rs.next()) {
+					freegem = rs.getInt("freegem");
+					cashgem = rs.getInt("cashgem");
 					
-					pstmt = conn.prepareStatement("insert into user_skindata (CostumeId,buy_Date,use_rcash,uid,charid) values(?,now(),?,?,?)");
-					pstmt.setInt(1, costumeid);
-					pstmt.setInt(2, usercash);
-					pstmt.setString(3, userid);
-					pstmt.setString(4,data.ChId);
+					if(cashgem >= usercash) {
+						pstmt = conn.prepareStatement("update user set cashgem = cashgem - ? where uid = ?");
+						cashgem = cashgem - usercash;
+					}
+					else {
+						if(freegem >= usercash) {
+							pstmt = conn.prepareStatement("update user set freegem = freegem - ? where uid = ?");
+							freegem = freegem - usercash;
+						}
+						else {
+							bugFlag = true;
+							ret.put("success",0);
+							LogManager.writeNorLog(userid, "error", cmd, "gem", "null", usercash);
+						}
+					}
+				}
+				
+				if(!bugFlag) {
+					pstmt.setInt(1, usercash);
+					pstmt.setString(2, userid);
 					
 					if(pstmt.executeUpdate()==1){
-						ret.put("success",1);
-						LogManager.writeNorLog(userid, "success", cmd, "null","null", 0);
-					}else{
+						LogManager.writeCashLog(userid, 0, 0, freegem, cashgem);
+						
+						pstmt = conn.prepareStatement("insert into user_skindata (CostumeId,buy_Date,use_rcash,uid,charid) values(?,now(),?,?,?)");
+						pstmt.setInt(1, costumeid);
+						pstmt.setInt(2, usercash);
+						pstmt.setString(3, userid);
+						pstmt.setString(4,data.ChId);
+						
+						if(pstmt.executeUpdate()==1){
+							ret.put("success",1);
+							LogManager.writeNorLog(userid, "success", cmd, "gem","null", 0);
+						}else{
+							ret.put("success",0);
+							LogManager.writeNorLog(userid, "fail_insert", cmd, "null","null", 0);
+						}	
+					}
+					else {
 						ret.put("success",0);
-						LogManager.writeNorLog(userid, "fail_updateerror", cmd, "null","null", 0);
-					}	
-				}
-				else {
-					ret.put("success",0);
-					LogManager.writeNorLog(userid, "user_fail", cmd, "null","null", 0);
+						LogManager.writeNorLog(userid, "fail_update", cmd, "null","null", 0);
+					}
 				}
 			}
 	

@@ -12,19 +12,7 @@
 <%@ page import="org.json.simple.*" %>
 <%@ page import="com.wingsinus.ep.ConnectionProvider" %>
 <%@ page import="com.wingsinus.ep.JdbcUtil" %>
-<%@ page import="com.wingsinus.ep.cashtester" %>
-<%@ page import="com.wingsinus.ep.StoryManager" %>
-<%@ page import="com.wingsinus.ep.CategoryList" %>
-<%@ page import="com.wingsinus.ep.EpisodeList" %>
-<%@ page import="com.wingsinus.ep.CostumeData" %>
-<%@ page import="com.wingsinus.ep.BannerManager" %>
 <%@ page import="com.wingsinus.ep.LogManager" %>
-<%@ page import="com.wingsinus.ep.ChdataManager" %>
-<%@ page import="com.wingsinus.ep.ChlistManager" %>
-<%@ page import="com.wingsinus.ep.ObdataManager" %>
-<%@ page import="com.wingsinus.ep.SoundtableManager" %>
-<%@ page import="com.wingsinus.ep.SelectItemData" %>
-<%@ page import="com.wingsinus.ep.TutorialList" %>
 <%
 	request.setCharacterEncoding("UTF-8");
 	PreparedStatement pstmt = null;
@@ -61,14 +49,14 @@
 				System.out.println("success reward gem .. id: " + snuid + " / currency: " + currency + " in iOS");
 				LogManager.writeNorLog(snuid, "offerwall_success", "tapjoy_ios", "gem","null", Integer.valueOf(currency));
 			
-				pstmt = conn.prepareStatement("select freeticket, cashticket, freegem, cashgem from user where uid = ?");
+				pstmt = conn.prepareStatement("select freegem, cashgem from user where uid = ?");
 			
 				pstmt.setString(1, snuid);
 				
 				rs = pstmt.executeQuery();
 				
 				if(rs.next()) {
-					LogManager.writeCashLog(snuid, rs.getInt("freeticket"), rs.getInt("cashticket"), rs.getInt("freegem"), rs.getInt("cashgem"));
+					LogManager.writeCashLog(snuid, 0, 0, rs.getInt("freegem"), rs.getInt("cashgem"));
 				}
 				else {
 					LogManager.writeNorLog(snuid, "cashlog_fail", "tapjoy_ios", "gem","null", Integer.valueOf(currency));
