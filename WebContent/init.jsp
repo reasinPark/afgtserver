@@ -477,7 +477,7 @@
 			}
 			
 			System.out.println("start user name in login");
-			
+			/* 
 			pstmt = conn.prepareStatement("select Story_id,Episode_num,likestory from user_episodelike where uid = ?");
 			pstmt.setString(1, userid);
 			JSONArray likelist = new JSONArray();
@@ -489,7 +489,7 @@
 				data.put("LikeNum", rs.getInt(3));
 				likelist.add(data);
 			}
-			
+			 */
 			//유저 이름 세팅 정보 로드
 			pstmt = conn.prepareStatement("select charid,name from user_chname where uid = ?");
 			pstmt.setString(1, userid);
@@ -526,7 +526,7 @@
 				ret.put("soundtablelist", slist);
 			}// end of csvserver.equals("on")
 			
-			ret.put("userepisodelikelist", likelist);
+			/* ret.put("userepisodelikelist", likelist); */
 			ret.put("userselectlist",selectlist);
 			ret.put("namelist",namelist);
 			ret.put("userstorylist",storylist);
@@ -1310,92 +1310,47 @@
 			// send result
 		}
 		else if(cmd.equals("likestory")){
-			String likestory = request.getParameter("likestory");
-			int episodenum = Integer.valueOf(request.getParameter("episodenum"));
 			String storyid = request.getParameter("storyid");
-			int likenum = 0;
-			if(likestory.equals("yes")){
-				likenum = 2;
-			}else if(likestory.equals("no")){
-				likenum = 1;
-			}
-
-			boolean comp = false;
-			JSONArray likelist = new JSONArray();
-			System.out.println("like is :"+likestory+", "+storyid+", "+episodenum);
-			pstmt = conn.prepareStatement("select likestory from user_episodelike where uid = ? and Story_id = ? and Episode_num = ?");
+			
+			pstmt = conn.prepareStatement("select likecheck from user_storylike where uid = ? and Story_id = ?");
 			pstmt.setString(1, userid);
 			pstmt.setString(2, storyid);
-			pstmt.setInt(3, episodenum);
-			if(rs.next()){
-				System.out.println("already have data");
-				LogManager.writeNorLog(userid,"check_like_story",cmd,"null","null",0);
-				pstmt = conn.prepareStatement("update user_episodelike set likestory = ? where uid = ? and Story_id = ? and Episode_num = ?");
-				pstmt.setInt(1, likenum);
+			rs = pstmt.executeQuery();
+			boolean result = false;
+			if(rs.next()){ //update
+				int likecheck = rs.getInt(1);
+				if(likecheck==0){ //update 1
+					pstmt = conn.prepareStatement("update user_storylike set likecheck = 1 where uid = ? and Story_id = ?");
+					pstmt.setString(1, userid);
+					pstmt.setString(2, storyid);
+					if(pstmt.executeUpdate()==1){
+						result = true;
+					}
+				}else{ //update 0
+					pstmt = conn.prepareStatement("update user_storylike set likecheck = 0 where uid = ? and Story_id = ?");
+					pstmt.setString(1, userid);
+					pstmt.setString(2, storyid);
+					if(pstmt.executeUpdate()==1){
+						result = true;
+					}
+				}
+			}else{ //insert 1
+				pstmt = conn.prepareStatement("insert into user_storylike (Story_id,uid,likecheck) values(?,?,1)");
+				pstmt.setString(1, storyid);
 				pstmt.setString(2, userid);
-				pstmt.setString(3, storyid);
-				pstmt.setInt(4, episodenum);
-				if(pstmt.executeUpdate()>0){
-					System.out.println("update complete");
-					LogManager.writeNorLog(userid,"success_like_story",cmd,"null","null",0);
-					comp = true;
-					pstmt = conn.prepareStatement("select Story_id,Episode_num,likestory from user_episodelike where uid = ?");
-					pstmt.setString(1,userid);
-					rs = pstmt.executeQuery();
-					while(rs.next()){
-						JSONObject data = new JSONObject();
-						data.put("StoryId",rs.getString(1));
-						data.put("EpisodeNum",rs.getInt(2));
-						data.put("LikeNum", rs.getInt(3));
-						likelist.add(data);
-					}
-					ret.put("userepisodelikelist", likelist);
-					ret.put("result", 1);//normal progress
-				}else{
-					LogManager.writeNorLog(userid,"faile_like_story",cmd,"null","null",0);
-					ret.put("result", 0);//error
+				if(pstmt.executeUpdate()==1){
+					result = true;
 				}
+			}
+			
+			
+			
+			if(result){
+				ret.put("result",1);
 			}else{
-				//lately insert
-				System.out.println("have no items");
-				pstmt = conn.prepareStatement("insert into user_episodelike (uid,Story_id,Episode_num,likestory) values(?,?,?,?)");
-				pstmt.setString(1, userid);
-				pstmt.setString(2, storyid);
-				pstmt.setInt(3, episodenum);
-				pstmt.setInt(4, likenum);
-				if(pstmt.executeUpdate()>0) {
-					System.out.println("insert complete");
-					LogManager.writeNorLog(userid,"success_input_like_story",cmd,"null","null",0);
-					comp = true;
-					pstmt = conn.prepareStatement("select Story_id,Episode_num,likestory from user_episodelike where uid = ?");
-					pstmt.setString(1,userid);
-					rs = pstmt.executeQuery();
-					while(rs.next()){
-						JSONObject data = new JSONObject();
-						data.put("StoryId",rs.getString(1));
-						data.put("EpisodeNum",rs.getInt(2));
-						data.put("LikeNum", rs.getInt(3));
-						likelist.add(data);
-					}
-					ret.put("userepisodelikelist", likelist);
-					ret.put("result", 1);//normal progress
-					LogManager.writeNorLog(userid, "sucess_like", cmd, "null","null", 0);	
-				}
-				else {
-					ret.put("result", 0);
-					LogManager.writeNorLog(userid, "fail_like", cmd, "null","null", 0);
-				}
+				ret.put("result", 0);
 			}
-			if(comp&&likenum==2){
-				pstmt = conn.prepareStatement("update likeview set likecount = likecount + 1 where episode_num = ? and Story_id = ?");
-				pstmt.setInt(1, episodenum);
-				pstmt.setString(2, storyid);
-				if(pstmt.executeUpdate()>0){
-					LogManager.writeNorLog(userid, "compl_likeup", cmd, "null","null", 0);
-				}else{
-					LogManager.writeNorLog(userid, "fail_likeup", cmd, "null","null", 0);
-				}
-			}
+			
 		}
 		else if(cmd.equals("getresourceversion")){
 			JSONArray rlist = new JSONArray();
