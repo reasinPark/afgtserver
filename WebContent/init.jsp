@@ -477,6 +477,17 @@
 			}
 			
 			System.out.println("start user name in login");
+			
+			pstmt = conn.prepareStatement("select Story_id,likecheck from user_storylike where uid = ?");
+			pstmt.setString(1, userid);
+			JSONArray likelist = new JSONArray();
+			rs = pstmt.executeQuery();
+			while(rs.next()){
+				JSONObject data = new JSONObject();
+				data.put("StoryId",rs.getString(1));
+				data.put("likecheck", rs.getInt(2));
+				likelist.add(data);
+			}
 			/* 
 			pstmt = conn.prepareStatement("select Story_id,Episode_num,likestory from user_episodelike where uid = ?");
 			pstmt.setString(1, userid);
@@ -526,7 +537,7 @@
 				ret.put("soundtablelist", slist);
 			}// end of csvserver.equals("on")
 			
-			/* ret.put("userepisodelikelist", likelist); */
+			ret.put("userstorylikelist", likelist);
 			ret.put("userselectlist",selectlist);
 			ret.put("namelist",namelist);
 			ret.put("userstorylist",storylist);
@@ -1394,13 +1405,12 @@
 		else if(cmd.equals("likerefresh")) {
 			JSONArray likecountlist = new JSONArray();
 			
-			pstmt = conn.prepareStatement("select Story_id, episode_num,likecount from likeview");
+			pstmt = conn.prepareStatement("select Story_id, sum(likecheck) from user_storylike group by Story_id");
 			rs = pstmt.executeQuery();
 			
 			while(rs.next()){
 				JSONObject data = new JSONObject();
 				data.put("StoryId",rs.getString(1));
-				data.put("EpisodeNum",rs.getInt(2));
 				data.put("LikeCount", rs.getInt(3));
 				likecountlist.add(data);
 			}
