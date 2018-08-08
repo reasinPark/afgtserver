@@ -1354,7 +1354,32 @@
 				}
 			}
 			
+			pstmt = conn.prepareStatement("select Story_id,likecheck from user_storylike where uid = ?");
+			pstmt.setString(1, userid);
 			
+			rs = pstmt.executeQuery();
+
+			JSONArray Playerlikelist = new JSONArray();
+			while(rs.next()){
+				JSONObject data = new JSONObject();
+				data.put("StoryId",rs.getString(1));
+				data.put("likecheck", rs.getInt(2));
+				Playerlikelist.add(data);
+			}
+			
+			pstmt = conn.prepareStatement("select Story_id,sum(likecheck) from user_storylike group by Story_id");
+			rs = pstmt.executeQuery();
+			
+			JSONArray likelist = new JSONArray();
+			while(rs.next()){
+				JSONObject data = new JSONObject();
+				data.put("StoryId",rs.getString(1));
+				data.put("LikeCount", rs.getInt(2));
+				likelist.add(data);
+			}
+			
+			ret.put("likelist",likelist);
+			ret.put("Playerlikelist", Playerlikelist);
 			
 			if(result){
 				ret.put("result",1);
@@ -1411,7 +1436,7 @@
 			while(rs.next()){
 				JSONObject data = new JSONObject();
 				data.put("StoryId",rs.getString(1));
-				data.put("LikeCount", rs.getInt(3));
+				data.put("LikeCount", rs.getInt(2));
 				likecountlist.add(data);
 			}
 			
