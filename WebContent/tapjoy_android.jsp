@@ -47,29 +47,29 @@
 			
 			if(pstmt.executeUpdate()>0){
 				System.out.println("success reward gem .. id: " + snuid + " / currency: " + currency + " in Android");
-				LogManager.writeNorLog(snuid, "offerwall_success", "tapjoy_android", "gem","null", Integer.valueOf(currency));
+				LogManager.writeNorLog(snuid, "success_offerwall", "tapjoy_android", "freegem","null", Integer.valueOf(currency));
 				
-				pstmt = conn.prepareStatement("select freegem, cashgem from user where uid = ?");
+				pstmt = conn.prepareStatement("select freeticket, cashticket, freegem, cashgem from user where uid = ?");
 				
 				pstmt.setString(1, snuid);
 				
 				rs = pstmt.executeQuery();
 				
 				if(rs.next()) {
-					LogManager.writeCashLog(snuid, 0, 0, rs.getInt("freegem"), rs.getInt("cashgem"));
+					LogManager.writeCashLog(snuid, rs.getInt("freeticket"), rs.getInt("cashticket"), rs.getInt("freegem"), rs.getInt("cashgem"));
 				}
 				else {
-					LogManager.writeNorLog(snuid, "cashlog_fail", "tapjoy_android", "gem","null", Integer.valueOf(currency));
+					LogManager.writeNorLog(snuid, "fail_cashlog", "tapjoy_android", "freegem","null", Integer.valueOf(currency));
 				}
 			}
 			else {
 				System.out.println("failed reward gem .. id: " + snuid + " / currency: " + currency + " in Android");
-				LogManager.writeNorLog(snuid, "offerwall_fail", "tapjoy_android", "gem","null", Integer.valueOf(currency));
+				LogManager.writeNorLog(snuid, "fail_offerwall", "tapjoy_android", "freegem","null", Integer.valueOf(currency));
 			}			
 		}
 		else {
 			System.out.println("verifier error.. id : " + snuid + " in Android");
-			LogManager.writeNorLog(snuid, "verifier_error", "tapjoy_android", "gem","null", Integer.valueOf(currency));
+			LogManager.writeNorLog(snuid, "error", "tapjoy_android", "gem","null", Integer.valueOf(currency));
 			response.sendError(HttpServletResponse.SC_FORBIDDEN);
 		}
 	}catch(Exception e){

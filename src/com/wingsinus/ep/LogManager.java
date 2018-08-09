@@ -20,7 +20,7 @@ public class LogManager {
 			pstmt.setString(2, action_type);
 			pstmt.setString(3, action_name);
 			pstmt.setString(4, itemname);
-			pstmt.setString(5, itemname);
+			pstmt.setString(5, pointname);
 			pstmt.setInt(6, count);
 			
 			int r = pstmt.executeUpdate();

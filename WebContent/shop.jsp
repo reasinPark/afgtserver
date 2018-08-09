@@ -77,20 +77,27 @@
 			shopManager data = shopManager.getData(shopid);
 			int getgem = data.gem;
 			int getticket = data.ticket;
-			
-			//결재 성공여부 확인(따로 확인안함) 
-			LogManager.writeNorLog(userid, "success", cmd, ident, "null", 0);
-			
+						
 			// 유저 아이템 증가
 			pstmt = conn.prepareStatement("update user set cashticket = cashticket + ?, cashgem = cashgem + ? where uid = ?");
 			pstmt.setInt(1, getticket);
 			pstmt.setInt(2, getgem);
 			pstmt.setString(3, userid);
+			
 			if(pstmt.executeUpdate()>0){
+				if(getgem != 0) {
+					LogManager.writeNorLog(userid, "success_increase", cmd, "cashgem", ident, getgem);
+				}
+				if(getticket != 0) {
+					LogManager.writeNorLog(userid, "success_increase", cmd, "cashticket", ident, getticket);
+				}
+				
 				pstmt = conn.prepareStatement("select freegem,cashgem,freeticket,cashticket from user where uid = ?");
 				pstmt.setString(1, userid);
 				rs = pstmt.executeQuery();
 				if(rs.next()){
+					LogManager.writeCashLog(userid, rs.getInt("freeticket"), rs.getInt("cashticket"), rs.getInt("freegem"), rs.getInt("cashgem"));
+					
 					int gemsum = rs.getInt(1)+rs.getInt(2);
 					int ticketsum = rs.getInt(3)+rs.getInt(4);
 					if (ticketsum > 0) {
@@ -100,9 +107,24 @@
 					ret.put("gem",gemsum);
 					ret.put("addticket",getticket);
 					ret.put("addgem",getgem);
+					ret.put("success", 1);
 				}
-				ret.put("success", 1);
+				else {
+					if(getgem != 0) {
+						LogManager.writeNorLog(userid, "fail_cashlog", cmd, "cashgem", ident, getgem);
+					}
+					if(getticket != 0) {
+						LogManager.writeNorLog(userid, "fail_cashlog", cmd, "cashticket", ident, getticket);
+					}
+					ret.put("success", 0);
+				}
 			}else{
+				if(getgem != 0) {
+					LogManager.writeNorLog(userid, "fail_increase", cmd, "cashgem", ident, getgem);
+				}
+				if(getticket != 0) {
+					LogManager.writeNorLog(userid, "fail_increase", cmd, "cashticket", ident, getticket);
+				}
 				ret.put("success", 0);
 			}		
 		}
