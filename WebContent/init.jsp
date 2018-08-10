@@ -782,7 +782,7 @@
 			pstmt.setString(2, userid);
 			if(pstmt.executeUpdate()>0){
 				ret.put("success",1);
-				LogManager.writeNorLog(userid, "sucess", cmd, "null","null", 0);
+				LogManager.writeNorLog(userid, "success", cmd, "null","null", 0);
 			}else{
 				ret.put("success",0);
 				LogManager.writeNorLog(userid, "fail", cmd, "null","null", 0);
@@ -822,7 +822,7 @@
 					pstmt.setString(4, Storyid);
 					if(pstmt.executeUpdate()==1) {
 						ret.put("success", 1);
-						LogManager.writeNorLog(userid, "sucess_buyepi", cmd, "null","null", 0);	
+						LogManager.writeNorLog(userid, "success_buyepi", cmd, "null","null", 0);	
 					}
 					else {
 						ret.put("success", 0);
@@ -837,7 +837,7 @@
 					pstmt.setString(3, Storyid);
 					if(pstmt.executeUpdate()==1) {
 						ret.put("success", 1);
-						LogManager.writeNorLog(userid, "sucess_lately", cmd, "null","null", 0);	
+						LogManager.writeNorLog(userid, "success_lately", cmd, "null","null", 0);	
 					}
 					else {
 						ret.put("success", 0);
@@ -853,7 +853,7 @@
 				pstmt.setInt(4, episodenum);
 				if(pstmt.executeUpdate()==1) {
 					ret.put("success", 1);
-					LogManager.writeNorLog(userid, "sucess_buyepi", cmd, "null","null", 0);	
+					LogManager.writeNorLog(userid, "success_buyepi", cmd, "null","null", 0);	
 				}
 				else {
 					ret.put("success", 0);
@@ -1303,7 +1303,7 @@
 								System.out.println("my data is :"+rs.getInt(1)+", "+rs.getString(2)+","+rs.getInt(3));
 								selectlist.add(sdata);
 							}
-							LogManager.writeNorLog(userid,"sucess_write_userchoice",cmd,"null","null",0);
+							LogManager.writeNorLog(userid,"success_write_userchoice",cmd,"null","null",0);
 							ret.put("userselectlist",selectlist);
 							ret.put("result",1);
 							
