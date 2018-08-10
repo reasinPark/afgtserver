@@ -1055,88 +1055,131 @@
 			int ticketValue = Integer.valueOf(request.getParameter("ticket"));
 			long ticketGenTime = 0;
 			
-			pstmt = conn.prepareStatement("select freeticket, cashticket from user where uid = ?");
+			pstmt = conn.prepareStatement("select freeticket, cashticket, freegem, cashgem from user where uid = ?");
 			pstmt.setString(1, userid);
 			rs = pstmt.executeQuery();
 			
 			int freeticket = 0;
 			int cashticket = 0;
+			int freegem = 0;
+			int cashgem = 0;
 			boolean bugFlag = false;
+			boolean cashorfree = false;		// cash : true , free : false
 			
 			while(rs.next()){
 				freeticket = rs.getInt(1);
 				cashticket = rs.getInt(2);
+				freegem = rs.getInt(3);
+				cashgem = rs.getInt(4);
 				
 				if (cashticket >= ticketValue) {
-					System.out.println("use cashticket");
 					pstmt = conn.prepareStatement("update user set cashticket = cashticket - ? where uid = ?");
+					pstmt.setInt(1, ticketValue);
+					pstmt.setString(2, userid);
+					cashticket = cashticket - ticketValue;
+					cashorfree = true;
 				}
 				else {
-					if(freeticket >= ticketValue){
-						System.out.println("use freeticket");
-						pstmt = conn.prepareStatement("update user set freeticket = freeticket - ? where uid = ?");
+					if(cashticket == 0) {
+						if(freeticket >= ticketValue){
+							pstmt = conn.prepareStatement("update user set freeticket = freeticket - ? where uid = ?");
+							pstmt.setInt(1, ticketValue);
+							pstmt.setString(2, userid);
+							freeticket = freeticket - ticketValue;
+							cashorfree = false;
+						}
+						else {
+							bugFlag = true;
+							System.out.println("ticket error!");
+							LogManager.writeNorLog(userid, "error", cmd, "ticket","null", ticketValue);
+						}
 					}
 					else {
-						bugFlag = true;
-						System.out.println("ticket error!");
-						LogManager.writeNorLog(userid, "error with ticket bug", cmd, "null","null", 0);
+						pstmt = conn.prepareStatement("update user set cashticket = cashticket - ? where uid = ?");
+						pstmt.setInt(1, cashticket);
+						pstmt.setString(2, userid);
+						
+						if(pstmt.executeUpdate() == 1) {
+							LogManager.writeNorLog(userid, "success_decrease", cmd, "cashticket","null", cashticket);
+							ticketValue = ticketValue - cashticket;
+							cashticket = cashticket - cashticket;
+							LogManager.writeCashLog(userid, freeticket, cashticket, freegem, cashgem);
+							pstmt = conn.prepareStatement("update user set freeticket = freeticket - ? where uid = ?");
+							pstmt.setInt(1, ticketValue);
+							pstmt.setString(2, userid);
+							freeticket = freeticket - ticketValue;
+							cashorfree = false;
+						}
+						else {
+							bugFlag = true;
+							System.out.println("ticket error!");
+							LogManager.writeNorLog(userid, "fail_decrease", cmd, "cashticket","null", cashticket);
+						}
 					}
 				}
 			}
 			
 			if (!bugFlag) {
-				System.out.println("not bug");
-				pstmt.setInt(1, ticketValue);
-				pstmt.setString(2, userid);
-			}
-			
-			if(pstmt.executeUpdate()==1 && (!bugFlag)){
-				ret.put("success",1);
-	
-				LogManager.writeNorLog(userid, "sucess", cmd, "null","null", 0);
-				
-				pstmt = conn.prepareStatement("select freeticket, cashticket from user where uid = ?");
-				pstmt.setString(1,userid);
-	
-				rs = pstmt.executeQuery();
-				
-				while(rs.next()){
-					int myticket = rs.getInt(1)+rs.getInt(2);
-					
-					ret.put("myticket", myticket);
-					
-					if (myticket == 0) {
-						pstmt = conn.prepareStatement("update user set ticketgentime = date_add(now(), interval 2 day) where uid = ?");
-						pstmt.setString(1, userid);
-						
-						if(pstmt.executeUpdate()==1){
-							
-							pstmt = conn.prepareStatement("select ticketgentime,now() from user where uid = ?");
-							pstmt.setString(1,userid);
-							
-							rs = pstmt.executeQuery();
-							
-							if(rs.next()){
-								ticketGenTime = rs.getTimestamp(1).getTime()/1000;
-								now = rs.getTimestamp(2).getTime()/1000;
-								ret.put("ticketgentime", ticketGenTime);
-								ret.put("nowtime", now);
-								ret.put("timecheck", 1);
-							}
-							LogManager.writeNorLog(userid, "sucess_set_gentime", cmd, "null","null", 0);
-						}
-						else {
-							LogManager.writeNorLog(userid, "fail_set_gentime", cmd, "null","null", 0);
-						}
+				if(pstmt.executeUpdate() == 1) {
+					if(cashorfree) {
+						LogManager.writeNorLog(userid, "success_decrease", cmd, "cashticket", "null", ticketValue);
 					}
 					else {
-						ret.put("timecheck", 0);
+						LogManager.writeNorLog(userid, "success_decrease", cmd, "freeticket", "null", ticketValue);
+					}
+					
+					LogManager.writeCashLog(userid, freeticket, cashticket, freegem, cashgem);
+
+					ret.put("success",1);
+					
+					pstmt = conn.prepareStatement("select freeticket, cashticket from user where uid = ?");
+					pstmt.setString(1,userid);
+		
+					rs = pstmt.executeQuery();
+					
+					while(rs.next()){
+						int myticket = rs.getInt(1)+rs.getInt(2);
+						
+						ret.put("myticket", myticket);
+						
+						if (myticket == 0) {
+							pstmt = conn.prepareStatement("update user set ticketgentime = date_add(now(), interval 2 day) where uid = ?");
+							pstmt.setString(1, userid);
+							
+							if(pstmt.executeUpdate()==1){
+								
+								pstmt = conn.prepareStatement("select ticketgentime,now() from user where uid = ?");
+								pstmt.setString(1,userid);
+								
+								rs = pstmt.executeQuery();
+								
+								if(rs.next()){
+									ticketGenTime = rs.getTimestamp(1).getTime()/1000;
+									now = rs.getTimestamp(2).getTime()/1000;
+									ret.put("ticketgentime", ticketGenTime);
+									ret.put("nowtime", now);
+									ret.put("timecheck", 1);
+								}
+								LogManager.writeNorLog(userid, "success_set_gentime", cmd, "null","null", 0);
+							}
+							else {
+								LogManager.writeNorLog(userid, "fail_set_gentime", cmd, "null","null", 0);
+							}
+						}
+						else {
+							ret.put("timecheck", 0);
+						}
 					}
 				}
-				
-			}else{
-				ret.put("success",0);
-				LogManager.writeNorLog(userid, "fail", cmd, "null","null", 0);
+				else {
+					ret.put("success",0);
+					if(cashorfree) {
+						LogManager.writeNorLog(userid, "fail_decrease", cmd, "cashticket", "null", ticketValue);
+					}
+					else {
+						LogManager.writeNorLog(userid, "fail_decrease", cmd, "freeticket", "null", ticketValue);
+					}
+				}
 			}
 		}
 		else if(cmd.equals("writeuserchoice")){
@@ -1175,17 +1218,23 @@
 					System.out.println("no data");
 					ret.put("result",2);
 				}else{
-					pstmt = conn.prepareStatement("select freegem,cashgem from user where uid = ?");
+					pstmt = conn.prepareStatement("select freegem,cashgem,freeticket,cashticket from user where uid = ?");
 					pstmt.setString(1, userid);
 					int aftercashgem = 0;
 					int afterfreegem = 0;
 					int cashtype = 0;
 					int beshort = 0;
+					int freegem = 0;
+					int cashgem = 0;
+					int freeticket = 0;
+					int cashticket = 0;
 					System.out.println("price is :"+data.Price+", "+userid);
 					rs = pstmt.executeQuery();
 					if(rs.next()){
-						int freegem = rs.getInt(1);
-						int cashgem = rs.getInt(2);
+						freegem = rs.getInt(1);
+						cashgem = rs.getInt(2);
+						freeticket = rs.getInt(3);
+						cashticket = rs.getInt(4);
 						System.out.println("price is :"+data.Price+", "+freegem+","+cashgem);
 						if(data.Price >freegem+cashgem){
 							ret.put("result", 0);//not enough gem
@@ -1202,6 +1251,7 @@
 							}
 						}
 					}
+					
 					System.out.println("cash is :"+afterfreegem+", "+beshort+","+aftercashgem);
 					
 					int upresult = 0;
@@ -1221,6 +1271,16 @@
 					System.out.println("result is :"+upresult);
 					
 					if(upresult == 1){
+						if(cashtype == 1) {
+							LogManager.writeNorLog(userid,"success_decrease",cmd,"cashgem","null",data.Price);
+							LogManager.writeCashLog(userid, freeticket, cashticket, freegem, aftercashgem);
+						}
+						else if(cashtype == 2) {
+							LogManager.writeNorLog(userid,"success_decrease",cmd,"cashgem","null",cashgem);
+							LogManager.writeNorLog(userid,"success_decrease",cmd,"freegem","null",beshort);
+							LogManager.writeCashLog(userid, freeticket, cashticket, afterfreegem, 0);
+						}
+						
 						System.out.println("insert data is :"+userid+","+selectid+","+Storyid+","+episodenum);
 						pstmt = conn.prepareStatement("insert into user_selectitem (uid,selectid,storyid,epinum) values(?,?,?,?)");
 						pstmt.setString(1, userid);
@@ -1252,6 +1312,15 @@
 							LogManager.writeNorLog(userid,"fail_buy_choice",cmd,"null","null",0);
 						}
 					}
+					else {
+						if(cashtype == 1) {
+							LogManager.writeNorLog(userid,"fail_decrease",cmd,"cashgem","null",data.Price);
+						}
+						else if(cashtype == 2) {
+							LogManager.writeNorLog(userid,"fail_decrease",cmd,"cashgem","null",cashgem);
+							LogManager.writeNorLog(userid,"fail_decrease",cmd,"freegem","null",beshort);
+						}
+					}
 				}
 			}
 			
@@ -1275,12 +1344,23 @@
 					pstmt.setString(1, userid);
 					
 					if(pstmt.executeUpdate()>0){
-						LogManager.writeNorLog(userid, "success", cmd, "null","null", 0);
+						LogManager.writeNorLog(userid, "success_increase", cmd, "freeticket","null", 1);
 						ret.put("nocharge", 1);
 						ret.put("success", 1);
+						
+						pstmt = conn.prepareStatement("select freegem,cashgem,freeticket,cashticket from user where uid = ?");
+						pstmt.setString(1, userid);
+						rs = pstmt.executeQuery();
+						
+						if(rs.next()) {
+							LogManager.writeCashLog(userid, rs.getInt("freeticket"), rs.getInt("cashticket"), rs.getInt("freegem"), rs.getInt("cashgem"));
+						}
+						else {
+							LogManager.writeNorLog(userid, "fail_cashlog", cmd, "freeticket","null", 1);
+						}
 					}
 					else {
-						LogManager.writeNorLog(userid, "fail", cmd, "null","null", 0);
+						LogManager.writeNorLog(userid, "fail_increase", cmd, "freeticket","null", 1);
 						ret.put("nocharge", 1);
 						ret.put("success", 0);
 					}
@@ -1334,13 +1414,15 @@
 			// check adpass count and date
 			int passprice = 10;
 			
-			pstmt = conn.prepareStatement("select adpass,adpasscount,freegem,cashgem from user where uid = ?");
+			pstmt = conn.prepareStatement("select adpass,adpasscount,freegem,cashgem,freeticket,cashticket from user where uid = ?");
 			pstmt.setString(1, userid);
 			
 			boolean passlive = false;
 			long livetime = 24*31*60*60;			
 			int freegem = 0;
 			int cashgem = 0;
+			int freeticket = 0;
+			int cashticket = 0;
 			
 			rs = pstmt.executeQuery();
 			if(rs.next()){
@@ -1348,6 +1430,8 @@
 				int adpasscount = rs.getInt(2);
 				freegem = rs.getInt(3);
 				cashgem = rs.getInt(4);
+				freeticket = rs.getInt(5);
+				cashticket = rs.getInt(6);
 				
 				if(adpasscount==1&&adpasstime+livetime>=now){
 					passlive = true;
@@ -1357,15 +1441,18 @@
 			
 			if(!passlive){
 				//check user gem
+				boolean cashorfree = false;			// cash : true, free : false
 				if(freegem+cashgem>=passprice){
 					int aftercash = 0;
 					int afterfree = 0;
 					if(cashgem>=passprice){
 						aftercash = cashgem-passprice;
 						afterfree = freegem;
+						cashorfree = true;
 					}else{
 						aftercash = 0;
 						afterfree = freegem - (passprice - cashgem);
+						cashorfree = false;
 					}
 					pstmt = conn.prepareStatement("update user set adpass = now(), adpasscount = 1, cashgem = ?, freegem = ? where uid = ?");
 					pstmt.setInt(1, aftercash);
@@ -1373,7 +1460,25 @@
 					pstmt.setString(3, userid);
 					if(pstmt.executeUpdate()==1){
 						ret.put("result", 1);
-						LogManager.writeNorLog(userid,"success_buy_adpass",cmd,"null","null",0);
+						
+						if(cashorfree) {
+							LogManager.writeNorLog(userid,"success_decrease",cmd,"cashgem","null",passprice);
+						}
+						else {
+							LogManager.writeNorLog(userid,"success_decrease",cmd,"cashgem","null",cashgem);
+							LogManager.writeNorLog(userid,"success_decrease",cmd,"freegem","null",passprice-cashgem);
+						}
+						
+						LogManager.writeCashLog(userid, freeticket, cashticket, afterfree, aftercash);
+					}
+					else {
+						if(cashorfree) {
+							LogManager.writeNorLog(userid,"fail_decrease",cmd,"cashgem","null",passprice);
+						}
+						else {
+							LogManager.writeNorLog(userid,"fail_decrease",cmd,"cashgem","null",cashgem);
+							LogManager.writeNorLog(userid,"fail_decrease",cmd,"freegem","null",passprice-cashgem);
+						}
 					}
 				}else{
 					LogManager.writeNorLog(userid,"fail_money",cmd,"null","null",0);
@@ -1472,8 +1577,10 @@
 			ret.put("Playerlikelist", Playerlikelist);
 			
 			if(result){
+				LogManager.writeNorLog(userid, "success", cmd, "null","null", 0);
 				ret.put("result",1);
 			}else{
+				LogManager.writeNorLog(userid, "fail", cmd, "null","null", 0);
 				ret.put("result", 0);
 			}
 			
@@ -1510,10 +1617,11 @@
 			
 			if(checker==1){
 				ret.put("success", 1);
+				LogManager.writeNorLog(userid, "success", cmd, "null","null", 0);
 			}
 			else {
 				ret.put("success", 0);
-				LogManager.writeNorLog(userid,"fail_question",cmd,"null","null",0);
+				LogManager.writeNorLog(userid,"fail",cmd,"null","null",0);
 			}
 		}
 		
@@ -1533,7 +1641,7 @@
 			ret.put("likecountlist", likecountlist);
 			
 			ret.put("result", 1);//normal progress
-			LogManager.writeNorLog(userid, "sucess", cmd, "null","null", 0);
+			LogManager.writeNorLog(userid, "success", cmd, "null","null", 0);
 		}
 		
 		out.print(ret.toString());
