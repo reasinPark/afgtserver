@@ -7,5 +7,6 @@
 	<frame src="tutorial.jsp" name="content">
 	<frame src="storyupload.jsp" name="content">
 	<frame src="csvupload.jsp" name="content">
+	<frame src="userinfo.jsp" name="content">
 </frameset>
 </HTML>

@@ -34,6 +34,11 @@
 			<a href="csvupload.jsp" target="content">csv 파일 적용</a>
 		</td>
 	</tr>
+	<tr>
+		<td>
+			<a href="userinfo.jsp" target="content">유저 기본데이터 보기</a>
+		</td>
+	</tr>
 </table>
 </body>
 </html>
