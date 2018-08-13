@@ -8,6 +8,13 @@
 <%@ page import="com.wingsinus.ep.JdbcUtil" %>
 <%@ page import="java.io.BufferedReader" %>
 <%@ page import="java.io.FileReader" %>
+<%@ page import="com.wingsinus.ep.BannerManager" %>
+<%@ page import="com.wingsinus.ep.StoryManager" %>
+<%@ page import="com.wingsinus.ep.EpisodeList" %>
+<%@ page import="com.wingsinus.ep.CategoryList" %>
+<%@ page import="com.wingsinus.ep.CostumeData" %>
+<%@ page import="com.wingsinus.ep.SelectItemData" %>
+<%@ page import="com.wingsinus.ep.shopManager" %>
 <%
 	//configuration
 	int maxSize = 1024 * 1024 * 10; // 파일 용량을 10M 으로 제한.
@@ -87,6 +94,7 @@
 					}
 					
 					if(completeCount == i) {
+						BannerManager.BannerReset();
 						out.print("배너 데이터 적용 완료!"); %> <br> <%
 					}
 					else {
@@ -141,6 +149,7 @@
 					}
 					
 					if(completeCount == i) {
+						StoryManager.StoryManagerReset();
 						out.print("스토리 데이터 적용 완료!"); %> <br> <%
 					}
 					else {
@@ -195,6 +204,7 @@
 					}
 					
 					if(completeCount == i) {
+						EpisodeList.EpisodeListReset();
 						out.print("에피소드 데이터 적용 완료!"); %> <br> <%
 					}
 					else {
@@ -249,6 +259,7 @@
 					}
 					
 					if(completeCount == i) {
+						CategoryList.CategoryReset();
 						out.print("카테고리 데이터 적용 완료!"); %> <br> <%
 					}
 					else {
@@ -303,6 +314,7 @@
 					}
 					
 					if(completeCount == i) {
+						CostumeData.CostumeDataReset();
 						out.print("코스튬 데이터 적용 완료!"); %> <br> <%
 					}
 					else {
@@ -357,6 +369,7 @@
 					}
 					
 					if(completeCount == i) {
+						SelectItemData.SelectItemDataReset();
 						out.print("선택지 데이터 적용 완료!"); %> <br> <%
 					}
 					else {
@@ -411,6 +424,7 @@
 					}
 					
 					if(completeCount == i) {
+						shopManager.shopManagerReset();
 						out.print("상점 데이터 적용 완료!"); %> <br> <%
 					}
 					else {

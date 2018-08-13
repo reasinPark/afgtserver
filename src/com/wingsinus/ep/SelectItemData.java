@@ -64,4 +64,8 @@ public class SelectItemData {
 			return null;
 		return list;
 	}
+	
+	public static void SelectItemDataReset(){
+		list = null;
+	}
 }
