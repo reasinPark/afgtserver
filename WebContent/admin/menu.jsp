@@ -29,6 +29,11 @@
 			<a href="storyupload.jsp" target="content">스토리 파일 업로드</a>
 		</td>
 	</tr>
+	<tr>
+		<td>
+			<a href="csvupload.jsp" target="content">csv 파일 적용</a>
+		</td>
+	</tr>
 </table>
 </body>
 </html>
