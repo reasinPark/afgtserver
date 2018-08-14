@@ -1,5 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
-   pageEncoding="EUC-KR"%>
+   pageEncoding="UTF-8"%>
 <%@ page import="java.net.URLEncoder" %>
 <%@	page import="java.util.*"%>
 <%@ page import="java.net.*"%>
@@ -65,28 +65,28 @@
 				isFound = true;
 			}else{
 				%>
-				<script type="text/javascript">alert("ÀÔ·ÂÇÏ½Å Á¤º¸¿Í ÀÏÄ¡ÇÏ´Â À¯Àú¸¦ Ã£À» ¼ö ¾ø½À´Ï´Ù.");</script>
+				<script type="text/javascript">alert("ìž…ë ¥í•˜ì‹  ì •ë³´ì™€ ì¼ì¹˜í•˜ëŠ” ìœ ì €ë¥¼ ì°¾ì„ ìˆ˜ ì—†ìŠµë‹ˆë‹¤.");</script>
 				<%
 			}
 		}
 		else if(command != null){
 			%>
-			<script type="text/javascript">alert("ÀÔ·ÂÀ» ´Ù½Ã È®ÀÎÇØÁÖ¼¼¿ä.");</script>
+			<script type="text/javascript">alert("ìž…ë ¥ì„ ë‹¤ì‹œ í™•ì¸í•´ì£¼ì„¸ìš”.");</script>
 			<%
 		}
 		%>
 		
-		<H2>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;À¯Àú Á¤º¸ ¼öÁ¤</H2>
+		<H2>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ìœ ì € ì •ë³´ ìˆ˜ì •</H2>
 		
 		<form method="post" name="search_form" id="item_form" action="user.jsp">
 			<input type="hidden" name="command" value="search">
 			<table border="1" style="border-style:solid;">
 			<tr height="10">
-				<td colspan="3"> ¾Æ·¡¿¡ À¯Àú¾ÆÀÌµð ÀÔ·ÂÈÄ Á¤º¸ °Ë»öÀ» ´©¸£¸é µË´Ï´Ù.
+				<td colspan="3"> ì•„ëž˜ì— ìœ ì €ì•„ì´ë”” ìž…ë ¥í›„ ì •ë³´ ê²€ìƒ‰ì„ ëˆ„ë¥´ë©´ ë©ë‹ˆë‹¤.
 			</tr>
 			<tr height="30">
 				<td><input type="text" name="uid" size="30" value="<%=((isFound)? uid : "")%>"></td>
-				<td><input type="submit" value="Á¤º¸ °Ë»ö"></td>
+				<td><input type="submit" value="ì •ë³´ ê²€ìƒ‰"></td>
 			</tr>
 			</table>
 		</form>
@@ -96,20 +96,20 @@
 			<input type="hidden" name="uid" value="<%=((isFound)? uid :"") %>">
 			<table border="1" style="border-style:solid;">
 				<tr>
-					<td colspan="10" align="center"><%=((isFound)? "ÀÔ·ÂµÈ Á¤º¸¿Í ÀÏÄ¡ÇÏ´Â À¯Àú¸¦ Ã£¾Ò½À´Ï´Ù. uid["+uid+"]" : "°Ë»öÀ» ¸ÕÀú ÇØÁÖ¼¼¿ä.")%></td>
+					<td colspan="10" align="center"><%=((isFound)? "ìž…ë ¥ëœ ì •ë³´ì™€ ì¼ì¹˜í•˜ëŠ” ìœ ì €ë¥¼ ì°¾ì•˜ìŠµë‹ˆë‹¤. uid["+uid+"]" : "ê²€ìƒ‰ì„ ë¨¼ì € í•´ì£¼ì„¸ìš”.")%></td>
 				</tr>
 				<tr>
-					<td>¹«·á Æ¼ÄÏ</td>
-					<td>Æ¼ÄÏ ÃæÀü½Ã°£</td>
-					<td>À¯·á Æ¼ÄÏ</td>
-					<td>¹«·á Áª</td>
-					<td>À¯·á Áª</td>
-					<td>ÇÃ·§Æû</td>
-					<td>ÃÖÁ¾ Á¢¼Ó½Ã°£</td>
-					<td>ÃÖÃÊ ±¸¸Å</td>
-					<td>¿¬¼Ó ·Î±×ÀÎ ÀÏ¼ö</td>
-					<td>±¤°í ±¸¸Å½Ã°£</td>
-					<td>±¤°í ±¸¸Å¿©ºÎ</td>
+					<td>ë¬´ë£Œ í‹°ì¼“</td>
+					<td>í‹°ì¼“ ì¶©ì „ì‹œê°„</td>
+					<td>ìœ ë£Œ í‹°ì¼“</td>
+					<td>ë¬´ë£Œ ì ¬</td>
+					<td>ìœ ë£Œ ì ¬</td>
+					<td>í”Œëž«í¼</td>
+					<td>ìµœì¢… ì ‘ì†ì‹œê°„</td>
+					<td>ìµœì´ˆ êµ¬ë§¤</td>
+					<td>ì—°ì† ë¡œê·¸ì¸ ì¼ìˆ˜</td>
+					<td>ê´‘ê³  êµ¬ë§¤ì‹œê°„</td>
+					<td>ê´‘ê³  êµ¬ë§¤ì—¬ë¶€</td>
 					<td>Active</td>
 					<td>ExistingUid</td>
 				</tr>
@@ -129,7 +129,7 @@
 					<td><input type="text" name="existinguid" size="20" value="<%=((isFound)? String.valueOf(existinguid): "") %>">
 				</tr>
 				<tr>
-					<td colspan="10" align="center"><input type="submit" value="    Àû¿ë    "></td>
+					<td colspan="10" align="center"><input type="submit" value="    ì ìš©    "></td>
 				</tr>
 			</table>
 		</form>

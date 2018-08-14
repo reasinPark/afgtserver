@@ -1,5 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
-   pageEncoding="EUC-KR"%>
+   pageEncoding="UTF-8"%>
 <%@ page import="java.net.URLEncoder" %>
 <%@	page import="java.util.*"%>
 <%@ page import="java.net.*"%>
@@ -35,7 +35,7 @@
 		}
 		else {
 			%>
-			<script type="text/javascript">alert("������ ������ �ֽ��ϴ�. Ȯ�����ּ���.");</script>
+			<script type="text/javascript">alert("쿼리에 문제가 있습니다. 확인해주세요.");</script>
 			<%
 		}
 		
@@ -48,22 +48,22 @@
 		}
 		else {
 			%>
-			<script type="text/javascript">alert("������ ������ �ֽ��ϴ�. Ȯ�����ּ���.");</script>
+			<script type="text/javascript">alert("쿼리에 문제가 있습니다. 확인해주세요.");</script>
 			<%
 		}
 		%>
 		
-		<H2>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Ʃ�丮�� ��ǰ ����</H2>
+		<H2>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;튜토리얼 작품 수정</H2>
 		
 		<form target="result_frame" method="post" name="update_form" id="item_form" action="tutorial_update.jsp">
 			<table border="1" style="border-style:solid;">
 				<tr>
-					<td>���丮 ���̵� �ϳ��� 0�̸� Ʃ�丮���� ��ŵ�մϴ�.</td>
+					<td>스토리 아이디가 하나라도 0이면 튜토리얼을 스킵합니다.</td>
 				</tr>
 				<tr>
-					<td>���丮 ���̵�</td>
-					<td>���Ǽҵ� ��ȣ</td>
-					<td>Ʃ�丮�� �Ұ�</td>
+					<td>스토리 아이디</td>
+					<td>에피소드 번호</td>
+					<td>튜토리얼 소개</td>
 				</tr>
 				<tr>
 					<td><input type="text" name="Story_id_1" size="20" value="<%=String.valueOf(Story_id_1) %>">
@@ -76,7 +76,7 @@
 					<td><input type="text" name="summary_2" size="200" value="<%=String.valueOf(summary_2) %>">
 				</tr>
 				<tr>
-					<td colspan="10" align="center"><input type="submit" value="    ����    "></td>
+					<td colspan="10" align="center"><input type="submit" value="    적용    "></td>
 				</tr>
 			</table>
 		</form>

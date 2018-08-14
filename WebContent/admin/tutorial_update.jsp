@@ -1,5 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
-   pageEncoding="EUC-KR"%>
+   pageEncoding="UTF-8"%>
 <%@ page import="java.net.URLEncoder" %>
 <%@	page import="java.util.*"%>
 <%@ page import="java.net.*"%>
@@ -37,7 +37,7 @@
 		if(pstmt.executeUpdate() == 1){
 			checkFlag = true;
 		}else{
-			%>ù��° �� ������Ʈ�� ���� �߽��ϴ�. �Է��� �ٽ� Ȯ���� �ּ���.<%
+			%>첫번째 줄 업데이트에 실패 했습니다. 입력을 다시 확인해 주세요.<%
 		}
 		
 		if(checkFlag) {
@@ -49,15 +49,15 @@
 			
 			if(pstmt.executeUpdate() == 1){
 				TutorialList.TutorialListReset();
-				%>������Ʈ �Ǿ����ϴ�.<%
+				%>업데이트 되었습니다.<%
 			}else{
-				%>�ι�° �� ������Ʈ�� ���� �߽��ϴ�. �Է��� �ٽ� Ȯ���� �ּ���.<%
+				%>두번째 줄 업데이트에 실패 했습니다. 입력을 다시 확인해 주세요.<%
 			}
 		}
 		
 	}catch(Exception e){
 		%>
-		�����Ͱ� �߸� �Ǿ����ϴ�. �Է��� �ٽ� Ȯ���� �ּ���. error!<br>
+		데이터가 잘못 되었습니다. 입력을 다시 확인해 주세요. error!<br>
 		<%=e.toString()%><br>
 		<%
 		for(int i = 0; i < e.getStackTrace().length; i++) {

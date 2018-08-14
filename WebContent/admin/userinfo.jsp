@@ -1,5 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="EUC-KR"%>
+    pageEncoding="UTF-8"%>
     
 <%
 	boolean isselected = false;
@@ -12,33 +12,33 @@
 		isselected = true;
 	}
 %>
-	<H2>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;À¯Àú ±âº»µ¥ÀÌÅÍ º¸±â</H2>
+	<H2>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ìœ ì € ê¸°ë³¸ë°ì´í„° ë³´ê¸°</H2>
 	
 	<form action="userinfo.jsp">
-		<label for = "type">º¸°í ½ÍÀº µ¥ÀÌÅÍ¸¦ ¼±ÅÃÇØÁÖ¼¼¿ä.</label><br>
-		<input type = "radio" name = "type" value = "regist"> °¡ÀÔÀÚ ¼ö <br>
-		<input type = "radio" name = "type" value = "uniquelogin"> ·Î±×ÀÎ ¼ö <br>
-		<input type = "radio" name = "type" value = "playing"> ½ÇÇàÈ½¼ö <br>
-		<input type = "radio" name = "type" value = "payer"> À¯·á °áÁ¦ÀÚ ¼ö <br>
-		<input type = "radio" name = "type" value = "firstpayer"> ÃÖÃÊ À¯·á °áÁ¦ÀÚ ¼ö <br>
-		<input type = "radio" name = "type" value = "retention"> 2,3,7ÀÏÀÚ ¸®ÅÙ¼Ç <br>
-		<input type = "submit" value ="¼±ÅÃ ¿Ï·á">
+		<label for = "type">ë³´ê³  ì‹¶ì€ ë°ì´í„°ë¥¼ ì„ íƒí•´ì£¼ì„¸ìš”.</label><br>
+		<input type = "radio" name = "type" value = "regist"> ê°€ìž…ìž ìˆ˜ <br>
+		<input type = "radio" name = "type" value = "uniquelogin"> ë¡œê·¸ì¸ ìˆ˜ <br>
+		<input type = "radio" name = "type" value = "playing"> ì‹¤í–‰íšŸìˆ˜ <br>
+		<input type = "radio" name = "type" value = "payer"> ìœ ë£Œ ê²°ì œìž ìˆ˜ <br>
+		<input type = "radio" name = "type" value = "firstpayer"> ìµœì´ˆ ìœ ë£Œ ê²°ì œìž ìˆ˜ <br>
+		<input type = "radio" name = "type" value = "retention"> 2,3,7ì¼ìž ë¦¬í…ì…˜ <br>
+		<input type = "submit" value ="ì„ íƒ ì™„ë£Œ">
 	</form>
 	<br>
 	
 	<%if(isselected) {
 		if(type.equals("regist")) {
 		%>
-		<td> °¡ÀÔÀÚ ¼ö : ³¯Â¥º° µî·ÏÀÚ ¼ö(ÃÖÃÊ °¡ÀÔ ¿¬µ¿) </td>
+		<td> ê°€ìž…ìž ìˆ˜ : ë‚ ì§œë³„ ë“±ë¡ìž ìˆ˜(ìµœì´ˆ ê°€ìž… ì—°ë™) </td>
 		<form target="result_frame" action="userinfo_update.jsp" method="post">
 			<table border = "1" style="border-style:solid;">
 				<tr>
-					<td> °Ë»öÇÏ½Ç ³¯Â¥¸¦ ¼±ÅÃÇØÁÖ¼¼¿ä. </td>
+					<td> ê²€ìƒ‰í•˜ì‹¤ ë‚ ì§œë¥¼ ì„ íƒí•´ì£¼ì„¸ìš”. </td>
 					<td><input type="date" id="regidate" name="regidate" value="2018-09-01" /></td>
 				</tr>
 				<tr>
 					<td colspan = "2" align="center">
-					<input type="submit" value="°Ë»ö" /> </td>
+					<input type="submit" value="ê²€ìƒ‰" /> </td>
 				</tr>
 			</table>
 			<input type="hidden" name="type" value="regist">
@@ -46,38 +46,38 @@
 	<%	}
 		else if(type.equals("uniquelogin")) {
 		%>
-		<td> ·Î±×ÀÎ ¼ö : ³¯Â¥º° ·Î±×ÀÎ À¯´ÏÅ© Ä«¿îÆ® </td>
+		<td> ë¡œê·¸ì¸ ìˆ˜ : ë‚ ì§œë³„ ë¡œê·¸ì¸ ìœ ë‹ˆí¬ ì¹´ìš´íŠ¸ </td>
 		<form target="result_frame" action="userinfo_update.jsp" method="post">
 			<table border = "1" style="border-style:solid;">
 				<tr>
-					<td> °Ë»öÇÏ½Ç ³¯Â¥¸¦ ¼±ÅÃÇØÁÖ¼¼¿ä. </td>
+					<td> ê²€ìƒ‰í•˜ì‹¤ ë‚ ì§œë¥¼ ì„ íƒí•´ì£¼ì„¸ìš”. </td>
 					<td><input type="date" id="regidate" name="regidate" value="2018-09-01" /></td>
 				</tr>
 				<tr>
 					<td colspan = "2" align="center">
-					<input type="submit" value="°Ë»ö" /> </td>
+					<input type="submit" value="ê²€ìƒ‰" /> </td>
 				</tr>
 			</table>
 			<input type="hidden" name="type" value="uniquelogin">
 		</form>
 	<%	}
 		else if(type.equals("playing")) {
-			out.print("¾ÆÁ÷ ÀÛ¾÷ ÁßÀÔ´Ï´Ù.. Á¶±Ý¸¸ ±â´Ù·ÁÁÖ¼¼¿ä ^^"); %> <br> <%
+			out.print("ì•„ì§ ìž‘ì—… ì¤‘ìž…ë‹ˆë‹¤.. ì¡°ê¸ˆë§Œ ê¸°ë‹¤ë ¤ì£¼ì„¸ìš” ^^"); %> <br> <%
 		%>
 		
 	<%	}
 		else if(type.equals("payer")) {
 		%>
-		<td> À¯·á °áÁ¦ÀÚ ¼ö : ÇØ´ç ³¯Â¥¿¡ À¯·á °áÁ¦¸¦ ÇÑ À¯´ÏÅ©ÇÑ À¯Àú ¼ýÀÚ </td>
+		<td> ìœ ë£Œ ê²°ì œìž ìˆ˜ : í•´ë‹¹ ë‚ ì§œì— ìœ ë£Œ ê²°ì œë¥¼ í•œ ìœ ë‹ˆí¬í•œ ìœ ì € ìˆ«ìž </td>
 		<form target="result_frame" action="userinfo_update.jsp" method="post">
 			<table border = "1" style="border-style:solid;">
 				<tr>
-					<td> °Ë»öÇÏ½Ç ³¯Â¥¸¦ ¼±ÅÃÇØÁÖ¼¼¿ä. </td>
+					<td> ê²€ìƒ‰í•˜ì‹¤ ë‚ ì§œë¥¼ ì„ íƒí•´ì£¼ì„¸ìš”. </td>
 					<td><input type="date" id="regidate" name="regidate" value="2018-09-01" /></td>
 				</tr>
 				<tr>
 					<td colspan = "2" align="center">
-					<input type="submit" value="°Ë»ö" /> </td>
+					<input type="submit" value="ê²€ìƒ‰" /> </td>
 				</tr>
 			</table>
 			<input type="hidden" name="type" value="payer">
@@ -85,12 +85,12 @@
 		
 	<%	}
 		else if(type.equals("firstpayer")) {
-			out.print("¾ÆÁ÷ ÀÛ¾÷ ÁßÀÔ´Ï´Ù.. Á¶±Ý¸¸ ±â´Ù·ÁÁÖ¼¼¿ä ^^"); %> <br> <%
+			out.print("ì•„ì§ ìž‘ì—… ì¤‘ìž…ë‹ˆë‹¤.. ì¡°ê¸ˆë§Œ ê¸°ë‹¤ë ¤ì£¼ì„¸ìš” ^^"); %> <br> <%
 		%>
 		
 	<%	}
 		else if(type.equals("retention")) {
-			out.print("¾ÆÁ÷ ÀÛ¾÷ ÁßÀÔ´Ï´Ù.. Á¶±Ý¸¸ ±â´Ù·ÁÁÖ¼¼¿ä ^^"); %> <br> <%
+			out.print("ì•„ì§ ìž‘ì—… ì¤‘ìž…ë‹ˆë‹¤.. ì¡°ê¸ˆë§Œ ê¸°ë‹¤ë ¤ì£¼ì„¸ìš” ^^"); %> <br> <%
 		%>
 	<%	} %>
 		

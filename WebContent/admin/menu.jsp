@@ -39,6 +39,11 @@
 			<a href="userinfo.jsp" target="content">유저 기본데이터 보기</a>
 		</td>
 	</tr>
+	<tr>
+		<td>
+			<a href="storyinfo.jsp" target="content">이야기 데이터 보기</a>
+		</td>
+	</tr>
 </table>
 </body>
 </html>

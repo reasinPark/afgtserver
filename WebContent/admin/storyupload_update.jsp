@@ -1,14 +1,14 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
-   pageEncoding="EUC-KR"%>
+   pageEncoding="UTF-8"%>
 <%@ page import="java.util.Enumeration" %>
 <%@ page import="com.oreilly.servlet.MultipartRequest" %>
 <%@ page import="com.wingsinus.ep.ConnectionProvider" %>
 <%	
 	// configuration
-	int maxSize = 1024 * 1024 * 10; // ÆÄÀÏ ¿ë·®À» 10M À¸·Î Á¦ÇÑ.
+	int maxSize = 1024 * 1024 * 10; // íŒŒì¼ ìš©ëŸ‰ì„ 10M ìœ¼ë¡œ ì œí•œ.
 	
-	long fileSize = 0;				// ÆÄÀÏ »çÀÌÁî
-	String fileType = "";			// ÆÄÀÏ Å¸ÀÔ
+	long fileSize = 0;				// íŒŒì¼ ì‚¬ì´ì¦ˆ
+	String fileType = "";			// íŒŒì¼ íƒ€ìž…
 	
 	MultipartRequest mr = null;
 	
@@ -30,12 +30,12 @@
 			fileSize = file.length();
 			fileType = mr.getContentType(file);
 			
-			%> <%=systemName%> ¾÷·Îµå ¿Ï·á! <br> <%
+			%> <%=systemName%> ì—…ë¡œë“œ ì™„ë£Œ! <br> <%
 		}
 		
 	} catch(Exception e) {
 		%>
-		µ¥ÀÌÅÍ°¡ Àß¸ø µÇ¾ú½À´Ï´Ù. ´Ù½Ã È®ÀÎÇØ ÁÖ¼¼¿ä. error!<br>
+		ë°ì´í„°ê°€ ìž˜ëª» ë˜ì—ˆìŠµë‹ˆë‹¤. ë‹¤ì‹œ í™•ì¸í•´ ì£¼ì„¸ìš”. error!<br>
 		<%=e.toString()%><br>
 		<%
 		for(int i = 0; i < e.getStackTrace().length; i++) {

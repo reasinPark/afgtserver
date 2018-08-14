@@ -657,7 +657,7 @@
 						
 						if(pstmt.executeUpdate()==1){
 							ret.put("success",1);
-							LogManager.writeNorLog(userid, "success", cmd, "null","null", 0);
+							LogManager.writeNorLog(userid, "success", cmd, String.valueOf(costumeid), data.StroyId, 0);
 						}else{
 							ret.put("success",0);
 							LogManager.writeNorLog(userid, "fail_insert", cmd, "null","null", 0);

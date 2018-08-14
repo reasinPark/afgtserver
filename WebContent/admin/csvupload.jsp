@@ -1,5 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
-   pageEncoding="EUC-KR"%>
+   pageEncoding="UTF-8"%>
    
 <%
 	boolean isselected = false;
@@ -13,18 +13,18 @@
 	}
 %>
    
-	<H2>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;csv фдюо юШ©К</H2>
+	<H2>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;csv М▄▄Л²╪ Л═│Л ╘</H2>
 	
 	<form action="csvupload.jsp">
-		<label for = "type">юШ©Кгр евюл╨Мю╩ ╪╠ецгьаж╪╪©Д.</label><br>
-		<input type = "radio" name = "type" value = "banner"> ╧ХЁй ╣╔юлем <br>
-		<input type = "radio" name = "type" value = "story"> ╫╨еД╦╝ ╣╔юлем <br>
-		<input type = "radio" name = "type" value = "episode"> ©║гг╪р╣Е ╣╔юлем <br>
-		<input type = "radio" name = "type" value = "category"> д╚ев╟М╦╝ ╣╔юлем <br>
-		<input type = "radio" name = "type" value = "costume"> дз╫╨ф╛ ╣╔юлем <br>
-		<input type = "radio" name = "type" value = "selectitem"> ╪╠ецаЖ ╣╔юлем <br>
-		<input type = "radio" name = "type" value = "shopitem"> ╩Са║ ╣╔юлем <br>
-		<input type = "submit" value ="╪╠ец ©о╥А">
+		<label for = "type">Л═│Л ╘М∙═ М┘▄Л²╢К╦■Л²└ Л└═М┐²М∙╢Лё╪Л└╦Л ■.</label><br>
+		<input type = "radio" name = "type" value = "banner"> К╟╟К└┬ К█╟Л²╢М└╟ <br>
+		<input type = "radio" name = "type" value = "story"> Л┼╓М├═К╕╛ К█╟Л²╢М└╟ <br>
+		<input type = "radio" name = "type" value = "episode"> Л≈░М■╪Л├▄К⌠° К█╟Л²╢М└╟ <br>
+		<input type = "radio" name = "type" value = "category"> Л╧╢М┘▄ЙЁ═К╕╛ К█╟Л²╢М└╟ <br>
+		<input type = "radio" name = "type" value = "costume"> Л╫■Л┼╓М┼╛ К█╟Л²╢М└╟ <br>
+		<input type = "radio" name = "type" value = "selectitem"> Л└═М┐²Л╖─ К█╟Л²╢М└╟ <br>
+		<input type = "radio" name = "type" value = "shopitem"> Л┐│Л═░ К█╟Л²╢М└╟ <br>
+		<input type = "submit" value ="Л└═М┐² Л≥└Кё▄">
 	</form>
 	<br>
 	
@@ -32,12 +32,12 @@
 	<form target="result_frame" action="csvupload_update.jsp" method="post" id="item_form" enctype="Multipart/form-data">
 		<table border = "1" style="border-style:solid;">
 			<tr>
-				<td> юШ©Кгр <%= type%> csv фдюо </td>
+				<td> Л═│Л ╘М∙═ <%= type%> csv М▄▄Л²╪ </td>
 				<td><input type="file" name=<%= type%> /></td>
 			</tr>
 			<tr>
 				<td colspan = "2" align="center">
-				<input type="submit" value="юШ©Кго╠Б" /> </td>
+				<input type="submit" value="Л═│Л ╘М∙≤Й╦╟" /> </td>
 			</tr>
 		</table>
 	</form>

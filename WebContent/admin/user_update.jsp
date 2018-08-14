@@ -1,5 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
-   pageEncoding="EUC-KR"%>
+   pageEncoding="UTF-8"%>
 <%@ page import="java.net.URLEncoder" %>
 <%@	page import="java.util.*"%>
 <%@ page import="java.net.*"%>
@@ -50,16 +50,16 @@
 			pstmt.setInt(13, existinguid);
 			pstmt.setString(14, uid);
 			if(pstmt.executeUpdate() == 1){
-				%>╬В╣╔юлф╝ ╣г╬З╫ю╢о╢ы.<%
+				%>Л≈┘К█╟Л²╢М┼╦ К░≤Л≈┬Л┼╣К▀┬К▀╓.<%
 			}else{
-				%>╬В╣╔юлф╝©║ ╫гфп гъ╫ю╢о╢ы. ют╥бю╩ ╢ы╫ц х╝юнгь аж╪╪©Д.<%
+				%>Л≈┘К█╟Л²╢М┼╦Л≈░ Л▀╓М▄╗ М√┬Л┼╣К▀┬К▀╓. Л·┘К═╔Л²└ К▀╓Л▀° М≥∙Л²╦М∙╢ Лё╪Л└╦Л ■.<%
 			}
 		}else {
-			%>ют╥бго╫е а╓╨╦©м юод║го╢б ю╞юЗ╦╕ цёю╩ ╪Ж ╬Ь╫ю╢о╢ы. uid[<%=uid%>]<%
+			%>Л·┘К═╔М∙≤Л▀═ Л═∙КЁ╢Л≥─ Л²╪Л╧≤М∙≤К┼■ Л°═Л═─К╔╪ Л╟╬Л²└ Л┬≤ Л≈├Л┼╣К▀┬К▀╓. uid[<%=uid%>]<%
 		}
 	}catch(Exception e){
 		%>
-		╣╔юлем╟║ юъ╦Ь ╣г╬З╫ю╢о╢ы. ют╥бю╩ ╢ы╫ц х╝юнгь аж╪╪©Д. error!<br>
+		К█╟Л²╢М└╟Й╟─ Л·≤К╙╩ К░≤Л≈┬Л┼╣К▀┬К▀╓. Л·┘К═╔Л²└ К▀╓Л▀° М≥∙Л²╦М∙╢ Лё╪Л└╦Л ■. error!<br>
 		<%=e.toString()%><br>
 		<%
 		for(int i = 0; i < e.getStackTrace().length; i++) {

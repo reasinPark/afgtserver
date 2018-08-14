@@ -1,5 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="EUC-KR"%>
+    pageEncoding="UTF-8"%>
 <%@ page import="java.sql.*" %>
 <%@ page import="com.wingsinus.ep.ConnectionProvider" %>
 <%@ page import="com.wingsinus.ep.JdbcUtil" %>
@@ -26,11 +26,11 @@
 			rs = pstmt.executeQuery();
 			if(rs.next()) {
 				int count = rs.getInt(1);
-				%> <%=regidate %> ¿¡ °¡ÀÔÇÑ À¯Àú´Â ÃÑ <%=count %>¸í ÀÔ´Ï´Ù. <%
+				%> <%=regidate %> ì— ê°€ìž…í•œ ìœ ì €ëŠ” ì´ <%=count %>ëª… ìž…ë‹ˆë‹¤. <%
 			}
 			else {
 				%>
-				<script type="text/javascript">alert("Äõ¸®¿¡ ¹®Á¦°¡ ÀÖ½À´Ï´Ù. È®ÀÎÇØÁÖ¼¼¿ä.");</script>
+				<script type="text/javascript">alert("ì¿¼ë¦¬ì— ë¬¸ì œê°€ ìžˆìŠµë‹ˆë‹¤. í™•ì¸í•´ì£¼ì„¸ìš”.");</script>
 				<%
 			}
 		}
@@ -48,11 +48,11 @@
 			rs = pstmt.executeQuery();
 			if(rs.next()) {
 				int count = rs.getInt(1);
-				%> <%=regidate %> ¿¡ ·Î±×ÀÎ ÇÑ À¯Àú´Â ÃÑ <%=count %>¸í ÀÔ´Ï´Ù. <%
+				%> <%=regidate %> ì— ë¡œê·¸ì¸ í•œ ìœ ì €ëŠ” ì´ <%=count %>ëª… ìž…ë‹ˆë‹¤. <%
 			}
 			else {
 				%>
-				<script type="text/javascript">alert("Äõ¸®¿¡ ¹®Á¦°¡ ÀÖ½À´Ï´Ù. È®ÀÎÇØÁÖ¼¼¿ä.");</script>
+				<script type="text/javascript">alert("ì¿¼ë¦¬ì— ë¬¸ì œê°€ ìžˆìŠµë‹ˆë‹¤. í™•ì¸í•´ì£¼ì„¸ìš”.");</script>
 				<%
 			}
 		}
@@ -73,11 +73,11 @@
 			rs = pstmt.executeQuery();
 			if(rs.next()) {
 				int count = rs.getInt(1);
-				%> <%=regidate %> ¿¡ À¯·á °áÁ¦¸¦ ÇÑ À¯Àú´Â ÃÑ <%=count %>¸í ÀÔ´Ï´Ù. <%
+				%> <%=regidate %> ì— ìœ ë£Œ ê²°ì œë¥¼ í•œ ìœ ì €ëŠ” ì´ <%=count %>ëª… ìž…ë‹ˆë‹¤. <%
 			}
 			else {
 				%>
-				<script type="text/javascript">alert("Äõ¸®¿¡ ¹®Á¦°¡ ÀÖ½À´Ï´Ù. È®ÀÎÇØÁÖ¼¼¿ä.");</script>
+				<script type="text/javascript">alert("ì¿¼ë¦¬ì— ë¬¸ì œê°€ ìžˆìŠµë‹ˆë‹¤. í™•ì¸í•´ì£¼ì„¸ìš”.");</script>
 				<%
 			}
 		}
@@ -90,7 +90,7 @@
 	}
 	catch(Exception e) {
 		%>
-		´Ù½Ã È®ÀÎÇØ ÁÖ¼¼¿ä. error!<br>
+		ë‹¤ì‹œ í™•ì¸í•´ ì£¼ì„¸ìš”. error!<br>
 		<%=e.toString()%><br>
 		<%
 		for(int i = 0; i < e.getStackTrace().length; i++) {

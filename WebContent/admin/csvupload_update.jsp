@@ -1,5 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
-   pageEncoding="EUC-KR"%>
+   pageEncoding="UTF-8"%>
 <%@ page import="java.util.Enumeration" %>
 <%@ page import="java.sql.*" %>
 <%@ page import="java.io.File"%>
@@ -8,6 +8,8 @@
 <%@ page import="com.wingsinus.ep.JdbcUtil" %>
 <%@ page import="java.io.BufferedReader" %>
 <%@ page import="java.io.FileReader" %>
+<%@ page import="java.io.InputStreamReader" %>
+<%@ page import="java.io.FileInputStream" %>
 <%@ page import="com.wingsinus.ep.BannerManager" %>
 <%@ page import="com.wingsinus.ep.StoryManager" %>
 <%@ page import="com.wingsinus.ep.EpisodeList" %>
@@ -17,10 +19,10 @@
 <%@ page import="com.wingsinus.ep.shopManager" %>
 <%
 	//configuration
-	int maxSize = 1024 * 1024 * 10; // ∆ƒ¿œ øÎ∑Æ¿ª 10M ¿∏∑Œ ¡¶«—.
+	int maxSize = 1024 * 1024 * 10; // ÌååÏùº Ïö©ÎüâÏùÑ 10M ÏúºÎ°ú Ï†úÌïú.
 	
-	long fileSize = 0;				// ∆ƒ¿œ ªÁ¿Ã¡Ó
-	String fileType = "";			// ∆ƒ¿œ ≈∏¿‘
+	long fileSize = 0;				// ÌååÏùº ÏÇ¨Ïù¥Ï¶à
+	String fileType = "";			// ÌååÏùº ÌÉÄÏûÖ
 	
 	//mysql
 	PreparedStatement pstmt = null;
@@ -32,11 +34,11 @@
 	try {
 		// test
 		if(ConnectionProvider.afgt_build_ver == 0) {
-			mr = new MultipartRequest(request, "/usr/share/tomcat6/webapps/tempcsv/", maxSize, "euc-kr");
+			mr = new MultipartRequest(request, "/usr/share/tomcat6/webapps/tempcsv/", maxSize, "UTF-8");
 		}
 		// live
 		else if(ConnectionProvider.afgt_build_ver == 1) {
-			mr = new MultipartRequest(request, "/usr/local/tomcat7/apache-tomcat-7.0.82/webapps/tempcsv/", maxSize, "euc-kr");
+			mr = new MultipartRequest(request, "/usr/local/tomcat7/apache-tomcat-7.0.82/webapps/tempcsv/", maxSize, "UTF-8");
 		}
 		
 		Enumeration files = mr.getFileNames();
@@ -45,7 +47,8 @@
 			String obj = (String)files.nextElement();
 			File csv = mr.getFile(obj);
 			
-			BufferedReader br = new BufferedReader(new FileReader(csv));
+			//BufferedReader br = new BufferedReader(new FileReader(csv));
+			BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(csv), "UTF-8"));
 			
 			String line = "";
 			
@@ -60,9 +63,8 @@
 					
 					while((line = br.readLine()) != null) {
 						if(i != 0) {
-							// -1 ø…º«¿∫ ∏∂¡ˆ∏∑ "," ¿Ã»ƒ ∫Û ∞¯πÈµµ ¿–±‚ ¿ß«— ø…º«
+							// -1 ÏòµÏÖòÏùÄ ÎßàÏßÄÎßâ "," Ïù¥ÌõÑ Îπà Í≥µÎ∞±ÎèÑ ÏùΩÍ∏∞ ÏúÑÌïú ÏòµÏÖò
 							String[] token = line.split(",(?=([^\"]*\"[^\"]*\")*[^\"]*$)",-1);
-							
 							int index = 1;
 							
 							pstmt = conn.prepareStatement("insert into bannerdata (idx,Newmark,Title,Text,sort,imgname,type,callid) values(?,?,?,?,?,?,?,?)");
@@ -85,7 +87,7 @@
 								completeCount++;
 							}
 							else {
-								out.print("µ•¿Ã≈Õ ª¿‘ ¡ﬂ ø¿∑˘! »Æ¿Œ«ÿ¡÷ººø‰!!"); %> <br> <%
+								out.print("Îç∞Ïù¥ÌÑ∞ ÏÇΩÏûÖ Ï§ë Ïò§Î•ò! ÌôïÏù∏Ìï¥Ï£ºÏÑ∏Ïöî!!"); %> <br> <%
 								break;
 							}
 						}
@@ -95,14 +97,14 @@
 					
 					if(completeCount == i) {
 						BannerManager.BannerReset();
-						out.print("πË≥  µ•¿Ã≈Õ ¿˚øÎ øœ∑·!"); %> <br> <%
+						out.print("Î∞∞ÎÑà Îç∞Ïù¥ÌÑ∞ Ï†ÅÏö© ÏôÑÎ£å!"); %> <br> <%
 					}
 					else {
-						out.print("πË≥  µ•¿Ã≈Õ ¿˚øÎ Ω«∆–! »Æ¿Œ«ÿ¡÷ººø‰"); %> <br> <%
+						out.print("Î∞∞ÎÑà Îç∞Ïù¥ÌÑ∞ Ï†ÅÏö© Ïã§Ìå®! ÌôïÏù∏Ìï¥Ï£ºÏÑ∏Ïöî"); %> <br> <%
 					}
 				}
 				else {
-					out.print("±‚¡∏ πË≥  µ•¿Ã≈Õ ªË¡¶ ø¿∑˘! »Æ¿Œ«ÿ¡÷ººø‰!!"); %> <br> <%
+					out.print("Í∏∞Ï°¥ Î∞∞ÎÑà Îç∞Ïù¥ÌÑ∞ ÏÇ≠Ï†ú Ïò§Î•ò! ÌôïÏù∏Ìï¥Ï£ºÏÑ∏Ïöî!!"); %> <br> <%
 				}
 			}
 			else if(obj.equals("story")) {
@@ -115,7 +117,7 @@
 					
 					while((line = br.readLine()) != null) {
 						if(i != 0) {
-							// -1 ø…º«¿∫ ∏∂¡ˆ∏∑ "," ¿Ã»ƒ ∫Û ∞¯πÈµµ ¿–±‚ ¿ß«— ø…º«
+							// -1 ÏòµÏÖòÏùÄ ÎßàÏßÄÎßâ "," Ïù¥ÌõÑ Îπà Í≥µÎ∞±ÎèÑ ÏùΩÍ∏∞ ÏúÑÌïú ÏòµÏÖò
 							String[] token = line.split(",(?=([^\"]*\"[^\"]*\")*[^\"]*$)",-1);
 							
 							int index = 1;
@@ -140,7 +142,7 @@
 								completeCount++;
 							}
 							else {
-								out.print("µ•¿Ã≈Õ ª¿‘ ¡ﬂ ø¿∑˘! »Æ¿Œ«ÿ¡÷ººø‰!!"); %> <br> <%
+								out.print("Îç∞Ïù¥ÌÑ∞ ÏÇΩÏûÖ Ï§ë Ïò§Î•ò! ÌôïÏù∏Ìï¥Ï£ºÏÑ∏Ïöî!!"); %> <br> <%
 								break;
 							}
 						}
@@ -150,14 +152,14 @@
 					
 					if(completeCount == i) {
 						StoryManager.StoryManagerReset();
-						out.print("Ω∫≈‰∏Æ µ•¿Ã≈Õ ¿˚øÎ øœ∑·!"); %> <br> <%
+						out.print("Ïä§ÌÜ†Î¶¨ Îç∞Ïù¥ÌÑ∞ Ï†ÅÏö© ÏôÑÎ£å!"); %> <br> <%
 					}
 					else {
-						out.print("Ω∫≈‰∏Æ µ•¿Ã≈Õ ¿˚øÎ Ω«∆–! »Æ¿Œ«ÿ¡÷ººø‰"); %> <br> <%
+						out.print("Ïä§ÌÜ†Î¶¨ Îç∞Ïù¥ÌÑ∞ Ï†ÅÏö© Ïã§Ìå®! ÌôïÏù∏Ìï¥Ï£ºÏÑ∏Ïöî"); %> <br> <%
 					}
 				}
 				else {
-					out.print("±‚¡∏ Ω∫≈‰∏Æ µ•¿Ã≈Õ ªË¡¶ ø¿∑˘! »Æ¿Œ«ÿ¡÷ººø‰!!"); %> <br> <%
+					out.print("Í∏∞Ï°¥ Ïä§ÌÜ†Î¶¨ Îç∞Ïù¥ÌÑ∞ ÏÇ≠Ï†ú Ïò§Î•ò! ÌôïÏù∏Ìï¥Ï£ºÏÑ∏Ïöî!!"); %> <br> <%
 				}
 			}
 			else if(obj.equals("episode")) {
@@ -170,7 +172,7 @@
 					
 					while((line = br.readLine()) != null) {
 						if(i != 0) {
-							// -1 ø…º«¿∫ ∏∂¡ˆ∏∑ "," ¿Ã»ƒ ∫Û ∞¯πÈµµ ¿–±‚ ¿ß«— ø…º«
+							// -1 ÏòµÏÖòÏùÄ ÎßàÏßÄÎßâ "," Ïù¥ÌõÑ Îπà Í≥µÎ∞±ÎèÑ ÏùΩÍ∏∞ ÏúÑÌïú ÏòµÏÖò
 							String[] token = line.split(",(?=([^\"]*\"[^\"]*\")*[^\"]*$)",-1);
 							
 							int index = 1;
@@ -195,7 +197,7 @@
 								completeCount++;
 							}
 							else {
-								out.print("µ•¿Ã≈Õ ª¿‘ ¡ﬂ ø¿∑˘! »Æ¿Œ«ÿ¡÷ººø‰!!"); %> <br> <%
+								out.print("Îç∞Ïù¥ÌÑ∞ ÏÇΩÏûÖ Ï§ë Ïò§Î•ò! ÌôïÏù∏Ìï¥Ï£ºÏÑ∏Ïöî!!"); %> <br> <%
 								break;
 							}
 						}
@@ -205,14 +207,14 @@
 					
 					if(completeCount == i) {
 						EpisodeList.EpisodeListReset();
-						out.print("ø°««º“µÂ µ•¿Ã≈Õ ¿˚øÎ øœ∑·!"); %> <br> <%
+						out.print("ÏóêÌîºÏÜåÎìú Îç∞Ïù¥ÌÑ∞ Ï†ÅÏö© ÏôÑÎ£å!"); %> <br> <%
 					}
 					else {
-						out.print("ø°««º“µÂ µ•¿Ã≈Õ ¿˚øÎ Ω«∆–! »Æ¿Œ«ÿ¡÷ººø‰"); %> <br> <%
+						out.print("ÏóêÌîºÏÜåÎìú Îç∞Ïù¥ÌÑ∞ Ï†ÅÏö© Ïã§Ìå®! ÌôïÏù∏Ìï¥Ï£ºÏÑ∏Ïöî"); %> <br> <%
 					}
 				}
 				else {
-					out.print("±‚¡∏ ø°««º“µÂ µ•¿Ã≈Õ ªË¡¶ ø¿∑˘! »Æ¿Œ«ÿ¡÷ººø‰!!"); %> <br> <%
+					out.print("Í∏∞Ï°¥ ÏóêÌîºÏÜåÎìú Îç∞Ïù¥ÌÑ∞ ÏÇ≠Ï†ú Ïò§Î•ò! ÌôïÏù∏Ìï¥Ï£ºÏÑ∏Ïöî!!"); %> <br> <%
 				}
 			}
 			else if(obj.equals("category")) {
@@ -225,7 +227,7 @@
 					
 					while((line = br.readLine()) != null) {
 						if(i != 0) {
-							// -1 ø…º«¿∫ ∏∂¡ˆ∏∑ "," ¿Ã»ƒ ∫Û ∞¯πÈµµ ¿–±‚ ¿ß«— ø…º«
+							// -1 ÏòµÏÖòÏùÄ ÎßàÏßÄÎßâ "," Ïù¥ÌõÑ Îπà Í≥µÎ∞±ÎèÑ ÏùΩÍ∏∞ ÏúÑÌïú ÏòµÏÖò
 							String[] token = line.split(",(?=([^\"]*\"[^\"]*\")*[^\"]*$)",-1);
 							
 							int index = 1;
@@ -250,7 +252,7 @@
 								completeCount++;
 							}
 							else {
-								out.print("µ•¿Ã≈Õ ª¿‘ ¡ﬂ ø¿∑˘! »Æ¿Œ«ÿ¡÷ººø‰!!"); %> <br> <%
+								out.print("Îç∞Ïù¥ÌÑ∞ ÏÇΩÏûÖ Ï§ë Ïò§Î•ò! ÌôïÏù∏Ìï¥Ï£ºÏÑ∏Ïöî!!"); %> <br> <%
 								break;
 							}
 						}
@@ -260,14 +262,14 @@
 					
 					if(completeCount == i) {
 						CategoryList.CategoryReset();
-						out.print("ƒ´≈◊∞Ì∏Æ µ•¿Ã≈Õ ¿˚øÎ øœ∑·!"); %> <br> <%
+						out.print("Ïπ¥ÌÖåÍ≥†Î¶¨ Îç∞Ïù¥ÌÑ∞ Ï†ÅÏö© ÏôÑÎ£å!"); %> <br> <%
 					}
 					else {
-						out.print("ƒ´≈◊∞Ì∏Æ µ•¿Ã≈Õ ¿˚øÎ Ω«∆–! »Æ¿Œ«ÿ¡÷ººø‰"); %> <br> <%
+						out.print("Ïπ¥ÌÖåÍ≥†Î¶¨ Îç∞Ïù¥ÌÑ∞ Ï†ÅÏö© Ïã§Ìå®! ÌôïÏù∏Ìï¥Ï£ºÏÑ∏Ïöî"); %> <br> <%
 					}
 				}
 				else {
-					out.print("±‚¡∏ ƒ´≈◊∞Ì∏Æ µ•¿Ã≈Õ ªË¡¶ ø¿∑˘! »Æ¿Œ«ÿ¡÷ººø‰!!"); %> <br> <%
+					out.print("Í∏∞Ï°¥ Ïπ¥ÌÖåÍ≥†Î¶¨ Îç∞Ïù¥ÌÑ∞ ÏÇ≠Ï†ú Ïò§Î•ò! ÌôïÏù∏Ìï¥Ï£ºÏÑ∏Ïöî!!"); %> <br> <%
 				}
 			}
 			else if(obj.equals("costume")) {
@@ -280,7 +282,7 @@
 					
 					while((line = br.readLine()) != null) {
 						if(i != 0) {
-							// -1 ø…º«¿∫ ∏∂¡ˆ∏∑ "," ¿Ã»ƒ ∫Û ∞¯πÈµµ ¿–±‚ ¿ß«— ø…º«
+							// -1 ÏòµÏÖòÏùÄ ÎßàÏßÄÎßâ "," Ïù¥ÌõÑ Îπà Í≥µÎ∞±ÎèÑ ÏùΩÍ∏∞ ÏúÑÌïú ÏòµÏÖò
 							String[] token = line.split(",(?=([^\"]*\"[^\"]*\")*[^\"]*$)",-1);
 							
 							int index = 1;
@@ -305,7 +307,7 @@
 								completeCount++;
 							}
 							else {
-								out.print("µ•¿Ã≈Õ ª¿‘ ¡ﬂ ø¿∑˘! »Æ¿Œ«ÿ¡÷ººø‰!!"); %> <br> <%
+								out.print("Îç∞Ïù¥ÌÑ∞ ÏÇΩÏûÖ Ï§ë Ïò§Î•ò! ÌôïÏù∏Ìï¥Ï£ºÏÑ∏Ïöî!!"); %> <br> <%
 								break;
 							}
 						}
@@ -315,14 +317,14 @@
 					
 					if(completeCount == i) {
 						CostumeData.CostumeDataReset();
-						out.print("ƒ⁄Ω∫∆¨ µ•¿Ã≈Õ ¿˚øÎ øœ∑·!"); %> <br> <%
+						out.print("ÏΩîÏä§Ìä¨ Îç∞Ïù¥ÌÑ∞ Ï†ÅÏö© ÏôÑÎ£å!"); %> <br> <%
 					}
 					else {
-						out.print("ƒ⁄Ω∫∆¨ µ•¿Ã≈Õ ¿˚øÎ Ω«∆–! »Æ¿Œ«ÿ¡÷ººø‰"); %> <br> <%
+						out.print("ÏΩîÏä§Ìä¨ Îç∞Ïù¥ÌÑ∞ Ï†ÅÏö© Ïã§Ìå®! ÌôïÏù∏Ìï¥Ï£ºÏÑ∏Ïöî"); %> <br> <%
 					}
 				}
 				else {
-					out.print("±‚¡∏ ƒ⁄Ω∫∆¨ µ•¿Ã≈Õ ªË¡¶ ø¿∑˘! »Æ¿Œ«ÿ¡÷ººø‰!!"); %> <br> <%
+					out.print("Í∏∞Ï°¥ ÏΩîÏä§Ìä¨ Îç∞Ïù¥ÌÑ∞ ÏÇ≠Ï†ú Ïò§Î•ò! ÌôïÏù∏Ìï¥Ï£ºÏÑ∏Ïöî!!"); %> <br> <%
 				}
 			}
 			else if(obj.equals("selectiem")) {
@@ -335,7 +337,7 @@
 					
 					while((line = br.readLine()) != null) {
 						if(i != 0) {
-							// -1 ø…º«¿∫ ∏∂¡ˆ∏∑ "," ¿Ã»ƒ ∫Û ∞¯πÈµµ ¿–±‚ ¿ß«— ø…º«
+							// -1 ÏòµÏÖòÏùÄ ÎßàÏßÄÎßâ "," Ïù¥ÌõÑ Îπà Í≥µÎ∞±ÎèÑ ÏùΩÍ∏∞ ÏúÑÌïú ÏòµÏÖò
 							String[] token = line.split(",(?=([^\"]*\"[^\"]*\")*[^\"]*$)",-1);
 							
 							int index = 1;
@@ -360,7 +362,7 @@
 								completeCount++;
 							}
 							else {
-								out.print("µ•¿Ã≈Õ ª¿‘ ¡ﬂ ø¿∑˘! »Æ¿Œ«ÿ¡÷ººø‰!!"); %> <br> <%
+								out.print("Îç∞Ïù¥ÌÑ∞ ÏÇΩÏûÖ Ï§ë Ïò§Î•ò! ÌôïÏù∏Ìï¥Ï£ºÏÑ∏Ïöî!!"); %> <br> <%
 								break;
 							}
 						}
@@ -370,14 +372,14 @@
 					
 					if(completeCount == i) {
 						SelectItemData.SelectItemDataReset();
-						out.print("º±≈√¡ˆ µ•¿Ã≈Õ ¿˚øÎ øœ∑·!"); %> <br> <%
+						out.print("ÏÑ†ÌÉùÏßÄ Îç∞Ïù¥ÌÑ∞ Ï†ÅÏö© ÏôÑÎ£å!"); %> <br> <%
 					}
 					else {
-						out.print("º±≈√¡ˆ µ•¿Ã≈Õ ¿˚øÎ Ω«∆–! »Æ¿Œ«ÿ¡÷ººø‰"); %> <br> <%
+						out.print("ÏÑ†ÌÉùÏßÄ Îç∞Ïù¥ÌÑ∞ Ï†ÅÏö© Ïã§Ìå®! ÌôïÏù∏Ìï¥Ï£ºÏÑ∏Ïöî"); %> <br> <%
 					}
 				}
 				else {
-					out.print("±‚¡∏ º±≈√¡ˆ µ•¿Ã≈Õ ªË¡¶ ø¿∑˘! »Æ¿Œ«ÿ¡÷ººø‰!!"); %> <br> <%
+					out.print("Í∏∞Ï°¥ ÏÑ†ÌÉùÏßÄ Îç∞Ïù¥ÌÑ∞ ÏÇ≠Ï†ú Ïò§Î•ò! ÌôïÏù∏Ìï¥Ï£ºÏÑ∏Ïöî!!"); %> <br> <%
 				}
 			}
 			else if(obj.equals("shopitem")) {
@@ -390,7 +392,7 @@
 					
 					while((line = br.readLine()) != null) {
 						if(i != 0) {
-							// -1 ø…º«¿∫ ∏∂¡ˆ∏∑ "," ¿Ã»ƒ ∫Û ∞¯πÈµµ ¿–±‚ ¿ß«— ø…º«
+							// -1 ÏòµÏÖòÏùÄ ÎßàÏßÄÎßâ "," Ïù¥ÌõÑ Îπà Í≥µÎ∞±ÎèÑ ÏùΩÍ∏∞ ÏúÑÌïú ÏòµÏÖò
 							String[] token = line.split(",(?=([^\"]*\"[^\"]*\")*[^\"]*$)",-1);
 							
 							int index = 1;
@@ -415,7 +417,7 @@
 								completeCount++;
 							}
 							else {
-								out.print("µ•¿Ã≈Õ ª¿‘ ¡ﬂ ø¿∑˘! »Æ¿Œ«ÿ¡÷ººø‰!!"); %> <br> <%
+								out.print("Îç∞Ïù¥ÌÑ∞ ÏÇΩÏûÖ Ï§ë Ïò§Î•ò! ÌôïÏù∏Ìï¥Ï£ºÏÑ∏Ïöî!!"); %> <br> <%
 								break;
 							}
 						}
@@ -425,14 +427,14 @@
 					
 					if(completeCount == i) {
 						shopManager.shopManagerReset();
-						out.print("ªÛ¡° µ•¿Ã≈Õ ¿˚øÎ øœ∑·!"); %> <br> <%
+						out.print("ÏÉÅÏ†ê Îç∞Ïù¥ÌÑ∞ Ï†ÅÏö© ÏôÑÎ£å!"); %> <br> <%
 					}
 					else {
-						out.print("ªÛ¡° µ•¿Ã≈Õ ¿˚øÎ Ω«∆–! »Æ¿Œ«ÿ¡÷ººø‰"); %> <br> <%
+						out.print("ÏÉÅÏ†ê Îç∞Ïù¥ÌÑ∞ Ï†ÅÏö© Ïã§Ìå®! ÌôïÏù∏Ìï¥Ï£ºÏÑ∏Ïöî"); %> <br> <%
 					}
 				}
 				else {
-					out.print("±‚¡∏ ªÛ¡° µ•¿Ã≈Õ ªË¡¶ ø¿∑˘! »Æ¿Œ«ÿ¡÷ººø‰!!"); %> <br> <%
+					out.print("Í∏∞Ï°¥ ÏÉÅÏ†ê Îç∞Ïù¥ÌÑ∞ ÏÇ≠Ï†ú Ïò§Î•ò! ÌôïÏù∏Ìï¥Ï£ºÏÑ∏Ïöî!!"); %> <br> <%
 				}
 			}
 			
@@ -441,7 +443,7 @@
 		
 	} catch(Exception e) {
 		%>
-		¥ŸΩ√ »Æ¿Œ«ÿ ¡÷ººø‰. error!<br>
+		Îã§Ïãú ÌôïÏù∏Ìï¥ Ï£ºÏÑ∏Ïöî. error!<br>
 		<%=e.toString()%><br>
 		<%
 		for(int i = 0; i < e.getStackTrace().length; i++) {
