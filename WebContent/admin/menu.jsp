@@ -44,6 +44,11 @@
 			<a href="storyinfo.jsp" target="content">이야기 데이터 보기</a>
 		</td>
 	</tr>
+	<tr>
+		<td>
+			<a href="cashinfo.jsp" target="content">재화 데이터 보기</a>
+		</td>
+	</tr>
 </table>
 </body>
 </html>

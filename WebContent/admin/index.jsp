@@ -9,5 +9,6 @@
 	<frame src="csvupload.jsp" name="content">
 	<frame src="userinfo.jsp" name="content">
 	<frame src="storyinfo.jsp" name="content">
+	<frame src="cashinfo.jsp" name="content">
 </frameset>
 </HTML>

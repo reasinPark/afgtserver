@@ -4,8 +4,8 @@
 <%@ page import="java.util.ArrayList" %>
 <%@ page import="com.wingsinus.ep.ConnectionProvider" %>
 <%@ page import="com.wingsinus.ep.JdbcUtil" %>
-<%@ page import="com.wingsinus.ep.StoryFromAdmin" %>
-<%@ page import="com.wingsinus.ep.CostumeFromAdmin" %>
+<%@ page import="com.wingsinus.ep.AdminStory" %>
+<%@ page import="com.wingsinus.ep.AdminCostume" %>
 <%
 	boolean isselected = false;
 	String type = request.getParameter("type");
@@ -46,12 +46,12 @@
 		</tr>
 		<%
 			conn = ConnectionProvider.getConnection("afgt");
-			ArrayList<StoryFromAdmin> list = new ArrayList<StoryFromAdmin>();
+			ArrayList<AdminStory> list = new ArrayList<AdminStory>();
 			pstmt = conn.prepareStatement("select Story_id, title from story");
 			rs = pstmt.executeQuery();
 			while(rs.next()) {
 				
-				StoryFromAdmin data = new StoryFromAdmin();
+				AdminStory data = new AdminStory();
 				data.Story_id = rs.getString(1);
 				data.title = rs.getString(2);
 				
@@ -102,11 +102,11 @@
 		</tr>
 		<% 
 			conn = ConnectionProvider.getConnection("afgt");
-			ArrayList<CostumeFromAdmin> list = new ArrayList<CostumeFromAdmin>();
+			ArrayList<AdminCostume> list = new ArrayList<AdminCostume>();
 			pstmt = conn.prepareStatement("select CostumeId, name, storyid from CostumeData");
 			rs = pstmt.executeQuery();
 			while(rs.next()) {
-				CostumeFromAdmin data = new CostumeFromAdmin();
+				AdminCostume data = new AdminCostume();
 				data.CostumeId = rs.getInt(1);
 				data.name = rs.getString(2);
 				data.Story_id = rs.getString(3);
