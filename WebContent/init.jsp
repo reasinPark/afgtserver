@@ -241,6 +241,7 @@
 							ret.put("episodelist",elist);
 							ret.put("categorylist",jlist);
 							ret.put("selectitemlist",sellist);
+							ret.put("uiversion",bundleversion);
 							LogManager.writeNorLog(uid, "success_make_uid", cmd, "null","null", 0);
 						}else{
 							ret.put("error",2);
@@ -553,6 +554,7 @@
 			ret.put("nowtime",now);
 			ret.put("service", service);
 			ret.put("token", token);
+			ret.put("uiversion",bundleversion);
 		}else if(cmd.equals("buyskin")){
 			//user skin buy logaction
 			
@@ -1642,6 +1644,9 @@
 			
 			ret.put("result", 1);//normal progress
 			LogManager.writeNorLog(userid, "success", cmd, "null","null", 0);
+		}
+		else if(cmd.equals("checkuiversion")){
+			ret.put("uiversion",bundleversion);
 		}
 		
 		out.print(ret.toString());
