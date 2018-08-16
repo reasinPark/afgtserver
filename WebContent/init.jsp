@@ -24,6 +24,7 @@
 <%@ page import="com.wingsinus.ep.SoundtableManager" %>
 <%@ page import="com.wingsinus.ep.SelectItemData" %>
 <%@ page import="com.wingsinus.ep.TutorialList" %>
+<%@ include file="GameVariable.jsp" %>
 <%
 
 	request.setCharacterEncoding("UTF-8");
@@ -49,7 +50,6 @@
 		JSONObject ret = new JSONObject();
 		
 		String cmd = request.getParameter("cmd");
-			
 		if (cmd.equals("registuser")){
 			//regist user log
 			JSONArray jlist = new JSONArray();
