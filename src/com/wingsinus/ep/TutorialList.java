@@ -12,6 +12,7 @@ public class TutorialList {
 	public String Story_id;
 	public int episode_num;
 	public String summary;
+	public static int nowversion = 0;
 	
 	private static ArrayList<TutorialList> list = null;
 	
@@ -53,6 +54,15 @@ public class TutorialList {
 			list = new ArrayList<TutorialList>();
 			hash = new HashMap<String,TutorialList>();
 			initData();
+		}
+	}
+	
+	public static void CheckStoryversion(int chversion){
+		if(nowversion == 0){
+			nowversion = chversion;
+		}else if(nowversion < chversion){
+			nowversion = chversion;
+			TutorialListReset();
 		}
 	}
 	

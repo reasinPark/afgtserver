@@ -12,6 +12,7 @@ public class SelectItemData {
 	public String StoryId;
 	public int Price;
 	public int Epinum;
+	public static int nowversion;
 	
 	private static ArrayList<SelectItemData> list = null;
 	
@@ -63,6 +64,15 @@ public class SelectItemData {
 		if(list == null || list.size() <1)
 			return null;
 		return list;
+	}
+	
+	public static void CheckStoryversion(int chversion){
+		if(nowversion == 0){
+			nowversion = chversion;
+		}else if(nowversion < chversion){
+			nowversion = chversion;
+			SelectItemDataReset();
+		}
 	}
 	
 	public static void SelectItemDataReset(){

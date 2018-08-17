@@ -12,6 +12,7 @@ public class CategoryList {
 	public int category_id;
 	public String category_name;
 	public int ordernum;
+	public static int nowversion = 0;
 	
 	private static ArrayList<CategoryList> list = null;
 	
@@ -46,12 +47,21 @@ public class CategoryList {
 			JdbcUtil.close(conn);
 		}
 	}
-	
+		
 	private static synchronized void checkDataInit() throws SQLException{
 		if(list == null||hash == null){
 			list = new ArrayList<CategoryList>();
 			hash = new HashMap<Integer,CategoryList>();
 			initData();
+		}
+	}
+	
+	public static void CheckStoryversion(int chversion){
+		if(nowversion == 0){
+			nowversion = chversion;
+		}else if(nowversion < chversion){
+			nowversion = chversion;
+			CategoryReset();
 		}
 	}
 	

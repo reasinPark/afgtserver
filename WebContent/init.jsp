@@ -1648,6 +1648,15 @@
 		else if(cmd.equals("checkuiversion")){
 			ret.put("uiversion",bundleversion);
 		}
+		else if(cmd.equals("liveupdate")){
+			//story table
+			//episode table
+			//banner table
+			//shop table
+			//Category table
+			//tutorial table
+			
+		}
 		
 		out.print(ret.toString());
 

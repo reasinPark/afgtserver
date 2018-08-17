@@ -14,6 +14,7 @@ public class BannerManager {
 	public String Imgname;
 	public String type;
 	public String callid;
+	public static int nowversion = 0;
 	
 	private static ArrayList<BannerManager> list = null;
 	
@@ -53,6 +54,15 @@ public class BannerManager {
 		if(list==null){
 			list = new ArrayList<BannerManager>();
 			initData();
+		}
+	}
+	
+	public static void CheckStoryversion(int chversion){
+		if(nowversion == 0){
+			nowversion = chversion;
+		}else if(nowversion < chversion){
+			nowversion = chversion;
+			BannerReset();
 		}
 	}
 	

@@ -20,6 +20,7 @@ public class StoryManager {
 	public int recommend;
 	public int totalcount;
 	public String diretor;
+	public static int nowversion = 0;
 	
 	private static ArrayList<StoryManager> list = null;
 	
@@ -68,6 +69,15 @@ public class StoryManager {
 			list = new ArrayList<StoryManager>();
 			hash = new HashMap<String,StoryManager>();
 			initData();
+		}
+	}
+	
+	public static void CheckStoryversion(int chversion){
+		if(nowversion == 0){
+			nowversion = chversion;
+		}else if(nowversion < chversion){
+			nowversion = chversion;
+			StoryManagerReset();
 		}
 	}
 	

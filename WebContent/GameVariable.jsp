@@ -2,5 +2,6 @@
     pageEncoding="UTF-8"%>
 <%
 int testint = 537;
-int bundleversion = 4;
+int bundleversion = 5;
+int nowstoryversion = 1;
 %>

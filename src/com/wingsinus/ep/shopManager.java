@@ -18,6 +18,7 @@ public class shopManager {
 	public String PID_android;
 	public String PID_ios;
 	public float price_ios;
+	public static int nowversion = 0;
 	
 	private static ArrayList<shopManager> list = null;
 	
@@ -65,6 +66,15 @@ public class shopManager {
 			list = new ArrayList<shopManager>();
 			hash = new HashMap<Integer,shopManager>();
 			initData();
+		}
+	}
+	
+	public static void CheckStoryversion(int chversion){
+		if(nowversion == 0){
+			nowversion = chversion;
+		}else if(nowversion < chversion){
+			nowversion = chversion;
+			shopManagerReset();
 		}
 	}
 	

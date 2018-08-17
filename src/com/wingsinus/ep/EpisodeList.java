@@ -24,6 +24,7 @@ public class EpisodeList {
 	public int likecount;
 	public String summary;
 	public String subtitle;
+	public static int nowversion = 0;
 
 	private static ArrayList<EpisodeList> list = null;
 	
@@ -77,6 +78,15 @@ public class EpisodeList {
 			list = new ArrayList<EpisodeList>();
 			hash = new HashMap<Integer,EpisodeList>();
 			initData();
+		}
+	}
+	
+	public static void CheckStoryversion(int chversion){
+		if(nowversion == 0){
+			nowversion = chversion;
+		}else if(nowversion <chversion){
+			nowversion = chversion;
+			EpisodeListReset();
 		}
 	}
 	
