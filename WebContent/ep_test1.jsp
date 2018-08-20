@@ -14,6 +14,7 @@
 <%@ page import="com.wingsinus.ep.cashtester" %>
 <%@ page import="com.wingsinus.ep.StoryManager" %>
 <%@ page import="com.wingsinus.ep.LogManager" %>
+<%@ include file="GameVariable.jsp" %>
 <%
 	request.setCharacterEncoding("UTF-8");
 	// test log
@@ -56,6 +57,9 @@
 		String cmd = request.getParameter("cmd");
 		
 		if (cmd.equals("loadstory")){
+			
+			StoryManager.CheckStoryversion(bundleversion);
+			
 			ArrayList<StoryManager> stList = StoryManager.getDataAll();
 	
 			JSONArray retlist = new JSONArray();

@@ -270,6 +270,17 @@
 			int gem = 0;
 			String service = "";
 			String token = "";
+			
+			BannerManager.CheckStoryversion(bundleversion);
+			
+			CategoryList.CheckStoryversion(bundleversion);
+			
+			EpisodeList.CheckStoryversion(bundleversion);
+			
+			SelectItemData.CheckStoryversion(bundleversion);
+			
+			
+			
 			JSONArray jlist = new JSONArray();
 			JSONArray elist = new JSONArray();
 			JSONArray blist = new JSONArray();
@@ -1647,15 +1658,6 @@
 		}
 		else if(cmd.equals("checkuiversion")){
 			ret.put("uiversion",bundleversion);
-		}
-		else if(cmd.equals("liveupdate")){
-			//story table
-			//episode table
-			//banner table
-			//shop table
-			//Category table
-			//tutorial table
-			
 		}
 		
 		out.print(ret.toString());
