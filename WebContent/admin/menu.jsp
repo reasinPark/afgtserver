@@ -12,7 +12,11 @@
 </form>
 <table>
 	<tr>
-		<td style="font-size: 20px; font-weight: bold;">메뉴</td>
+		<td style="font-size: 20px; font-weight: bold;">파일 적용 및 수정</td>
+	</tr>
+	<tr height = 5px></tr>
+	<tr>
+		<td style="font-size: 15px; font-weight: bold;">정보 수정</td>
 	</tr>
 	<tr>
 		<td>
@@ -24,26 +28,16 @@
 			<a href="tutorial.jsp" target="content">튜토리얼 작품 수정</a>
 		</td>
 	</tr>
+	<tr height = 5px></tr>
+	<tr>
+		<td style="font-size: 15px; font-weight: bold;">파일 업로드 (beta)</td>
+	</tr>
 	<tr>
 		<td>
 			<a href="storyupload.jsp" target="content">스토리 파일 업로드</a>
 		</td>
 	</tr>
-	<tr>
-		<td>
-			<a href="userinfo.jsp" target="content">유저 기본데이터 보기</a>
-		</td>
-	</tr>
-	<tr>
-		<td>
-			<a href="storyinfo.jsp" target="content">이야기 데이터 보기</a>
-		</td>
-	</tr>
-	<tr>
-		<td>
-			<a href="cashinfo.jsp" target="content">재화 데이터 보기</a>
-		</td>
-	</tr>
+	<tr height = 5px></tr>
 	<tr>
 		<td style="font-size: 15px; font-weight: bold;">csv 파일 적용</td>
 	</tr>
@@ -81,6 +75,37 @@
 		<td>
 			<a href="csvupload_shopitem.jsp" target="content">상점 데이터 적용</a>
 		</td>
+	</tr>
+	<tr height = 15px></tr>
+	<tr>
+		<td style="font-size: 20px; font-weight: bold;">서비스 지표 데이터</td>
+	</tr>
+	<tr height = 5px></tr>
+	<tr>
+		<td style="font-size: 15px; font-weight: bold;">유저 기본 데이터 상세</td>
+	</tr>
+	<tr>
+		<td>
+			<a href="indicator_user_regist.jsp" target="content">가입자 수</a>
+		</td>
+	</tr>
+	<tr>
+		<td>
+			<a href="cashinfo.jsp" target="content">재화 데이터</a>
+		</td>
+	</tr>
+	<tr height = 5px></tr>
+	<tr>
+		<td style="font-size: 15px; font-weight: bold;">이야기 데이터 상세</td>
+	</tr>
+	<tr>
+		<td>
+			<a href="storyinfo.jsp" target="content">이야기 데이터</a>
+		</td>
+	</tr>
+	<tr height = 5px></tr>
+	<tr>
+		<td style="font-size: 15px; font-weight: bold;">메인 페이지 상세</td>
 	</tr>
 </table>
 </body>
