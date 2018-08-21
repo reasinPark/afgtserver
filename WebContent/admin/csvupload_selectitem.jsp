@@ -3,13 +3,13 @@
     
 <H2>&nbsp;&nbsp;&nbsp;&nbsp;csv 파일 적용</H2>
 <section>
-	<H3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;선택지 데이터</H3>
+	<H3 style="font-size:100">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;선택지 데이터</H3>
 </section>
 
 <form target="result_frame" action="csvupload_selectitem_update.jsp" method="post" id="item_form" enctype="Multipart/form-data">
 	<table border = "1" style="border-style:solid;">
 		<tr>
-			<td> 적용할 SelectItem.csv 파일 </td>
+			<td> 적용할 selectitem.csv 파일 </td>
 			<td><input type="file" name="selectitem" /></td>
 		</tr>
 		<tr>

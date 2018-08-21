@@ -131,7 +131,7 @@
 				}
 			}
 			else {
-				out.print("파일명이 다릅니다. 업로드한 파일이 SelectItem.csv가 맞는지 확인해주세요!"); %> <br> <%
+				out.print("파일명이 다릅니다. 업로드한 파일이 selectitem.csv가 맞는지 확인해주세요!"); %> <br> <%
 				break;
 			}
 			

@@ -100,8 +100,11 @@
 							output = output.replaceAll("\"", "");
 							
 							// int
-							if(index == 1 || index == 3) {
+							if(index == 1 || index == 4 || index == 5 || index == 6) {
 								pstmt.setInt(index, Integer.parseInt(output));
+							}
+							else if(index == 9) {
+								pstmt.setFloat(index, Float.parseFloat(output));
 							}
 							// string
 							else {

@@ -64,7 +64,7 @@
 	</tr>
 	<tr>
 		<td>
-			<a href="csvupload_category.jsp" target="content">카테고리 데이터 적용</a>
+			<a href="csvupload_categorylist.jsp" target="content">카테고리 데이터 적용</a>
 		</td>
 	</tr>
 	<tr>
