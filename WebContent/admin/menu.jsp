@@ -31,11 +31,6 @@
 	</tr>
 	<tr>
 		<td>
-			<a href="csvupload.jsp" target="content">csv 파일 적용</a>
-		</td>
-	</tr>
-	<tr>
-		<td>
 			<a href="userinfo.jsp" target="content">유저 기본데이터 보기</a>
 		</td>
 	</tr>
@@ -47,6 +42,44 @@
 	<tr>
 		<td>
 			<a href="cashinfo.jsp" target="content">재화 데이터 보기</a>
+		</td>
+	</tr>
+	<tr>
+		<td style="font-size: 15px; font-weight: bold;">csv 파일 적용</td>
+	</tr>
+	<tr>
+		<td>
+			<a href="csvupload_banner.jsp" target="content">배너 데이터 적용</a>
+		</td>
+	</tr>
+	<tr>
+		<td>
+			<a href="csvupload_story.jsp" target="content">스토리 데이터 적용</a>
+		</td>
+	</tr>
+	<tr>
+		<td>
+			<a href="csvupload_episode.jsp" target="content">에피소드 데이터 적용</a>
+		</td>
+	</tr>
+	<tr>
+		<td>
+			<a href="csvupload_category.jsp" target="content">카테고리 데이터 적용</a>
+		</td>
+	</tr>
+	<tr>
+		<td>
+			<a href="csvupload_costumedata.jsp" target="content">코스튬 데이터 적용</a>
+		</td>
+	</tr>
+	<tr>
+		<td>
+			<a href="csvupload_selectitem.jsp" target="content">선택지 데이터 적용</a>
+		</td>
+	</tr>
+	<tr>
+		<td>
+			<a href="csvupload_shopitem.jsp" target="content">상점 데이터 적용</a>
 		</td>
 	</tr>
 </table>
