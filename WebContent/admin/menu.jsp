@@ -91,6 +91,11 @@
 	</tr>
 	<tr>
 		<td>
+			<a href="indicator_user_login.jsp" target="content">로그인 수</a>
+		</td>
+	</tr>
+	<tr>
+		<td>
 			<a href="cashinfo.jsp" target="content">재화 데이터</a>
 		</td>
 	</tr>
