@@ -7,9 +7,9 @@
 <%@ page import="com.wingsinus.ep.JdbcUtil" %>
 <%@ page import="com.wingsinus.ep.AdminDateCount" %>
 
-<H2>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;유료 결제자 수</H2>
+<H2>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;최초 유료 결제자 수</H2>
 <section>
-	<H3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;해당 날짜에 유료 결제를 한 유니크한 유저 숫자</H3>
+	<H3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;해당 날짜에 유료 결제를 최초로 한 유니크한 유저 숫자</H3>
 </section>
 	<%
 	String filepath = "";
@@ -41,7 +41,7 @@
 	
 	%>
 
-	<form action="indicator_user_payer.jsp" method="post">
+	<form action="indicator_user_firstpayer.jsp" method="post">
 		<table border = "1" style="border-style:solid;">
 			<tr>
 				<td> 시작 날짜 </td>
@@ -56,7 +56,7 @@
 				<input type="submit" value="검색" /> </td>
 			</tr>
 		</table>
-		<input type="hidden" name="type" value="payer">
+		<input type="hidden" name="type" value="firstpayer">
 	</form>
 
 	<%
@@ -69,7 +69,7 @@
 			</tr>
 			
 			<form action="csvfiledownload.jsp" method="post">
-				<input type="hidden" name="filename" value="user_payer">
+				<input type="hidden" name="filename" value="user_firstpayer">
 				<input type ="submit" value ="다운로드">
 			</form>
 			
@@ -85,7 +85,7 @@
 				filepath = "/usr/local/tomcat7/apache-tomcat-7.0.82/webapps/tempcsv/";
 			}
 			
-			filename = "user_payer.csv";
+			filename = "user_firstpayer.csv";
 			fw = new FileWriter(filepath+filename);
 			
 			conn = ConnectionProvider.getConnection("logdb");
@@ -111,15 +111,16 @@
 				list.add(adc);
 			}
 			
-			pstmt = conn.prepareStatement("select date_format(regdate, '%Y-%m-%d') m, count(distinct uid) from log_action where regdate between " +
-										  "? and ? and action_type = 'success_increase' and action_name = 'buyitem' group by m");
+			pstmt = conn.prepareStatement("select a.regdate, count(a.uid) from (select uid, min(date_format(regdate, '%Y-%m-%d')) regdate from log_action " +
+										  "where action_type = 'success_increase' and action_name = 'buyitem' group by uid) a " +
+										  "where a.regdate between ? and ? group by a.regdate");
 			pstmt.setTimestamp(1, start);
 			pstmt.setTimestamp(2, end);
 			rs = pstmt.executeQuery();
 
 			fw.append("날짜");
 			fw.append(',');
-			fw.append("결제자 수");
+			fw.append("최초 결제자 수");
 			fw.append('\n');
 			
 			%>
