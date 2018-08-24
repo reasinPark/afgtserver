@@ -7,9 +7,9 @@
 <%@ page import="com.wingsinus.ep.JdbcUtil" %>
 <%@ page import="com.wingsinus.ep.AdminDateCount" %>
 
-<H2>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;로그인 수</H2>
+<H2>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;실행 횟수</H2>
 <section>
-	<H3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;날짜별 로그인 유니크 카운트</H3>
+	<H3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;날짜별 최초 리스트를 로딩한 중복 숫자</H3>
 </section>
 	<%
 	String filepath = "";
@@ -26,7 +26,7 @@
 	String startdate = request.getParameter("startdate");
 	String enddate = request.getParameter("enddate");
 	boolean isfirst = false;
-
+	
 	conn = ConnectionProvider.getConnection("afgt");
 	pstmt = conn.prepareStatement("select date_format(now(),'%Y-%m-%d')");
 	rs = pstmt.executeQuery();
@@ -38,10 +38,9 @@
 	if((startdate!=null) && (enddate!=null)) {
 		isfirst = true;
 	}
-	
 	%>
 
-	<form action="indicator_user_login.jsp" method="post">
+	<form action="indicator_user_listloadcount.jsp" method="post">
 		<table border = "1" style="border-style:solid;">
 			<tr>
 				<td> 시작 날짜 </td>
@@ -56,7 +55,7 @@
 				<input type="submit" value="검색" /> </td>
 			</tr>
 		</table>
-		<input type="hidden" name="type" value="login">
+		<input type="hidden" name="type" value="listloadcount">
 	</form>
 
 	<%
@@ -69,7 +68,7 @@
 			</tr>
 			
 			<form action="csvfiledownload.jsp" method="post">
-				<input type="hidden" name="filename" value="user_login">
+				<input type="hidden" name="filename" value="listloadcount">
 				<input type ="submit" value ="다운로드">
 			</form>
 			
@@ -85,7 +84,7 @@
 				filepath = "/usr/local/tomcat7/apache-tomcat-7.0.82/webapps/tempcsv/";
 			}
 			
-			filename = "user_login.csv";
+			filename = "user_listloadcount.csv";
 			fw = new FileWriter(filepath+filename);
 			
 			conn = ConnectionProvider.getConnection("logdb");
@@ -111,22 +110,22 @@
 				list.add(adc);
 			}
 			
-			pstmt = conn.prepareStatement("select date_format(regdate, '%Y-%m-%d') m, count(distinct uid) from log_action where regdate between " +
-										  "? and ? and action_type = 'success' and action_name = 'login' group by m;");
+			pstmt = conn.prepareStatement("select date_format(regdate, '%Y-%m-%d') m, count(*) from log_action where (regdate between ? and ?) " +
+										  "and (action_type = 'location') and (action_name = 'list') group by m");
 			pstmt.setTimestamp(1, start);
 			pstmt.setTimestamp(2, end);
 			rs = pstmt.executeQuery();
 
 			fw.append("날짜");
 			fw.append(',');
-			fw.append("로그인 수");
+			fw.append("실행 횟수");
 			fw.append('\n');
 			
 			%>
 			<table border="1" style="border-style:solid;">
 				<tr>
 					<td>날짜</td>
-					<td>로그인 수</td>
+					<td>실행 횟수</td>
 				</tr>
 			<%
 			

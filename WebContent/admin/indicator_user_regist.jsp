@@ -15,6 +15,7 @@
 	String filepath = "";
 	String filename = "";
 	FileWriter fw = null;
+	String today = "";
 	
 	//mysql
 	PreparedStatement pstmt = null;
@@ -25,6 +26,14 @@
 	String startdate = request.getParameter("startdate");
 	String enddate = request.getParameter("enddate");
 	boolean isfirst = false;
+	
+	conn = ConnectionProvider.getConnection("afgt");
+	pstmt = conn.prepareStatement("select date_format(now(),'%Y-%m-%d')");
+	rs = pstmt.executeQuery();
+	
+	if(rs.next()) {
+		today = rs.getString(1);
+	}
 	
 	if((startdate!=null) && (enddate!=null)) {
 		isfirst = true;
@@ -39,7 +48,7 @@
 			</tr>
 			<tr>
 				<td> 끝 날짜 </td>
-				<td><input type="date" id="enddate" name="enddate" value="<%=((isfirst)? enddate : "2018-12-31")%>" /></td>
+				<td><input type="date" id="enddate" name="enddate" value="<%=((isfirst)? enddate : today)%>" /></td>
 			</tr>
 			<tr>
 				<td colspan = "2" align="center">

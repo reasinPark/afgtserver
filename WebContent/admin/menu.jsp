@@ -105,6 +105,11 @@
 	</tr>
 	<tr>
 		<td>
+			<a href="indicator_user_listloadcount.jsp" target="content">실행 횟수</a>
+		</td>
+	</tr>
+	<tr>
+		<td>
 			<a href="cashinfo.jsp" target="content">재화 데이터</a>
 		</td>
 	</tr>

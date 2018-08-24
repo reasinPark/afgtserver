@@ -18,5 +18,6 @@
 	<frame src="csvupload_assetbundleversion.jsp" name="content">
 	<frame src="indicator_user_regist.jsp" name="content">
 	<frame src="indicator_user_login.jsp" name="content">
+	<frame src="indicator_user_listloadcount.jsp" name="content">
 </frameset>
 </HTML>
