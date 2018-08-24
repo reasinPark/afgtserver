@@ -566,6 +566,8 @@
 			ret.put("service", service);
 			ret.put("token", token);
 			ret.put("uiversion",bundleversion);
+			System.out.println("cli version is :"+clientversion);
+			ret.put("cliversion",clientversion);
 		}else if(cmd.equals("buyskin")){
 			//user skin buy logaction
 			
@@ -1658,6 +1660,7 @@
 		}
 		else if(cmd.equals("checkuiversion")){
 			ret.put("uiversion",bundleversion);
+			ret.put("cliversion",clientversion);
 		}
 		
 		out.print(ret.toString());
