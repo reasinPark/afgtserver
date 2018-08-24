@@ -110,6 +110,11 @@
 	</tr>
 	<tr>
 		<td>
+			<a href="indicator_user_payer.jsp" target="content">유료 결제자 수</a>
+		</td>
+	</tr>
+	<tr>
+		<td>
 			<a href="cashinfo.jsp" target="content">재화 데이터</a>
 		</td>
 	</tr>
