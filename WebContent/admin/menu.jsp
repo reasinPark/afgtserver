@@ -76,6 +76,15 @@
 			<a href="csvupload_shopitem.jsp" target="content">상점 데이터 적용</a>
 		</td>
 	</tr>
+	<tr height = 5px></tr>
+	<tr>
+		<td style="font-size: 15px; font-weight: bold;">에셋 번들 버전</td>
+	</tr>
+	<tr>
+		<td>
+			<a href="csvupload_assetbundleversion.jsp" target="content">에셋 번들 버전 적용</a>
+		</td>
+	</tr>
 	<tr height = 15px></tr>
 	<tr>
 		<td style="font-size: 20px; font-weight: bold;">서비스 지표 데이터</td>
