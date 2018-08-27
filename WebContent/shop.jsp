@@ -73,6 +73,7 @@
 		else if(cmd.equals("buyitem")){
 			int shopid = Integer.valueOf(request.getParameter("shopid"));
 			String ident = request.getParameter("ident");
+			String item = request.getParameter("item");
 			
 			shopManager data = shopManager.getData(shopid);
 			int getgem = data.gem;
@@ -86,10 +87,10 @@
 			
 			if(pstmt.executeUpdate()>0){
 				if(getgem != 0) {
-					LogManager.writeNorLog(userid, "success_increase", cmd, "cashgem", ident, getgem);
+					LogManager.writeNorLog(userid, "success_increase", cmd, item, ident, getgem);
 				}
 				if(getticket != 0) {
-					LogManager.writeNorLog(userid, "success_increase", cmd, "cashticket", ident, getticket);
+					LogManager.writeNorLog(userid, "success_increase", cmd, item, ident, getticket);
 				}
 				
 				pstmt = conn.prepareStatement("select freegem,cashgem,freeticket,cashticket from user where uid = ?");
@@ -111,19 +112,19 @@
 				}
 				else {
 					if(getgem != 0) {
-						LogManager.writeNorLog(userid, "fail_cashlog", cmd, "cashgem", ident, getgem);
+						LogManager.writeNorLog(userid, "fail_cashlog", cmd, item, ident, getgem);
 					}
 					if(getticket != 0) {
-						LogManager.writeNorLog(userid, "fail_cashlog", cmd, "cashticket", ident, getticket);
+						LogManager.writeNorLog(userid, "fail_cashlog", cmd, item, ident, getticket);
 					}
 					ret.put("success", 0);
 				}
 			}else{
 				if(getgem != 0) {
-					LogManager.writeNorLog(userid, "fail_increase", cmd, "cashgem", ident, getgem);
+					LogManager.writeNorLog(userid, "fail_increase", cmd, item, ident, getgem);
 				}
 				if(getticket != 0) {
-					LogManager.writeNorLog(userid, "fail_increase", cmd, "cashticket", ident, getticket);
+					LogManager.writeNorLog(userid, "fail_increase", cmd, item, ident, getticket);
 				}
 				ret.put("success", 0);
 			}		
