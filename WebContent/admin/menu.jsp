@@ -120,7 +120,7 @@
 	</tr>
 	<tr>
 		<td>
-			<a href="cashinfo.jsp" target="content">재화 데이터</a>
+			<a href="indicator_user_shopitem.jsp" target="content">상품별 구매 카운트</a>
 		</td>
 	</tr>
 	<tr height = 5px></tr>
