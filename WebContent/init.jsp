@@ -1630,6 +1630,7 @@
 				data.put("version",rs.getInt(2));
 				rlist.add(data);
 			}
+			ret.put("cliversion",clientversion);
 			ret.put("resourceversion",rlist);
 		}
 
