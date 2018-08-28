@@ -1354,30 +1354,47 @@
 				now = rs.getTimestamp(2).getTime()/1000;
 				
 				if(ticketGenTime < now) {
-					System.out.println("charge success");
-					pstmt = conn.prepareStatement("update user set freeticket = freeticket + 1 where uid = ?");
-					pstmt.setString(1, userid);
 					
-					if(pstmt.executeUpdate()>0){
-						LogManager.writeNorLog(userid, "success_increase", cmd, "freeticket","null", 1);
-						ret.put("nocharge", 1);
-						ret.put("success", 1);
+					pstmt = conn.prepareStatement("select freeticket, cashticket from user where uid = ?");
+					pstmt.setString(1, userid);
+					rs = pstmt.executeQuery();
+					
+					if(rs.next()) {
+						int myticket = 0;
+						myticket = rs.getInt(1) + rs.getInt(2);
 						
-						pstmt = conn.prepareStatement("select freegem,cashgem,freeticket,cashticket from user where uid = ?");
-						pstmt.setString(1, userid);
-						rs = pstmt.executeQuery();
-						
-						if(rs.next()) {
-							LogManager.writeCashLog(userid, rs.getInt("freeticket"), rs.getInt("cashticket"), rs.getInt("freegem"), rs.getInt("cashgem"));
+						if(myticket > 0) {
+							LogManager.writeNorLog(userid, "fail_increase", cmd, "freeticket", "already_have_ticket", 1);
+							ret.put("nocharge", 0);
+							ret.put("success", 0);
 						}
 						else {
-							LogManager.writeNorLog(userid, "fail_cashlog", cmd, "freeticket","null", 1);
+							System.out.println("charge success");
+							pstmt = conn.prepareStatement("update user set freeticket = freeticket + 1 where uid = ?");
+							pstmt.setString(1, userid);
+							
+							if(pstmt.executeUpdate()>0){
+								LogManager.writeNorLog(userid, "success_increase", cmd, "freeticket","null", 1);
+								ret.put("nocharge", 1);
+								ret.put("success", 1);
+								
+								pstmt = conn.prepareStatement("select freegem,cashgem,freeticket,cashticket from user where uid = ?");
+								pstmt.setString(1, userid);
+								rs = pstmt.executeQuery();
+								
+								if(rs.next()) {
+									LogManager.writeCashLog(userid, rs.getInt("freeticket"), rs.getInt("cashticket"), rs.getInt("freegem"), rs.getInt("cashgem"));
+								}
+								else {
+									LogManager.writeNorLog(userid, "fail_cashlog", cmd, "freeticket","null", 1);
+								}
+							}
+							else {
+								LogManager.writeNorLog(userid, "fail_increase", cmd, "freeticket","null", 1);
+								ret.put("nocharge", 1);
+								ret.put("success", 0);
+							}
 						}
-					}
-					else {
-						LogManager.writeNorLog(userid, "fail_increase", cmd, "freeticket","null", 1);
-						ret.put("nocharge", 1);
-						ret.put("success", 0);
 					}
 				}
 				else {
