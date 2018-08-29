@@ -1,5 +1,8 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+<%@ page import="java.sql.*" %>
+<%@ page import="com.wingsinus.ep.ConnectionProvider" %>
+<%@ page import="com.wingsinus.ep.JdbcUtil" %>
 
 <H2>&nbsp;&nbsp;&nbsp;&nbsp;csv 파일 적용</H2>
 <section>
@@ -25,3 +28,57 @@
 		</td>
 	</tr>
 </table>
+
+<%
+	try {
+		Connection conn = ConnectionProvider.getConnection("afgt");
+		PreparedStatement pstmt = conn.prepareStatement("select Story_id, episode_num, episode_name, csvfilename, ticket, gem, purchaseinfo, reward_gem, " +
+														"reward_ticket, rewardinfo, writer, director, imgname, likecount, summary, subtitle from episode");
+		ResultSet rs = pstmt.executeQuery();
+				
+		%>
+		<H2 style="font-size:20">&nbsp;&nbsp;&nbsp;&nbsp;현재 DB</H2>
+		<table border="1" style="border-style:solid;">
+			<tr>
+				<td>category_id</td>
+				<td>categoryname</td>
+				<td>ordernum</td>
+			</tr>
+		<%
+		while(rs.next()) {
+		%>
+			<tr>
+				<td><%=String.valueOf(rs.getString(1))%></td>
+				<td><%=String.valueOf(rs.getInt(2))%></td>
+				<td><%=String.valueOf(rs.getString(3))%></td>
+				<td><%=String.valueOf(rs.getString(4))%></td>
+				<td><%=String.valueOf(rs.getInt(5))%></td>
+				<td><%=String.valueOf(rs.getInt(6))%></td>
+				<td><%=String.valueOf(rs.getInt(7))%></td>
+				<td><%=String.valueOf(rs.getInt(8))%></td>
+				<td><%=String.valueOf(rs.getInt(9))%></td>
+				<td><%=String.valueOf(rs.getInt(10))%></td>
+				<td><%=String.valueOf(rs.getString(11))%></td>
+				<td><%=String.valueOf(rs.getString(12))%></td>
+				<td><%=String.valueOf(rs.getString(13))%></td>
+				<td><%=String.valueOf(rs.getInt(14))%></td>
+				<td><%=String.valueOf(rs.getString(15))%></td>
+				<td><%=String.valueOf(rs.getString(16))%></td>
+			</tr>
+		<%
+		}
+		%>
+		</table>
+		<%
+	} catch(Exception e) {
+		%>
+		다시 확인해 주세요. error!<br>
+		<%=e.toString()%><br>
+		<%
+		for(int i = 0; i < e.getStackTrace().length; i++) {
+			%><%=e.getStackTrace()[i]%><br><%
+		}
+	} finally {
+	
+	}
+%>
