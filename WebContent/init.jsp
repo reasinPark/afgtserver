@@ -549,6 +549,17 @@
 				ret.put("soundtablelist", slist);
 			}// end of csvserver.equals("on")
 			
+			// 마지막 로그인 시간 갱신
+			pstmt = conn.prepareStatement("update user set lastjointime = now() where uid = ?");
+			pstmt.setString(1,userid);
+			
+			if(pstmt.executeUpdate()==1) {
+				
+			}
+			else {
+				LogManager.writeNorLog(userid, "fail_lastjointime", cmd, "null","null", 0);
+			}
+			
 			ret.put("userstorylikelist", likelist);
 			ret.put("userselectlist",selectlist);
 			ret.put("namelist",namelist);
