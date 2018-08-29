@@ -32,34 +32,24 @@
 <%
 	try {
 		Connection conn = ConnectionProvider.getConnection("afgt");
-		PreparedStatement pstmt = conn.prepareStatement("select idx, Newmark, Title, Text, sort, imgname, type, callid from bannerdata");
+		PreparedStatement pstmt = conn.prepareStatement("select category_id, categoryname, ordernum from categorylist");
 		ResultSet rs = pstmt.executeQuery();
 				
 		%>
 		<H2 style="font-size:20">&nbsp;&nbsp;&nbsp;&nbsp;현재 DB</H2>
 		<table border="1" style="border-style:solid;">
 			<tr>
-				<td>idx</td>
-				<td>Newmark</td>
-				<td>Title</td>
-				<td>Text</td>
-				<td>sort</td>
-				<td>imgname</td>
-				<td>type</td>
-				<td>callid</td>
+				<td>category_id</td>
+				<td>categoryname</td>
+				<td>ordernum</td>
 			</tr>
 		<%
 		while(rs.next()) {
 		%>
 			<tr>
 				<td><%=String.valueOf(rs.getInt(1))%></td>
-				<td><%=String.valueOf(rs.getInt(2))%></td>
-				<td><%=String.valueOf(rs.getString(3))%></td>
-				<td><%=String.valueOf(rs.getString(4))%></td>
-				<td><%=String.valueOf(rs.getInt(5))%></td>
-				<td><%=String.valueOf(rs.getString(6))%></td>
-				<td><%=String.valueOf(rs.getString(7))%></td>
-				<td><%=String.valueOf(rs.getString(8))%></td>
+				<td><%=String.valueOf(rs.getString(2))%></td>
+				<td><%=String.valueOf(rs.getInt(3))%></td>
 			</tr>
 		<%
 		}
