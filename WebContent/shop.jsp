@@ -88,9 +88,11 @@
 			if(pstmt.executeUpdate()>0){
 				if(getgem != 0) {
 					LogManager.writeNorLog(userid, "success_increase", cmd, item, ident, getgem);
+					LogManager.writeReceipt(userid, item, ident);
 				}
 				if(getticket != 0) {
 					LogManager.writeNorLog(userid, "success_increase", cmd, item, ident, getticket);
+					LogManager.writeReceipt(userid, item, ident);
 				}
 				
 				pstmt = conn.prepareStatement("select freegem,cashgem,freeticket,cashticket from user where uid = ?");

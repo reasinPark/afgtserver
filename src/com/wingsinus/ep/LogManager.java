@@ -64,4 +64,31 @@ public class LogManager {
 			JdbcUtil.close(pstmt);			
 		}
 	}
+	
+	public static boolean writeReceipt(String uid, String pid, String ident) throws SQLException{
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		Connection conn = null;
+		try{
+			conn = ConnectionProvider.getConnection("logdb");
+			
+			pstmt = conn.prepareStatement("insert into payment_receipt (uid,productid,ident) values(?,?,?)");
+			
+			pstmt.setString(1, uid);
+			pstmt.setString(2, pid);
+			pstmt.setString(3, ident);
+			
+			int r = pstmt.executeUpdate();
+			if(r == 1){
+				return true;
+			}else{
+				return false;
+			}
+			
+		}finally{
+			JdbcUtil.close(conn);
+			JdbcUtil.close(rs);
+			JdbcUtil.close(pstmt);			
+		}
+	}
 }
