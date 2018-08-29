@@ -123,6 +123,11 @@
 			<a href="indicator_user_shopitem.jsp" target="content">상품별 구매 카운트</a>
 		</td>
 	</tr>
+	<tr>
+		<td>
+			<a href="indicator_user_cash.jsp" target="content">유저 보유 재화 카운트</a>
+		</td>
+	</tr>
 	<tr height = 5px></tr>
 	<tr>
 		<td style="font-size: 15px; font-weight: bold;">이야기 데이터 상세</td>

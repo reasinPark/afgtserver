@@ -21,5 +21,6 @@
 	<frame src="indicator_user_payer.jsp" name="content">
 	<frame src="indicator_user_firstpayer.jsp" name="content">
 	<frame src="indicator_user_shopitem.jsp" name="content">
+	<frame src="indicator_user_cash.jsp" name="content">
 </frameset>
 </HTML>
