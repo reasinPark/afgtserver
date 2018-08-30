@@ -74,9 +74,7 @@
 				<input type ="submit" value ="다운로드">
 			</form>
 			
-			<%
-			ArrayList<AdminUserCash> list = new ArrayList<AdminUserCash>();
-			
+			<%			
 			// test
 			if(ConnectionProvider.afgt_build_ver == 0) {
 				filepath = "/usr/share/tomcat6/webapps/tempcsv/";
@@ -89,34 +87,11 @@
 			filename = "user_cash.csv";
 			fw = new FileWriter(filepath+filename);
 			
-			pstmt = conn.prepareStatement("select * from (select adddate('1970-01-01',t4.i*10000 + t3.i*1000 + t2.i*100 + t1.i*10 + t0.i) selected_date from "+
-										  "(select 0 i union select 1 union select 2 union select 3 union select 4 union select 5 union select 6 union select 7 union select 8 union select 9) t0, " +
-										  "(select 0 i union select 1 union select 2 union select 3 union select 4 union select 5 union select 6 union select 7 union select 8 union select 9) t1, " +
-										  "(select 0 i union select 1 union select 2 union select 3 union select 4 union select 5 union select 6 union select 7 union select 8 union select 9) t2, " +
-										  "(select 0 i union select 1 union select 2 union select 3 union select 4 union select 5 union select 6 union select 7 union select 8 union select 9) t3, " +
-										  "(select 0 i union select 1 union select 2 union select 3 union select 4 union select 5 union select 6 union select 7 union select 8 union select 9) t4) v " +
-										  "where selected_date between ? and ?");
-			
 			Timestamp start = Timestamp.valueOf(startdate + " 00:00:00");
 			Timestamp end = Timestamp.valueOf(enddate + " 23:59:59");
-			pstmt.setTimestamp(1, start);
-			pstmt.setTimestamp(2, end);
-			rs = pstmt.executeQuery();
 			
-			while(rs.next()) {
-				AdminUserCash auc = new AdminUserCash();
-				auc.date = String.valueOf(rs.getString(1));
-				auc.freeticket = "0";
-				auc.cashticket = "0";
-				auc.totalticket = "0";
-				auc.freegem = "0";
-				auc.cashgem = "0";
-				auc.totalgem = "0";
-				list.add(auc);
-			}
-
 			conn = ConnectionProvider.getConnection("logdb");
-			pstmt = conn.prepareStatement("select date_format(regdate, '%Y-%m-%d'), freeticket, cashticket, totalticket, freegem, cashgem, totalgem from cash_status where regdate between ? and ?");
+			pstmt = conn.prepareStatement("select date_format(regdate, '%Y-%m-%d'), freeticket, cashticket, totalticket, freegem, cashgem, totalgem from user_cash where regdate between ? and ?");
 			pstmt.setTimestamp(1, start);
 			pstmt.setTimestamp(2, end);
 			rs = pstmt.executeQuery();
@@ -158,45 +133,30 @@
 				String cashgem = String.valueOf(rs.getInt(6));
 				String totalgem = String.valueOf(rs.getInt(7));
 				
-				for(int i = 0; i<list.size();i++) {
-					if(list.get(i).date.equals(date)) {
-						list.get(i).freeticket = freeticket;
-						list.get(i).cashticket = cashticket;
-						list.get(i).totalticket = totalticket;
-						list.get(i).freegem = freegem;
-						list.get(i).cashgem = cashgem;
-						list.get(i).totalgem = totalgem;
-						break;
-					}
-				}
-			}
-			
-			for(int j = 0; j<list.size();j++) {
-
-				fw.append(list.get(j).date);
+				fw.append(date);
 				fw.append(',');
-				fw.append(list.get(j).freeticket);
+				fw.append(freeticket);
 				fw.append(',');
-				fw.append(list.get(j).cashticket);
+				fw.append(cashticket);
 				fw.append(',');
-				fw.append(list.get(j).totalticket);
+				fw.append(totalticket);
 				fw.append(',');
-				fw.append(list.get(j).freegem);
+				fw.append(freegem);
 				fw.append(',');
-				fw.append(list.get(j).cashgem);
+				fw.append(cashgem);
 				fw.append(',');
-				fw.append(list.get(j).totalgem);
+				fw.append(totalgem);
 				fw.append('\n');
 				
 				%>
 				<tr>
-					<td><%=list.get(j).date%></td>
-					<td><%=list.get(j).freeticket%></td>
-					<td><%=list.get(j).cashticket%></td>
-					<td><%=list.get(j).totalticket%></td>
-					<td><%=list.get(j).freegem%></td>
-					<td><%=list.get(j).cashgem%></td>
-					<td><%=list.get(j).totalgem%></td>
+					<td><%=date%></td>
+					<td><%=freeticket%></td>
+					<td><%=cashticket%></td>
+					<td><%=totalticket%></td>
+					<td><%=freegem%></td>
+					<td><%=cashgem%></td>
+					<td><%=totalgem%></td>
 				</tr>
 				<%
 			}

@@ -134,7 +134,7 @@
 	</tr>
 	<tr>
 		<td>
-			<a href="storyinfo.jsp" target="content">이야기 데이터</a>
+			<a href="indicator_story_readcount.jsp" target="content">이야기별 읽은 수</a>
 		</td>
 	</tr>
 	<tr height = 5px></tr>

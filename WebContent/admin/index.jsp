@@ -6,7 +6,6 @@
 	<frame src="user.jsp" name="content">
 	<frame src="tutorial.jsp" name="content">
 	<frame src="storyupload.jsp" name="content">
-	<frame src="storyinfo.jsp" name="content">
 	<frame src="csvupload_banner.jsp" name="content">
 	<frame src="csvupload_story.jsp" name="content">
 	<frame src="csvupload_episode.jsp" name="content">
@@ -22,5 +21,6 @@
 	<frame src="indicator_user_firstpayer.jsp" name="content">
 	<frame src="indicator_user_shopitem.jsp" name="content">
 	<frame src="indicator_user_cash.jsp" name="content">
+	<frame src="indicator_story_readcount.jsp" name="content">
 </frameset>
 </HTML>
