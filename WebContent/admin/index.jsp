@@ -22,5 +22,7 @@
 	<frame src="indicator_user_shopitem.jsp" name="content">
 	<frame src="indicator_user_cash.jsp" name="content">
 	<frame src="indicator_story_readcount.jsp" name="content">
+	<frame src="indicator_story_itempercostume.jsp" name="content">
+	<frame src="indicator_story_itemperstory.jsp" name="content">
 </frameset>
 </HTML>

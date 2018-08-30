@@ -7,7 +7,6 @@
 <%@ page import="com.wingsinus.ep.JdbcUtil" %>
 <%@ page import="com.wingsinus.ep.AdminStory" %>
 <%@ page import="com.wingsinus.ep.AdminStoryReadCount" %>
-<%@ page import="com.wingsinus.ep.EpisodeList" %>
 
 <H2>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;이야기별 읽은 수</H2>
 <section>
@@ -17,6 +16,7 @@
 	String filepath = "";
 	String filename = "";
 	FileWriter fw = null;
+	String lastweek = "";
 	String today = "";
 	
 	//mysql
@@ -30,11 +30,12 @@
 	boolean isfirst = false;
 	
 	conn = ConnectionProvider.getConnection("afgt");
-	pstmt = conn.prepareStatement("select date_format(now(),'%Y-%m-%d')");
+	pstmt = conn.prepareStatement("select date_format(date_add(now(), interval -7 day),'%Y-%m-%d'),date_format(now(),'%Y-%m-%d')");
 	rs = pstmt.executeQuery();
 	
 	if(rs.next()) {
-		today = rs.getString(1);
+		lastweek = rs.getString(1);
+		today = rs.getString(2);
 	}
 	
 	if((startdate!=null) && (enddate!=null)) {
@@ -46,7 +47,7 @@
 		<table border = "1" style="border-style:solid;">
 			<tr>
 				<td> 시작 날짜 </td>
-				<td><input type="date" id="startdate" name="startdate" value="<%=((isfirst)? startdate : "2018-01-01")%>" /></td>
+				<td><input type="date" id="startdate" name="startdate" value="<%=((isfirst)? startdate : lastweek)%>" /></td>
 			</tr>
 			<tr>
 				<td> 끝 날짜 </td>
@@ -101,7 +102,7 @@
 			fw = new FileWriter(filepath+filename);
 
 			conn = ConnectionProvider.getConnection("logdb");
-			pstmt = conn.prepareStatement("select date_format(regdate, '%Y-%m-%d'), storyid, maxepinum from episode_totalcount where regdate between ? and ?");
+			pstmt = conn.prepareStatement("select date_format(regdate, '%Y-%m-%d'), storyid, maxepinum from info_episode where regdate between ? and ?");
 			
 			Timestamp start = Timestamp.valueOf(startdate + " 00:00:00");
 			Timestamp end = Timestamp.valueOf(enddate + " 23:59:59");

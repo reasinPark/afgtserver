@@ -137,6 +137,16 @@
 			<a href="indicator_story_readcount.jsp" target="content">이야기별 읽은 수</a>
 		</td>
 	</tr>
+	<tr>
+		<td>
+			<a href="indicator_story_itempercostume.jsp" target="content">패션상품별 아이템 구매 횟수</a>
+		</td>
+	</tr>
+	<tr>
+		<td>
+			<a href="indicator_story_itemperstory.jsp" target="content">이야기별 패션 아이템 구매 횟수</a>
+		</td>
+	</tr>
 	<tr height = 5px></tr>
 	<tr>
 		<td style="font-size: 15px; font-weight: bold;">메인 페이지 상세</td>
