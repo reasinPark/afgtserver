@@ -133,6 +133,12 @@
 				</tr>
 			</table>
 		</form>
+		<form target="result_frame" method="post" name="update_form" id="story_form" action="user_storyfull.jsp">
+		<input type="hidden" name="uid" value="<%=((isFound)? uid :"") %>">
+			<tr>
+				<td colspan="10" align="center"> 모든 이야기 읽기 상태로 만들기  <input type="submit"  value="    적용    "></td>
+			</tr>
+		</form>
 		<%} %>
 		<table border="1" style="border-style: solid;" width="90%">
 		<tr>
