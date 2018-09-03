@@ -123,7 +123,6 @@
 				}
 				
 				if(completeCount == i) {
-					StoryManager.StoryManagerReset();
 					out.print("스토리 데이터 적용 완료!"); %> <br> <%
 				}
 				else {

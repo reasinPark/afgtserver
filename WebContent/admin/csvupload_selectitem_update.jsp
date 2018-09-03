@@ -123,7 +123,6 @@
 				}
 				
 				if(completeCount == i) {
-					SelectItemData.SelectItemDataReset();
 					out.print("선택지 데이터 적용 완료!"); %> <br> <%
 				}
 				else {

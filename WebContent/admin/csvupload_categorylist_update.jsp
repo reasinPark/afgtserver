@@ -123,7 +123,6 @@
 				}
 				
 				if(completeCount == i) {
-					CategoryList.CategoryReset();
 					out.print("카테고리 데이터 적용 완료!"); %> <br> <%
 				}
 				else {

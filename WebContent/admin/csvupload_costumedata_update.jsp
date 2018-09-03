@@ -123,7 +123,6 @@
 				}
 				
 				if(completeCount == i) {
-					CostumeData.CostumeDataReset();
 					out.print("코스튬 데이터 적용 완료!"); %> <br> <%
 				}
 				else {

@@ -126,7 +126,6 @@
 				}
 				
 				if(completeCount == i) {
-					shopManager.shopManagerReset();
 					out.print("상점 데이터 적용 완료!"); %> <br> <%
 				}
 				else {

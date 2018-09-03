@@ -123,7 +123,6 @@
 				}
 				
 				if(completeCount == i) {
-					EpisodeList.EpisodeListReset();
 					out.print("에피소드 데이터 적용 완료!"); %> <br> <%
 				}
 				else {

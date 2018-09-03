@@ -123,7 +123,6 @@
 				}
 				
 				if(completeCount == i) {
-					BannerManager.BannerReset();
 					out.print("배너 데이터 적용 완료!"); %> <br> <%
 				}
 				else {
