@@ -1283,7 +1283,7 @@
 							ret.put("result", 0);//not enough gem
 							LogManager.writeNorLog(userid,"not enough gem",cmd,"null","null",0);
 						}else{
-							if(cashgem >data.Price){ // first use cashgem
+							if(cashgem >=data.Price){ // first use cashgem
 								cashtype = 1;
 								aftercashgem = cashgem - data.Price;
 							}else{ // first cash after free
@@ -1306,7 +1306,7 @@
 						upresult = pstmt.executeUpdate();
 					}else if(cashtype==2){
 						pstmt = conn.prepareStatement("update user set freegem = ? , cashgem = 0 where uid = ?");
-						pstmt.setInt(1,beshort);
+						pstmt.setInt(1,afterfreegem);
 						pstmt.setString(2, userid);
 						upresult = pstmt.executeUpdate();
 					}
