@@ -48,7 +48,6 @@
 			pstmt.setInt(4, 2);
 			
 			if(pstmt.executeUpdate() == 1){
-				TutorialList.TutorialListReset();
 				%>업데이트 되었습니다.<%
 			}else{
 				%>두번째 줄 업데이트에 실패 했습니다. 입력을 다시 확인해 주세요.<%
