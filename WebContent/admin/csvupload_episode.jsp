@@ -40,9 +40,22 @@
 		<H2 style="font-size:20">&nbsp;&nbsp;&nbsp;&nbsp;현재 DB</H2>
 		<table border="1" style="border-style:solid;">
 			<tr>
-				<td>category_id</td>
-				<td>categoryname</td>
-				<td>ordernum</td>
+				<td>Story_id</td>
+				<td>episode_num</td>
+				<td>episode_name</td>
+				<td>csvfilename</td>
+				<td>ticket</td>
+				<td>gem</td>
+				<td>purchaseinfo</td>
+				<td>reward_gem</td>
+				<td>reward_ticket</td>
+				<td>rewardinfo</td>
+				<td>writer</td>
+				<td>director</td>
+				<td>imgname</td>
+				<td>likecount</td>
+				<td>summary</td>
+				<td>subtitle</td>
 			</tr>
 		<%
 		while(rs.next()) {

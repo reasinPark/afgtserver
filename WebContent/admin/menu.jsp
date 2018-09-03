@@ -151,6 +151,15 @@
 	<tr>
 		<td style="font-size: 15px; font-weight: bold;">메인 페이지 상세</td>
 	</tr>
+	<tr height = 5px></tr>
+	<tr>
+		<td style="font-size: 15px; font-weight: bold;">라이브 서비스</td>
+	</tr>
+	<tr>
+		<td>
+			<a href="question.jsp" target="content">문의 내역 보기</a>
+		</td>
+	</tr>
 </table>
 </body>
 </html>
