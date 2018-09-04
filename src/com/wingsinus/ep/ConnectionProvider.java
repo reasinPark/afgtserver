@@ -15,9 +15,9 @@ public class ConnectionProvider {
 	public static Connection getConnection(String dbname) throws SQLException {
 		 try {
              Class.forName("com.mysql.jdbc.Driver");
-             System.out.println("드라이버 로딩");
+//             System.out.println("드라이버 로딩");
 	     } catch(ClassNotFoundException e) {
-	         System.out.println("드라이버 로딩 실패!");
+	         System.out.println("Driver Loading Fail!");
 	     }
 		
 		Connection conn = null;		
