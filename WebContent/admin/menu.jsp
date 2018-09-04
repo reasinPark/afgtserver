@@ -115,6 +115,11 @@
 	</tr>
 	<tr>
 		<td>
+			<a href="indicator_user_retention.jsp" target="content">2,7,30일자 리텐션</a>
+		</td>
+	</tr>
+	<tr>
+		<td>
 			<a href="indicator_user_firstpayer.jsp" target="content">최초 유료 결제자 수</a>
 		</td>
 	</tr>

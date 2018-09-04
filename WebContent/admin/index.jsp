@@ -18,6 +18,7 @@
 	<frame src="indicator_user_login.jsp" name="content">
 	<frame src="indicator_user_listloadcount.jsp" name="content">
 	<frame src="indicator_user_payer.jsp" name="content">
+	<frame src="indicator_user_retention.jsp" name="content">
 	<frame src="indicator_user_firstpayer.jsp" name="content">
 	<frame src="indicator_user_shopitem.jsp" name="content">
 	<frame src="indicator_user_cash.jsp" name="content">
