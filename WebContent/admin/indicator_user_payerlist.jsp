@@ -5,9 +5,9 @@
 <%@ page import="com.wingsinus.ep.ConnectionProvider" %>
 <%@ page import="com.wingsinus.ep.JdbcUtil" %>
 
-<H2>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;상품별 구매 카운트</H2>
+<H2>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;결제 유저 목록</H2>
 <section>
-	<H3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;티켓/젬 상품 코드별 유저 구매 카운트</H3>
+	<H3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;결제 유저 정보 및 영수증 보기</H3>
 </section>
 	<%
 	String filepath = "";
@@ -25,7 +25,7 @@
 	String startdate = request.getParameter("startdate");
 	String enddate = request.getParameter("enddate");
 	boolean isfirst = false;
-	
+
 	conn = ConnectionProvider.getConnection("logdb");
 	pstmt = conn.prepareStatement("select date_format(date_add(now(), interval -7 day),'%Y-%m-%d'),date_format(now(),'%Y-%m-%d')");
 	rs = pstmt.executeQuery();
@@ -40,7 +40,7 @@
 	}
 	%>
 
-	<form action="indicator_user_shopitem.jsp" method="post">
+	<form action="indicator_user_payerlist.jsp" method="post">
 		<table border = "1" style="border-style:solid;">
 			<tr>
 				<td> 시작 날짜 </td>
@@ -55,7 +55,7 @@
 				<input type="submit" value="검색" /> </td>
 			</tr>
 		</table>
-		<input type="hidden" name="type" value="shopitem">
+		<input type="hidden" name="type" value="payerlist">
 	</form>
 
 	<%
@@ -68,12 +68,11 @@
 			</tr>
 			
 			<form action="csvfiledownload.jsp" method="post">
-				<input type="hidden" name="filename" value="user_shopitem">
+				<input type="hidden" name="filename" value="user_payerlist">
 				<input type ="submit" value ="다운로드">
 			</form>
 			
-			<%
-			
+			<%						
 			// test
 			if(ConnectionProvider.afgt_build_ver == 0) {
 				filepath = "/usr/share/tomcat6/webapps/tempcsv/";
@@ -83,57 +82,57 @@
 				filepath = "/usr/local/tomcat7/apache-tomcat-7.0.82/webapps/tempcsv/";
 			}
 			
-			filename = "user_shopitem.csv";
+			filename = "user_payerlist.csv";
 			fw = new FileWriter(filepath+filename);
-			
-			pstmt = conn.prepareStatement("select date_format(regdate,'%Y-%m-%d'), title, pid, count from user_shopitem where regdate between ? and ?");
-			
+
+			pstmt = conn.prepareStatement("select regdate, uid, productid, ident from payment_receipt where regdate between ? and ?");
+
 			Timestamp start = Timestamp.valueOf(startdate + " 00:00:00");
 			Timestamp end = Timestamp.valueOf(enddate + " 23:59:59");
 			pstmt.setTimestamp(1, start);
 			pstmt.setTimestamp(2, end);
 			rs = pstmt.executeQuery();
-
-			fw.append("날짜");
+			
+			fw.append("구매 일시");
 			fw.append(',');
-			fw.append("상품명");
+			fw.append("유저 ID");
 			fw.append(',');
-			fw.append("PID");
+			fw.append("상품 ID");
 			fw.append(',');
-			fw.append("구매 횟수");
+			fw.append("영수증 번호");
 			fw.append('\n');
 			
 			%>
 			<table border="1" style="border-style:solid;">
 				<tr>
-					<td>날짜</td>
-					<td>상품명</td>
-					<td>PID</td>
-					<td>구매 횟수</td>
+					<td>구매 일시</td>
+					<td>유저 ID</td>
+					<td>상품 ID</td>
+					<td>영수증 번호</td>
 				</tr>
 			<%
 			
 			while(rs.next()) {
-				String date = rs.getString(1);
-				String title = rs.getString(2);
+				String date = String.valueOf(rs.getTimestamp(1));
+				String uid = rs.getString(2);
 				String pid = rs.getString(3);
-				String count = String.valueOf(rs.getInt(4));
+				String ident = rs.getString(4);
 				
 				fw.append(date);
 				fw.append(',');
-				fw.append(title);
+				fw.append(uid);
 				fw.append(',');
 				fw.append(pid);
 				fw.append(',');
-				fw.append(count);
+				fw.append(ident);
 				fw.append('\n');
 				
 				%>
 				<tr>
 					<td><%=date%></td>
-					<td><%=title%></td>
+					<td><%=uid%></td>
 					<td><%=pid%></td>
-					<td><%=count%></td>
+					<td><%=ident%></td>
 				</tr>
 				<%
 			}

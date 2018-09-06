@@ -92,7 +92,7 @@
 			
 			conn = ConnectionProvider.getConnection("logdb");
 			
-			pstmt = conn.prepareStatement("select date_format(date, '%Y-%m-%d'), day0, day1, day6, day29 from retention where date between " +
+			pstmt = conn.prepareStatement("select date_format(date, '%Y-%m-%d'), day1, day1n0, day6, day6n0, day29, day29n0 from user_retention where date between " +
 										  "? and ?");
 			Timestamp start = Timestamp.valueOf(startdate + " 00:00:00");
 			Timestamp end = Timestamp.valueOf(enddate + " 23:59:59");
@@ -102,51 +102,65 @@
 
 			fw.append("기준일");
 			fw.append(',');
-			fw.append("DAY0");
+			fw.append("DAY2");
 			fw.append(',');
-			fw.append("DAY1");
+			fw.append("DAY7");
 			fw.append(',');
-			fw.append("DAY6");
-			fw.append(',');
-			fw.append("DAY29");
+			fw.append("DAY30");
 			fw.append('\n');
 			
 			%>
 			<table border="1" style="border-style:solid;">
 				<tr>
 					<td>기준일</td>
-					<td>DAY0</td>
-					<td>DAY1</td>
-					<td>DAY6</td>
-					<td>DAY29</td>
+					<td>DAY2</td>
+					<td>DAY7</td>
+					<td>DAY30</td>
 				</tr>
 			<%
 			
 			while(rs.next()) {
 				String date = String.valueOf(rs.getString(1));
-				String day0 = String.valueOf(rs.getInt(2));
-				String day1 = String.valueOf(rs.getInt(3));
-				String day6 = String.valueOf(rs.getInt(4));
-				String day29 = String.valueOf(rs.getInt(5));
+				String day2 = "";
+				String day7 = "";
+				String day30 = "";
+				
+				if(Double.isNaN(rs.getFloat(3)/rs.getFloat(2))) {
+					day2 = "0";
+				}
+				else {
+					day2 = String.format("%.2f", rs.getFloat(3)/rs.getFloat(2));
+				}
+				
+				if(Double.isNaN(rs.getFloat(5)/rs.getFloat(4))) {
+					day7 = "0";
+				}
+				else {
+					day7 = String.format("%.2f", rs.getFloat(5)/rs.getFloat(4));
+				}
+				
+				if(Double.isNaN(rs.getFloat(7)/rs.getFloat(6))) {
+					day30 = "0";
+				}
+				else {
+					day30 = String.format("%.2f", rs.getFloat(7)/rs.getFloat(6));
+				}
 				
 				fw.append(date);
 				fw.append(',');
-				fw.append(day0);
+				fw.append(day2);
 				fw.append(',');
-				fw.append(day1);
+				fw.append(day7);
 				fw.append(',');
-				fw.append(day6);
-				fw.append(',');
-				fw.append(day29);
+				fw.append(day30);
 				fw.append('\n');
 				
 				%>
 				<tr>
 					<td><%=date%></td>
-					<td><%=day0%></td>
-					<td><%=day1%></td>
-					<td><%=day6%></td>
-					<td><%=day29%></td>
+					<td><%=day2%></td>
+					<td><%=day7%></td>
+					<td><%=day30%></td>
 				</tr>
 				<%
 				

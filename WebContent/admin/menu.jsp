@@ -133,6 +133,11 @@
 			<a href="indicator_user_cash.jsp" target="content">유저 보유 재화 카운트</a>
 		</td>
 	</tr>
+	<tr>
+		<td>
+			<a href="indicator_user_payerlist.jsp" target="content">결제 유저 목록</a>
+		</td>
+	</tr>
 	<tr height = 5px></tr>
 	<tr>
 		<td style="font-size: 15px; font-weight: bold;">이야기 데이터 상세</td>
