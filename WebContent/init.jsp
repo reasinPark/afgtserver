@@ -1105,6 +1105,7 @@
 			if(buynum >= episodenum + 1) {
 				LogManager.writeNorLog(userid, "already_buy", cmd, "null","null", 0);
 				ret.put("success",1);
+				ret.put("myticket",(freeticket+cashticket));
 			}
 			else {
 
