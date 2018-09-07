@@ -29,7 +29,7 @@ public class CategoryList {
 		try{
 			conn = ConnectionProvider.getConnection("afgt");
 			
-			pstmt = conn.prepareStatement("select category_id,categoryname,ordernum from categorylist");
+			pstmt = conn.prepareStatement("select category_id,categoryname,ordernum from categorylist where ordernum > 0 order by ordernum");
 			
 			rs = pstmt.executeQuery();
 			while(rs.next()){
