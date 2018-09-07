@@ -94,13 +94,13 @@
 					else {
 						int index = 1;
 						
-						pstmt = conn.prepareStatement("insert into story (Story_id,csvfilename,title,writer,summary,category_id,imgname,recommend,totalcount,director) values(?,?,?,?,?,?,?,?,?,?)");
+						pstmt = conn.prepareStatement("insert into story (Story_id,csvfilename,title,writer,summary,category_id,imgname,recommend,totalcount,director,sort) values(?,?,?,?,?,?,?,?,?,?,?)");
 						
 						for (String output: token) {
 							output = output.replaceAll("\"", "");
 							
 							// int
-							if(index == 6 || index == 8 || index == 9) {
+							if(index == 6 || index == 8 || index == 9 || index == 11) {
 								pstmt.setInt(index, Integer.parseInt(output));
 							}
 							// string

@@ -37,7 +37,7 @@ public class StoryManager {
 		try{
 			conn = ConnectionProvider.getConnection("afgt");
 			
-			pstmt = conn.prepareStatement("select Story_id, csvfilename, title, writer, summary, category_id, imgname, recommend, totalcount, director from story");
+			pstmt = conn.prepareStatement("select Story_id, csvfilename, title, writer, summary, category_id, imgname, recommend, totalcount, director from story order by sort");
 			
 			rs = pstmt.executeQuery();
 			while(rs.next()){

@@ -32,7 +32,7 @@
 <%
 	try {
 		Connection conn = ConnectionProvider.getConnection("afgt");
-		PreparedStatement pstmt = conn.prepareStatement("select Story_id, csvfilename, title, writer, summary, category_id, imgname, recommend, totalcount, director from story");
+		PreparedStatement pstmt = conn.prepareStatement("select Story_id, csvfilename, title, writer, summary, category_id, imgname, recommend, totalcount, director, sort from story");
 		ResultSet rs = pstmt.executeQuery();
 				
 		%>
@@ -49,6 +49,7 @@
 				<td>recommend</td>
 				<td>totalcount</td>
 				<td>director</td>
+				<td>sort</td>
 			</tr>
 		<%
 		while(rs.next()) {
@@ -64,6 +65,7 @@
 				<td><%=String.valueOf(rs.getInt(8))%></td>
 				<td><%=String.valueOf(rs.getInt(9))%></td>
 				<td><%=String.valueOf(rs.getString(10))%></td>
+				<td><%=String.valueOf(rs.getInt(11))%></td>
 			</tr>
 		<%
 		}
