@@ -1083,8 +1083,9 @@
 			long ticketGenTime = 0;
 			int buynum = 0;
 			
-			pstmt = conn.prepareStatement("select buy_num from user_story where uid = ?");
+			pstmt = conn.prepareStatement("select buy_num from user_story where uid = ? and Story_id = ?");
 			pstmt.setString(1, userid);
+			pstmt.setString(2, Storyid);
 			rs = pstmt.executeQuery();
 			
 			if(rs.next()) {
