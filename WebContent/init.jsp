@@ -1232,7 +1232,7 @@
 			pstmt.setInt(4, episodenum);
 			rs = pstmt.executeQuery();
 			if(rs.next()){
-				ret.put("result",2);
+				ret.put("result",3);
 				ret.put("already",1);
 			}else{
 	
