@@ -1079,91 +1079,81 @@
 		else if(cmd.equals("buyepisode")){
 			String Storyid = request.getParameter("StoryId");
 			int episodenum = Integer.valueOf(request.getParameter("episodenum"));
-			int ticketValue = Integer.valueOf(request.getParameter("ticket"));
-			long ticketGenTime = 0;
-			int buynum = 0;
+			int ticketValue = -1;
+			System.out.println("input buyepisode"+Storyid+","+(episodenum+1));
 			
-			pstmt = conn.prepareStatement("select buy_num from user_story where uid = ? and Story_id = ?");
-			pstmt.setString(1, userid);
-			pstmt.setString(2, Storyid);
+			pstmt = conn.prepareStatement("select ticket from episode where Story_id = ? and episode_num = ?");
+			pstmt.setString(1,Storyid);
+			pstmt.setInt(2,episodenum+1);
 			rs = pstmt.executeQuery();
-			
-			if(rs.next()) {
-				buynum = rs.getInt(1);
+			if(rs.next()){
+				ticketValue = rs.getInt(1);
 			}
-		
-			pstmt = conn.prepareStatement("select freeticket, cashticket, freegem, cashgem from user where uid = ?");
-			pstmt.setString(1, userid);
-			rs = pstmt.executeQuery();
-			
-			int freeticket = 0;
-			int cashticket = 0;
-			int freegem = 0;	
-			int cashgem = 0;
-			boolean bugFlag = false;
-			boolean cashorfree = false;		// cash : true , free : false
-			
-			if(buynum >= episodenum + 1) {
-				LogManager.writeNorLog(userid, "already_buy", cmd, "null","null", 0);
-				ret.put("success",1);
-				ret.put("myticket",(freeticket+cashticket));
-			}
-			else {
-
-				while(rs.next()){
-					freeticket = rs.getInt(1);
-					cashticket = rs.getInt(2);
-					freegem = rs.getInt(3);
-					cashgem = rs.getInt(4);
-					
-					if (cashticket >= ticketValue) {
-						pstmt = conn.prepareStatement("update user set cashticket = cashticket - ? where uid = ?");
-						pstmt.setInt(1, ticketValue);
-						pstmt.setString(2, userid);
-						cashticket = cashticket - ticketValue;
-						cashorfree = true;
-					}
-					else {					
-						if(cashticket == 0) {
-							if(freeticket >= ticketValue){
-								pstmt = conn.prepareStatement("update user set freeticket = freeticket - ? where uid = ?");
-								pstmt.setInt(1, ticketValue);
-								pstmt.setString(2, userid);
-								freeticket = freeticket - ticketValue;
-								cashorfree = false;
-							}
-							else {
-								bugFlag = true;
-								System.out.println("ticket error!");
-								LogManager.writeNorLog(userid, "error", cmd, "ticket","null", ticketValue);
-							}
-						}
-						else {
-							pstmt = conn.prepareStatement("update user set cashticket = cashticket - ? where uid = ?");
-							pstmt.setInt(1, cashticket);
-							pstmt.setString(2, userid);
-							
-							if(pstmt.executeUpdate() == 1) {
-								LogManager.writeNorLog(userid, "success_decrease", cmd, "cashticket","null", cashticket);
-								ticketValue = ticketValue - cashticket;
-								cashticket = cashticket - cashticket;
-								LogManager.writeCashLog(userid, freeticket, cashticket, freegem, cashgem);
-								pstmt = conn.prepareStatement("update user set freeticket = freeticket - ? where uid = ?");
-								pstmt.setInt(1, ticketValue);
-								pstmt.setString(2, userid);
-								freeticket = freeticket - ticketValue;
-								cashorfree = false;
-							}
-							else {
-								bugFlag = true;
-								System.out.println("ticket error!");
-								LogManager.writeNorLog(userid, "fail_decrease", cmd, "cashticket","null", cashticket);
-							}
-						}
-					}
-				}
+			if(ticketValue<0){
+				ret.put("error",1);
+			}else{
+				long ticketGenTime = 0;
+				int buynum = 0;
 				
-				if (!bugFlag) {
+				pstmt = conn.prepareStatement("select buy_num from user_story where uid = ? and Story_id = ?");
+				pstmt.setString(1, userid);
+				pstmt.setString(2, Storyid);
+				rs = pstmt.executeQuery();
+				
+				if(rs.next()) {
+					buynum = rs.getInt(1);
+				}
+			
+				pstmt = conn.prepareStatement("select freeticket, cashticket, freegem, cashgem from user where uid = ?");
+				pstmt.setString(1, userid);
+				rs = pstmt.executeQuery();
+				
+				int freeticket = 0;
+				int cashticket = 0;
+				int freegem = 0;	
+				int cashgem = 0;
+				boolean bugFlag = false;
+				boolean cashorfree = false;		// cash : true , free : false
+				
+				if(buynum >= episodenum + 1) {
+					LogManager.writeNorLog(userid, "already_buy", cmd, "null","null", 0);
+					ret.put("success",1);
+					ret.put("myticket",(freeticket+cashticket));
+					System.out.println("story check is already");
+				}
+				else {
+					System.out.println("story check is not already");
+	
+					if(rs.next()){
+						freeticket = rs.getInt(1);
+						cashticket = rs.getInt(2);
+						freegem = rs.getInt(3);
+						cashgem = rs.getInt(4);
+						
+						if(cashticket+freeticket<ticketValue){
+							ret.put("success",0);
+							ret.put("myticket",(freeticket+cashticket));
+							System.out.println("not enough ticket");
+						}else{
+							System.out.println("enough ticket"+cashticket+","+freeticket+","+ticketValue);						
+							if(cashticket >= ticketValue){
+								System.out.println("Case :1");
+								pstmt = conn.prepareStatement("update user set cashticket = cashticket - ? where uid = ?");
+								pstmt.setInt(1,ticketValue);
+								pstmt.setString(2, userid);
+								cashorfree = true;;
+							}else{
+								System.out.println("Case :2");
+								int minusT = ticketValue - cashticket;
+								pstmt = conn.prepareStatement("update user set cashticket = 0, freeticket = freeticket -? where uid = ?");
+								pstmt.setInt(1, minusT);
+								pstmt.setString(2, userid);
+								cashorfree = true;
+								if(cashticket == 0)cashorfree = false;
+							}
+						}
+					}
+					
 					if(pstmt.executeUpdate() == 1) {
 						if(cashorfree) {
 							LogManager.writeNorLog(userid, "success_decrease", cmd, "cashticket", "null", ticketValue);
@@ -1216,7 +1206,7 @@
 						}
 					}
 					else {
-						ret.put("success",0);
+						ret.put("error",1);
 						if(cashorfree) {
 							LogManager.writeNorLog(userid, "fail_decrease", cmd, "cashticket", "null", ticketValue);
 						}
