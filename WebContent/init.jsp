@@ -24,6 +24,7 @@
 <%@ page import="com.wingsinus.ep.SoundtableManager" %>
 <%@ page import="com.wingsinus.ep.SelectItemData" %>
 <%@ page import="com.wingsinus.ep.TutorialList" %>
+<%@ page import="com.wingsinus.ep.IDDataManager" %>
 <%@ include file="GameVariable.jsp" %>
 <%
 
@@ -1640,6 +1641,19 @@
 		}
 		else if(cmd.equals("getresourceversion")){
 			JSONArray rlist = new JSONArray();
+			JSONArray idlist = new JSONArray();
+			
+			IDDataManager.CheckStoryversion(bundleversion);
+			
+			// id_data
+			ArrayList<IDDataManager> tmpiddata = IDDataManager.getDataAll();
+			for(int i=0;i<tmpiddata.size();i++){
+				IDDataManager iddata = tmpiddata.get(i);
+				JSONObject data = new JSONObject();
+				data.put("keyname", iddata.keyname);
+				data.put("id", iddata.id);
+				idlist.add(data);
+			}
 			
 			pstmt = conn.prepareStatement("select AssetBundleName,version from AssetBundleVersion");
 			rs = pstmt.executeQuery();
@@ -1651,8 +1665,10 @@
 				data.put("version",rs.getInt(2));
 				rlist.add(data);
 			}
+			
 			ret.put("cliversion",clientversion);
 			ret.put("resourceversion",rlist);
+			ret.put("iddatalist", idlist);
 		}
 
 		else if(cmd.equals("question")) {
