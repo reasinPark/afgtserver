@@ -3,5 +3,5 @@
 <%
 int testint = 537;
 int bundleversion = 1; 
-int clientversion = 1;
+int clientversion = 2;
 %>
