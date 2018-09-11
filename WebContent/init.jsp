@@ -1339,7 +1339,7 @@
 								System.out.println("my data is :"+rs.getInt(1)+", "+rs.getString(2)+","+rs.getInt(3));
 								selectlist.add(sdata);
 							}
-							LogManager.writeNorLog(userid,"success_write_userchoice",cmd,"null","null",0);
+							LogManager.writeNorLog(userid,"success_write_userchoice",cmd,Storyid,String.valueOf(episodenum),data.Price);
 							ret.put("userselectlist",selectlist);
 							ret.put("result",1);
 							
