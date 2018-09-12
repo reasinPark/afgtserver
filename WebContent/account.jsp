@@ -42,6 +42,10 @@
 			
 			String token = request.getParameter("token");
 			String service = request.getParameter("service");
+			String os = request.getParameter("os");
+			if(os == null) {
+				os = "oldversion";
+			}
 					
 			pstmt = conn.prepareStatement("select uid from user where token = ? and service = ?");
 			pstmt.setString(1, token);
@@ -55,10 +59,11 @@
 				// 이전에 연동을 한 유저라면
 				String exist_uid = rs.getString(1);
 				
-				pstmt = conn.prepareStatement("update user set token = ?, service = ? where uid = ?");
+				pstmt = conn.prepareStatement("update user set token = ?, service = ?, os = ? where uid = ?");
 				pstmt.setString(1, token);
 				pstmt.setString(2, service);
-				pstmt.setString(3, exist_uid);
+				pstmt.setString(3, os);
+				pstmt.setString(4, exist_uid);
 				
 				if(pstmt.executeUpdate()>0){
 					LogManager.writeNorLog(exist_uid, "link_success_"+service, cmd, "null","null", 0);
@@ -112,10 +117,11 @@
 								LogManager.writeNorLog(uid, "make_uid_fail_" + service, cmd, "null","null", 0);
 								break;
 							}else{
-								pstmt = conn.prepareStatement("insert into user (uid,token,service) values(?,?,?)");
+								pstmt = conn.prepareStatement("insert into user (uid,token,service,os) values(?,?,?,?)");
 								pstmt.setString(1, uid);
 								pstmt.setString(2, token);
 								pstmt.setString(3, service);
+								pstmt.setString(4, os);
 								r = pstmt.executeUpdate();
 								if(r == 1){
 									ret.put("uid", uid);
@@ -134,10 +140,11 @@
 					
 				}else{
 					// Guest 일 때
-					pstmt = conn.prepareStatement("update user set token = ?, service = ? where uid = ?");
+					pstmt = conn.prepareStatement("update user set token = ?, service = ?, os = ? where uid = ?");
 					pstmt.setString(1, token);
 					pstmt.setString(2, service);
-					pstmt.setString(3, userid);
+					pstmt.setString(3, os);
+					pstmt.setString(4, userid);
 					
 					if(pstmt.executeUpdate()>0){
 						LogManager.writeNorLog(userid, "login_success_" + service, cmd, "null","null", 0);

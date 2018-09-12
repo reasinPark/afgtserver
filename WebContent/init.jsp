@@ -71,6 +71,10 @@
 			
 			// csv Test parameter by Hong-Min
 			String csvserver = request.getParameter("csvserver");
+			String os = request.getParameter("os");
+			if(os == null) {
+				os = "oldversion";
+			}
 			
 			if(r == 1){
 				pstmt = conn.prepareStatement("select * from user_regist where UUID = ?");
@@ -87,8 +91,9 @@
 						LogManager.writeNorLog(uid, "fail", cmd, "null","null", 0);
 						break;
 					}else{
-						pstmt = conn.prepareStatement("insert into user (uid) values(?)");
+						pstmt = conn.prepareStatement("insert into user (uid, os) values(?,?)");
 						pstmt.setString(1, uid);
+						pstmt.setString(2, os);
 						r = pstmt.executeUpdate();
 						if(r == 1){
 							ret.put("uid", uid);
