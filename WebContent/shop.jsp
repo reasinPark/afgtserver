@@ -76,13 +76,13 @@
 			String ident = request.getParameter("ident");
 			String item = request.getParameter("item");
 			int market = 2;
-			if(request.getParameter("market")!=null)Integer.parseInt(request.getParameter("market").toString());
+			if(request.getParameter("market")!=null)market = Integer.parseInt(request.getParameter("market").toString());
 			String receipt = "fake receipt";
 			if(request.getParameter("receipt")!=null)receipt = request.getParameter("receipt");
-			System.out.println("receipt is :"+receipt);
+			System.out.println("receipt is :"+receipt+","+market);
 			
 			JSONObject payResult = newCheckreceipt(receipt,market);
-			if(payResult != null && payResult.get("productId")!=null){
+			if((ConnectionProvider.afgt_build_ver==0&&market==0)||(payResult != null && payResult.get("productId")!=null)){
 				shopManager data = shopManager.getData(shopid);
 				int getgem = data.gem;
 				int getticket = data.ticket;
@@ -95,10 +95,12 @@
 
 				if(pstmt.executeUpdate()>0){
 					if(getgem != 0) {
+						if(payResult==null)payResult.put("market",0);
 						LogManager.writeNorLog(userid, "success_increase", cmd,payResult.get("market").toString()+item, ident, getgem);
 						LogManager.writeReceipt(userid, item, ident);
 					}
 					if(getticket != 0) {
+						if(payResult==null)payResult.put("market",0);
 						LogManager.writeNorLog(userid, "success_increase", cmd, payResult.get("market").toString()+item, ident, getticket);
 						LogManager.writeReceipt(userid, item, ident);
 					}
@@ -114,6 +116,7 @@
 						if (ticketsum > 0) {
 							ret.put("getticket", 1);
 						}
+						ret.put("getticket",0);
 						ret.put("ticket",ticketsum);
 						ret.put("gem",gemsum);
 						ret.put("addticket",getticket);
