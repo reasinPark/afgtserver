@@ -75,7 +75,7 @@
 			int shopid = Integer.valueOf(request.getParameter("shopid"));
 			String ident = request.getParameter("ident");
 			String item = request.getParameter("item");
-			int market = 1;
+			int market = 2;
 			if(request.getParameter("market")!=null)Integer.parseInt(request.getParameter("market").toString());
 			String receipt = "fake receipt";
 			if(request.getParameter("receipt")!=null)receipt = request.getParameter("receipt");

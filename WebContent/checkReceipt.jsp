@@ -84,7 +84,7 @@ public JSONObject newCheckreceipt(String receipt,int store)throws Exception{// s
 			jsonReceipt.put("receipt-data",oriJson);
 			//https://buy.itunes.apple.com/verifyReceipt		//실서버 적용 주소
 			//https://sandbox.itunes.apple.com/verifyReceipt		//테스트용 주소
-			URL url = new URL("https://sandbox.itunes.apple.com/verifyReceipt");
+			URL url = new URL("https://buy.itunes.apple.com/verifyReceipt");
 			HttpsURLConnection con = (HttpsURLConnection)url.openConnection();
 			con.setRequestMethod("POST");
 			con.setRequestProperty("Accept-Language","en-US,en;q=0.5");
@@ -132,6 +132,65 @@ public JSONObject newCheckreceipt(String receipt,int store)throws Exception{// s
 			if(rd != null){
 				rd.close();
 				rd = null;
+			}
+		}
+		if(resultCode == 21007){
+			resultCode = -1;
+			try{
+				String responseTxt;
+				JSONObject jsonReceipt = new JSONObject();
+				jsonReceipt.put("receipt-data",oriJson);
+				//https://buy.itunes.apple.com/verifyReceipt		//실서버 적용 주소
+				//https://sandbox.itunes.apple.com/verifyReceipt		//테스트용 주소
+				URL url = new URL("https://sandbox.itunes.apple.com/verifyReceipt");
+				HttpsURLConnection con = (HttpsURLConnection)url.openConnection();
+				con.setRequestMethod("POST");
+				con.setRequestProperty("Accept-Language","en-US,en;q=0.5");
+				con.setDoOutput(true);
+				String parameter = jsonReceipt.toString();
+				wr = new OutputStreamWriter(con.getOutputStream());
+				wr.write(parameter);
+				wr.flush();
+				wr.close();
+				wr = null;
+				rd = new BufferedReader(new InputStreamReader(con.getInputStream(),"UTF-8"));
+				String line = null;
+				StringBuilder sb = new StringBuilder();
+				while((line = rd.readLine())!=null){
+					sb.append(line);
+				}
+				rd.close();
+				rd = null;
+				JSONObject jsonResult = (JSONObject) parser.parse(sb.toString());
+				resultCode = Integer.parseInt(jsonResult.get("status").toString());
+				if(resultCode == 0){
+					receiptJson = (JSONObject) jsonResult.get("receipt");
+					//System.out.println("receiptJson is :"+receiptJson.toString());
+					JSONArray inAppArray = (JSONArray)receiptJson.get("in_app");
+					//System.out.println("Json Array is :"+inAppArray.toString());
+					JSONObject inAppJson = (JSONObject)inAppArray.get(0);
+					//System.out.println("in App Json is :"+inAppJson.toString());
+					order = inAppJson.get("original_transaction_id").toString();
+					productId = inAppJson.get("product_id").toString();
+				}else{
+					
+				}
+			}catch(Exception e){
+				purchaseDelayMillis = System.currentTimeMillis() - purchaseDelayMillis;
+				String errorTxt = null;
+				if(e.getStackTrace() != null && e.getStackTrace().length > 0){
+					errorTxt = e.getStackTrace()[0].toString();
+				}
+				e.printStackTrace();
+			}finally{
+				if(wr != null){
+					wr.close();
+					wr = null;
+				}
+				if(rd != null){
+					rd.close();
+					rd = null;
+				}
 			}
 		}
 	}
