@@ -14,6 +14,7 @@
 <%@ page import="com.wingsinus.ep.cashtester" %>
 <%@ page import="com.wingsinus.ep.LogManager" %>
 <%@ page import="com.wingsinus.ep.shopManager" %>
+<%@ include file="checkReceipt.jsp" %>
 <%
 	request.setCharacterEncoding("UTF-8");
 	// test log
@@ -38,7 +39,7 @@
 		JSONObject ret = new JSONObject();
 		
 		String cmd = request.getParameter("cmd");
-		
+		System.out.println("system out println in shop");
 		if (cmd.equals("loadshop")){
 			JSONArray slist = new JSONArray();
 			ArrayList<shopManager> smp = shopManager.getDataAll();
@@ -74,62 +75,73 @@
 			int shopid = Integer.valueOf(request.getParameter("shopid"));
 			String ident = request.getParameter("ident");
 			String item = request.getParameter("item");
+			int market = 1;
+			if(request.getParameter("market")!=null)Integer.parseInt(request.getParameter("market").toString());
+			String receipt = "fake receipt";
+			if(request.getParameter("receipt")!=null)receipt = request.getParameter("receipt");
+			System.out.println("receipt is :"+receipt);
 			
-			shopManager data = shopManager.getData(shopid);
-			int getgem = data.gem;
-			int getticket = data.ticket;
-						
-			// 유저 아이템 증가
-			pstmt = conn.prepareStatement("update user set cashticket = cashticket + ?, cashgem = cashgem + ? where uid = ?");
-			pstmt.setInt(1, getticket);
-			pstmt.setInt(2, getgem);
-			pstmt.setString(3, userid);
-			
-			if(pstmt.executeUpdate()>0){
-				if(getgem != 0) {
-					LogManager.writeNorLog(userid, "success_increase", cmd, item, ident, getgem);
-					LogManager.writeReceipt(userid, item, ident);
-				}
-				if(getticket != 0) {
-					LogManager.writeNorLog(userid, "success_increase", cmd, item, ident, getticket);
-					LogManager.writeReceipt(userid, item, ident);
-				}
+			JSONObject payResult = newCheckreceipt(receipt,market);
+			if(payResult != null && payResult.get("productId")!=null){
+				shopManager data = shopManager.getData(shopid);
+				int getgem = data.gem;
+				int getticket = data.ticket;
 				
-				pstmt = conn.prepareStatement("select freegem,cashgem,freeticket,cashticket from user where uid = ?");
-				pstmt.setString(1, userid);
-				rs = pstmt.executeQuery();
-				if(rs.next()){
-					LogManager.writeCashLog(userid, rs.getInt("freeticket"), rs.getInt("cashticket"), rs.getInt("freegem"), rs.getInt("cashgem"));
-					
-					int gemsum = rs.getInt(1)+rs.getInt(2);
-					int ticketsum = rs.getInt(3)+rs.getInt(4);
-					if (ticketsum > 0) {
-						ret.put("getticket", 1);
-					}
-					ret.put("ticket",ticketsum);
-					ret.put("gem",gemsum);
-					ret.put("addticket",getticket);
-					ret.put("addgem",getgem);
-					ret.put("success", 1);
-				}
-				else {
+				// 유저 아이템 증가
+				pstmt = conn.prepareStatement("update user set cashticket = cashticket + ?, cashgem = cashgem + ? where uid = ?");
+				pstmt.setInt(1, getticket);
+				pstmt.setInt(2, getgem);
+				pstmt.setString(3, userid);
+
+				if(pstmt.executeUpdate()>0){
 					if(getgem != 0) {
-						LogManager.writeNorLog(userid, "fail_cashlog", cmd, item, ident, getgem);
+						LogManager.writeNorLog(userid, "success_increase", cmd,payResult.get("market").toString()+item, ident, getgem);
+						LogManager.writeReceipt(userid, item, ident);
 					}
 					if(getticket != 0) {
-						LogManager.writeNorLog(userid, "fail_cashlog", cmd, item, ident, getticket);
+						LogManager.writeNorLog(userid, "success_increase", cmd, payResult.get("market").toString()+item, ident, getticket);
+						LogManager.writeReceipt(userid, item, ident);
+					}
+					
+					pstmt = conn.prepareStatement("select freegem,cashgem,freeticket,cashticket from user where uid = ?");
+					pstmt.setString(1, userid);
+					rs = pstmt.executeQuery();
+					if(rs.next()){
+						LogManager.writeCashLog(userid, rs.getInt("freeticket"), rs.getInt("cashticket"), rs.getInt("freegem"), rs.getInt("cashgem"));
+						
+						int gemsum = rs.getInt(1)+rs.getInt(2);
+						int ticketsum = rs.getInt(3)+rs.getInt(4);
+						if (ticketsum > 0) {
+							ret.put("getticket", 1);
+						}
+						ret.put("ticket",ticketsum);
+						ret.put("gem",gemsum);
+						ret.put("addticket",getticket);
+						ret.put("addgem",getgem);
+						ret.put("success", 1);
+					}
+					else {
+						if(getgem != 0) {
+							LogManager.writeNorLog(userid, "fail_cashlog", cmd, item, ident, getgem);
+						}
+						if(getticket != 0) {
+							LogManager.writeNorLog(userid, "fail_cashlog", cmd, item, ident, getticket);
+						}
+						ret.put("success", 0);
+					}
+				}else{
+					if(getgem != 0) {
+						LogManager.writeNorLog(userid, "fail_increase", cmd, item, ident, getgem);
+					}
+					if(getticket != 0) {
+						LogManager.writeNorLog(userid, "fail_increase", cmd, item, ident, getticket);
 					}
 					ret.put("success", 0);
-				}
+				}		
 			}else{
-				if(getgem != 0) {
-					LogManager.writeNorLog(userid, "fail_increase", cmd, item, ident, getgem);
-				}
-				if(getticket != 0) {
-					LogManager.writeNorLog(userid, "fail_increase", cmd, item, ident, getticket);
-				}
-				ret.put("success", 0);
-			}		
+				ret.put("success",0);
+				LogManager.writeNorLog(userid, "fail_unverifyPaying", cmd, item, ident, 0);
+			}
 		}
 		out.print(ret.toString());
 	}catch(Exception e){
