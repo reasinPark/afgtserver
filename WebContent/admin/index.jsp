@@ -26,6 +26,8 @@
 	<frame src="indicator_story_itempercostume.jsp" name="content">
 	<frame src="indicator_story_itemperstory.jsp" name="content">
 	<frame src="indicator_user_payerlist.jsp" name="content">
+	<frame src="indicator_user_readfullrate.jsp" name="content">
+	<frame src="indicator_user_usegem.jsp" name="content">
 	<frame src="question.jsp" name="content">
 </frameset>
 </HTML>

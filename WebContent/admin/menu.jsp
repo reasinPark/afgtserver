@@ -138,6 +138,16 @@
 			<a href="indicator_user_payerlist.jsp" target="content">결제 유저 목록</a>
 		</td>
 	</tr>
+	<tr>
+		<td>
+			<a href="indicator_user_readfullrate.jsp" target="content">완독률</a>
+		</td>
+	</tr>
+	<tr>
+		<td>
+			<a href="indicator_user_usegem.jsp" target="content">이야기별 패션 아이템 사용 젬 수</a>
+		</td>
+	</tr>
 	<tr height = 5px></tr>
 	<tr>
 		<td style="font-size: 15px; font-weight: bold;">이야기 데이터 상세</td>
