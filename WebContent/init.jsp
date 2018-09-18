@@ -33,6 +33,7 @@
 	Statement stmt = null;
 	Connection conn = ConnectionProvider.getConnection("afgt");
 	ResultSet rs = null;
+	int Storyversion = 0;
 	try{
 			
 		long now = 0;
@@ -48,6 +49,13 @@
 		String userid = request.getParameter("uid");
 		
 		JSONObject ret = new JSONObject();
+		
+		rs = stmt.executeQuery("select storyversion from story_version limit 1");
+		if(rs.next()){
+			Storyversion = rs.getInt(1);
+		}
+		
+		System.out.println("story version is :"+Storyversion);
 		
 		String cmd = request.getParameter("cmd");
 		if (cmd.equals("registuser")){
@@ -276,13 +284,13 @@
 			String service = "";
 			String token = "";
 			
-			BannerManager.CheckStoryversion(bundleversion);
+			BannerManager.CheckStoryversion(Storyversion);
 			
-			CategoryList.CheckStoryversion(bundleversion);
+			CategoryList.CheckStoryversion(Storyversion);
 			
-			EpisodeList.CheckStoryversion(bundleversion);
+			EpisodeList.CheckStoryversion(Storyversion);
 			
-			SelectItemData.CheckStoryversion(bundleversion);
+			SelectItemData.CheckStoryversion(Storyversion);
 			
 			
 			

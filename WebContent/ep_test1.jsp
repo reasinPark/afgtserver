@@ -22,7 +22,7 @@
 	Statement stmt = null;
 	Connection conn = ConnectionProvider.getConnection("afgt");
 	ResultSet rs = null;
-	
+	int Storyversion = 0;	
 	try {
 		
 		pstmt = conn.prepareStatement("SELECT DATE_FORMAT(now(), '%Y-%m-%d');");
@@ -31,6 +31,13 @@
 		String uid = request.getParameter("uid");
 		
 		rs = pstmt.executeQuery();
+
+		rs = stmt.executeQuery("select storyversion from story_version limit 1");
+		if(rs.next()){
+			Storyversion = rs.getInt(1);
+		}
+		
+		System.out.println("story version is :"+Storyversion);
 		
 		Calendar date = Calendar.getInstance();
 		String strTime = date.get(Calendar.HOUR_OF_DAY) + ":" + date.get(Calendar.MINUTE) + ":" + date.get(Calendar.SECOND);
@@ -58,7 +65,7 @@
 		
 		if (cmd.equals("loadstory")){
 			
-			StoryManager.CheckStoryversion(bundleversion);
+			StoryManager.CheckStoryversion(Storyversion);
 			
 			ArrayList<StoryManager> stList = StoryManager.getDataAll();
 	
