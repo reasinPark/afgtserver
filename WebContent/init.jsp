@@ -1477,93 +1477,100 @@
 			ret.put("tutoriallist", tlist);
 		}
 		else if(cmd.equals("buyadpass")){
-			// check adpass count and date
-			int passprice = 10;
+			boolean freepass = true;
 			
-			pstmt = conn.prepareStatement("select adpass,adpasscount,freegem,cashgem,freeticket,cashticket from user where uid = ?");
-			pstmt.setString(1, userid);
-			
-			boolean passlive = false;
-			long livetime = 24*31*60*60;			
-			int freegem = 0;
-			int cashgem = 0;
-			int freeticket = 0;
-			int cashticket = 0;
-			
-			rs = pstmt.executeQuery();
-			if(rs.next()){
-				long adpasstime = rs.getTimestamp(1).getTime()/1000;
-				int adpasscount = rs.getInt(2);
-				freegem = rs.getInt(3);
-				cashgem = rs.getInt(4);
-				freeticket = rs.getInt(5);
-				cashticket = rs.getInt(6);
+			if(!freepass){
+				// check adpass count and date
+				int passprice = 10;
 				
-				if(adpasscount==1&&adpasstime+livetime>=now){
-					passlive = true;
+				pstmt = conn.prepareStatement("select adpass,adpasscount,freegem,cashgem,freeticket,cashticket from user where uid = ?");
+				pstmt.setString(1, userid);
+				
+				boolean passlive = false;
+				long livetime = 24*31*60*60;			
+				int freegem = 0;
+				int cashgem = 0;
+				int freeticket = 0;
+				int cashticket = 0;
+				
+				rs = pstmt.executeQuery();
+				if(rs.next()){
+					long adpasstime = rs.getTimestamp(1).getTime()/1000;
+					int adpasscount = rs.getInt(2);
+					freegem = rs.getInt(3);
+					cashgem = rs.getInt(4);
+					freeticket = rs.getInt(5);
+					cashticket = rs.getInt(6);
+					
+					if(adpasscount==1&&adpasstime+livetime>=now){
+						passlive = true;
+					}
+					LogManager.writeNorLog(userid,"checkadpass",cmd,"null","null",0);
 				}
-				LogManager.writeNorLog(userid,"checkadpass",cmd,"null","null",0);
-			}
-			
-			if(!passlive){
-				//check user gem
-				boolean cashorfree = false;			// cash : true, free : false
-				if(freegem+cashgem>=passprice){
-					int aftercash = 0;
-					int afterfree = 0;
-					if(cashgem>=passprice){
-						aftercash = cashgem-passprice;
-						afterfree = freegem;
-						cashorfree = true;
+				
+				if(!passlive){
+					//check user gem
+					boolean cashorfree = false;			// cash : true, free : false
+					if(freegem+cashgem>=passprice){
+						int aftercash = 0;
+						int afterfree = 0;
+						if(cashgem>=passprice){
+							aftercash = cashgem-passprice;
+							afterfree = freegem;
+							cashorfree = true;
+						}else{
+							aftercash = 0;
+							afterfree = freegem - (passprice - cashgem);
+							cashorfree = false;
+						}
+						pstmt = conn.prepareStatement("update user set adpass = now(), adpasscount = 1, cashgem = ?, freegem = ? where uid = ?");
+						pstmt.setInt(1, aftercash);
+						pstmt.setInt(2, afterfree);
+						pstmt.setString(3, userid);
+						if(pstmt.executeUpdate()==1){
+							ret.put("result", 1);
+							
+							if(cashorfree) {
+								LogManager.writeNorLog(userid,"success_decrease",cmd,"cashgem","null",passprice);
+							}
+							else {
+								LogManager.writeNorLog(userid,"success_decrease",cmd,"cashgem","null",cashgem);
+								LogManager.writeNorLog(userid,"success_decrease",cmd,"freegem","null",passprice-cashgem);
+							}
+							
+							LogManager.writeCashLog(userid, freeticket, cashticket, afterfree, aftercash);
+						}
+						else {
+							if(cashorfree) {
+								LogManager.writeNorLog(userid,"fail_decrease",cmd,"cashgem","null",passprice);
+							}
+							else {
+								LogManager.writeNorLog(userid,"fail_decrease",cmd,"cashgem","null",cashgem);
+								LogManager.writeNorLog(userid,"fail_decrease",cmd,"freegem","null",passprice-cashgem);
+							}
+						}
 					}else{
-						aftercash = 0;
-						afterfree = freegem - (passprice - cashgem);
-						cashorfree = false;
-					}
-					pstmt = conn.prepareStatement("update user set adpass = now(), adpasscount = 1, cashgem = ?, freegem = ? where uid = ?");
-					pstmt.setInt(1, aftercash);
-					pstmt.setInt(2, afterfree);
-					pstmt.setString(3, userid);
-					if(pstmt.executeUpdate()==1){
-						ret.put("result", 1);
-						
-						if(cashorfree) {
-							LogManager.writeNorLog(userid,"success_decrease",cmd,"cashgem","null",passprice);
-						}
-						else {
-							LogManager.writeNorLog(userid,"success_decrease",cmd,"cashgem","null",cashgem);
-							LogManager.writeNorLog(userid,"success_decrease",cmd,"freegem","null",passprice-cashgem);
-						}
-						
-						LogManager.writeCashLog(userid, freeticket, cashticket, afterfree, aftercash);
-					}
-					else {
-						if(cashorfree) {
-							LogManager.writeNorLog(userid,"fail_decrease",cmd,"cashgem","null",passprice);
-						}
-						else {
-							LogManager.writeNorLog(userid,"fail_decrease",cmd,"cashgem","null",cashgem);
-							LogManager.writeNorLog(userid,"fail_decrease",cmd,"freegem","null",passprice-cashgem);
-						}
+						LogManager.writeNorLog(userid,"fail_money",cmd,"null","null",0);
+						ret.put("result",0);//not enough money
 					}
 				}else{
-					LogManager.writeNorLog(userid,"fail_money",cmd,"null","null",0);
-					ret.put("result",0);//not enough money
+					LogManager.writeNorLog(userid,"fail_already",cmd,"null","null",0);
+					ret.put("already", 1);
 				}
+				
+				// update adpass and date
+				// send result
 			}else{
-				LogManager.writeNorLog(userid,"fail_already",cmd,"null","null",0);
-				ret.put("already", 1);
+				ret.put("result",1);
+				ret.put("already",1);
 			}
-			
-			// update adpass and date
-			// send result
 		}
 		else if(cmd.equals("checkadpass")){
 			// check adpass count and date
 			pstmt = conn.prepareStatement("select adpass,adpasscount from user where uid = ?");
 			pstmt.setString(1, userid);
 			
-			boolean passlive = false;
+			boolean passlive = true; // turn off check adpass
 			long livetime = 24*31*60*60;
 			rs = pstmt.executeQuery();
 			if(rs.next()){
