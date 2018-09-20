@@ -10,204 +10,83 @@
 
 <H2>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;완독률</H2>
 <section>
-	<H3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;스토리 별 완독률 (연재된 최종화 누적 조회수/연재된 전체 화 누적 조회수)</H3>
+	<H3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(해당 이야기 마지막화를 완료 한 유니크 합)/(해당 이야기 1화를 1컷이라도 읽은 유니크 합)</H3>
 </section>
 	<%
-	String filepath = "";
-	String filename = "";
-	FileWriter fw = null;
-	String lastweek = "";
-	String today = "";
 	
 	//mysql
 	PreparedStatement pstmt = null;
 	Connection conn = null;
 	ResultSet rs = null;
 
-	String type = request.getParameter("type");
-	String startdate = request.getParameter("startdate");
-	String enddate = request.getParameter("enddate");
 	boolean isfirst = false;
 	
 	conn = ConnectionProvider.getConnection("afgt");
-	pstmt = conn.prepareStatement("select date_format(date_add(now(), interval -7 day),'%Y-%m-%d'),date_format(now(),'%Y-%m-%d')");
-	rs = pstmt.executeQuery();
 	
-	if(rs.next()) {
-		lastweek = rs.getString(1);
-		today = rs.getString(2);
-	}
-	
-	if((startdate!=null) && (enddate!=null)) {
-		isfirst = true;
-	}
-	%>
-
-	<form action="indicator_user_readfullrate.jsp" method="post">
-		<table border = "1" style="border-style:solid;">
-			<tr>
-				<td> 시작 날짜 </td>
-				<td><input type="date" id="startdate" name="startdate" value="<%=((isfirst)? startdate : lastweek)%>" /></td>
-			</tr>
-			<tr>
-				<td> 끝 날짜 </td>
-				<td><input type="date" id="enddate" name="enddate" value="<%=((isfirst)? enddate : today)%>" /></td>
-			</tr>
-			<tr>
-				<td colspan = "2" align="center">
-				<input type="submit" value="검색" /> </td>
-			</tr>
-		</table>
-		<input type="hidden" name="type" value="readfullrate">
-	</form>
-
-	<%
-	
-	try {
-		if(type != null) {
-			%>	
-			<tr>
-				<td> csv로 다운받기 </td>
-			</tr>
+	try {			
+			ArrayList<AdminStoryReadCount> list = new ArrayList<AdminStoryReadCount>();					// 해당 이야기를 1화를 1컷이라도 읽은 유니크 정보 리스트
+			ArrayList<AdminStoryReadCount> maxlist = new ArrayList<AdminStoryReadCount>();				// 이야기 마다 최종화 정보 리스트
+			ArrayList<AdminStoryReadCount> mylist = new ArrayList<AdminStoryReadCount>();				// 해당 이야기 마지막화를 완료한 유니크 정보 리스트
 			
-			<form action="csvfiledownload.jsp" method="post">
-				<input type="hidden" name="filename" value="user_readfullrate">
-				<input type ="submit" value ="다운로드">
-			</form>
-			
-			<%
-			ArrayList<AdminStoryReadCount> list = new ArrayList<AdminStoryReadCount>();
-			ArrayList<AdminStory> titlelist = new ArrayList<AdminStory>();
-			ArrayList<AdminStoryReadCount> totalepisodelist = new ArrayList<AdminStoryReadCount>();
-			
-			pstmt = conn.prepareStatement("select Story_id, title from story");
+			pstmt = conn.prepareStatement("select Story_id,count(UID) from user_story where buy_num >= 1 and view_date >= '2018-09-04 11:00:00' group by Story_id");
 			rs = pstmt.executeQuery();
 			while(rs.next()) {
-				AdminStory data = new AdminStory();
-				data.Story_id = rs.getString(1);
-				data.title = rs.getString(2);
+				AdminStoryReadCount data = new AdminStoryReadCount();
+				data.storyid = rs.getString(1);
+				data.count = rs.getInt(2);
 				
-				titlelist.add(data);
+				list.add(data);
 			}
 			
-			// test
-			if(ConnectionProvider.afgt_build_ver == 0) {
-				filepath = "/usr/share/tomcat6/webapps/tempcsv/";
-			}
-			// live
-			else if(ConnectionProvider.afgt_build_ver == 1) {
-				filepath = "/usr/local/tomcat7/apache-tomcat-7.0.82/webapps/tempcsv/";
-			}
-			
-			filename = "user_readfullrate.csv";
-			fw = new FileWriter(filepath+filename);
-
-			conn = ConnectionProvider.getConnection("logdb");
-			pstmt = conn.prepareStatement("select date_format(regdate, '%Y-%m-%d'), storyid, maxepinum from info_episode where regdate between ? and ?");
-			
-			Timestamp start = Timestamp.valueOf(startdate + " 00:00:00");
-			Timestamp end = Timestamp.valueOf(enddate + " 23:59:59");
-			pstmt.setTimestamp(1, start);
-			pstmt.setTimestamp(2, end);
+			pstmt = conn.prepareStatement("select Story_id, max(episode_num) from episode group by Story_id;");
 			rs = pstmt.executeQuery();
-			
 			while(rs.next()) {
-				String date = rs.getString(1);
-				String storyid = rs.getString(2);
-				int maxepinum = rs.getInt(3);
-								
-				for(int i=0;i<maxepinum;i++) {
-					AdminStoryReadCount asrc = new AdminStoryReadCount();
-					asrc.date = date;
-					asrc.storyid = storyid;
-					asrc.episodenum = i + 1;
-					asrc.count = 0;
-					list.add(asrc);
+				AdminStoryReadCount data = new AdminStoryReadCount();
+				data.storyid = rs.getString(1);
+				data.count = rs.getInt(2);
+				
+				maxlist.add(data);
+				
+				AdminStoryReadCount data2 = new AdminStoryReadCount();
+				data2.storyid = rs.getString(1);
+				data2.count = 0;
+				
+				mylist.add(data2);
+			}
+			
+			for(int i=0;i<maxlist.size();i++) {
+				pstmt = conn.prepareStatement("select count(UID) from user_story where Episode_num = ? and Story_id = ? and view_date >= '2018-09-04 11:00:00'");
+				pstmt.setInt(1, maxlist.get(i).count);
+				pstmt.setString(2, maxlist.get(i).storyid);
+				rs = pstmt.executeQuery();
+				
+				if(rs.next()) {
+					mylist.get(i).count = rs.getInt(1);
 				}
 			}
-			
-			pstmt = conn.prepareStatement("select * from info_episode where regdate between date_format(date_add(now(), interval -1 day), '%Y-%m-%d 00:00:00')" +
-					  "and date_format(date_add(now(), interval -1 day), '%Y-%m-%d 23:59:59')");
-			rs = pstmt.executeQuery();
-
-			while(rs.next()) {
-				String date = rs.getString(1);
-				String storyid = rs.getString(2);
-				int maxepinum = rs.getInt(3);
-								
-				for(int i=0;i<maxepinum;i++) {
-					AdminStoryReadCount asrc = new AdminStoryReadCount();
-					asrc.date = date;
-					asrc.storyid = storyid;
-					asrc.episodenum = i + 1;
-					asrc.count = 0;
-					totalepisodelist.add(asrc);
-				}
-			}
-
-			pstmt = conn.prepareStatement("select date_format(regdate, '%Y-%m-%d'), storyid, episodenum, count from story_readcount " +
-										  "where regdate between ? and ?");
-			pstmt.setTimestamp(1, start);
-			pstmt.setTimestamp(2, end);
-			rs = pstmt.executeQuery();
-
-			fw.append("날짜");
-			fw.append(',');
-			fw.append("스토리명");
-			fw.append(',');
-			fw.append("완독률");
-			fw.append('\n');
 			
 			%>
 			<table border="1" style="border-style:solid;">
 				<tr>
-					<td>날짜</td>
 					<td>스토리명</td>
-					<td>완독률</td>
+					<td>최종화까지 본 유저 수</td>
+					<td>첫 화를 보기 시작한 유저 수</td>
 				</tr>
 			<%
-			/*
-			while(rs.next()) {
-				String date = rs.getString(1);
-				String storyid = rs.getString(2);
-				int epinum = rs.getInt(3);
-				int count = rs.getInt(4);
-				
-				for(int i = 0; i<list.size();i++) {
-					if(list.get(i).date.equals(date) && list.get(i).storyid.equals(storyid) && list.get(i).episodenum == epinum) {
-						list.get(i).count = count;
-						break;
-					}
-				}
+			
+			for(int i=0;i<mylist.size();i++) {
+				%>
+				<tr>
+					<td><%=mylist.get(i).storyid%></td>
+					<td><%=mylist.get(i).count%></td>
+					<td><%=list.get(i).count%></td>
+				</tr>
+				<%
 			}
 			
-			String currentdate = "";
-			
-			for(int i=0;i<list.size();i++) {
-				for(int j=0;j<totalepisodelist.size();j++) {
-					if(list.get(i).storyid.equals(totalepisodelist.get(j).storyid) && (list.get(i).episodenum == totalepisodelist.get(j).episodenum)) {
-						totalepisodelist.get(j).count = totalepisodelist.get(j).count + list.get(i).count;
-					}
-				}
-				
-				if(i+1 ==list.size()) {
-					
-				}
-				else {
-					if(list.get(i).storyid != list.get(i+1).date) {
-						
-					}
-				}
-			}
-			*/
-		
 			%>
 			</table>
 			<%
-			
-			fw.flush();
-			fw.close();
-		}
 	}
 	catch(Exception e) {
 		%>
