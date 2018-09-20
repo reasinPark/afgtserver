@@ -24,6 +24,7 @@
 <%@ page import="com.wingsinus.ep.SoundtableManager" %>
 <%@ page import="com.wingsinus.ep.SelectItemData" %>
 <%@ page import="com.wingsinus.ep.TutorialList" %>
+<%@ page import="com.wingsinus.ep.RouletteTable" %>
 <%@ include file="GameVariable.jsp" %>
 <%
 
@@ -1721,6 +1722,128 @@
 		else if(cmd.equals("checkuiversion")){
 			ret.put("uiversion",bundleversion);
 			ret.put("cliversion",clientversion);
+		}
+		
+		else if(cmd.equals("roulette")) {
+			String service = request.getParameter("service");
+			long gentime = 0;
+			boolean nextflag = false;
+			boolean alreadyflag = false;
+			
+			pstmt = conn.prepareStatement("select gentime from user_roulette where uid = ?");
+			pstmt.setString(1, userid);
+			
+			rs = pstmt.executeQuery();
+			
+			if(rs.next()) {
+				alreadyflag = true;
+				gentime = rs.getTimestamp(1).getTime()/1000;
+				
+				if(gentime > now) {
+					nextflag = false;
+				}
+				else {
+					nextflag = true;
+				}
+			}
+			else {
+				nextflag = true;
+			}
+			
+			if(nextflag) {
+				pstmt = conn.prepareStatement("select item, rand, count from roulette_table");
+				rs = pstmt.executeQuery();
+				
+				ArrayList<RouletteTable> table = new ArrayList<RouletteTable>();
+				Random random = new Random();
+				int value = 0;
+				int res = 0;
+				
+				while(rs.next()) {
+					RouletteTable data = new RouletteTable();
+					data.item = rs.getString(1);
+					data.rand = rs.getInt(2);
+					data.count = rs.getInt(3);
+					table.add(data);
+				}
+				
+				value = random.nextInt(table.get(table.size()-1).rand);
+				System.out.println("random value : " + value);
+				
+				for(int i=0;i<table.size();i++) {
+					if(value < table.get(i).rand) {
+						res = i;
+						System.out.println("res value : " + (res+1));
+						break;
+					}
+				}
+				
+				if(service.equals("Guest")) {
+					if(alreadyflag) {
+						pstmt = conn.prepareStatement("update user_roulette set gentime = date_add(now(), interval 1 day) where uid = ?");
+					}
+					else {
+						pstmt = conn.prepareStatement("insert into user_roulette (uid,gentime) values(?,date_add(now(), interval 1 day))");
+					}
+				}
+				else {
+					if(alreadyflag) {
+						pstmt = conn.prepareStatement("update user_roulette set gentime = date_add(now(), interval 12 hour) where uid = ?");
+					}
+					else {
+						pstmt = conn.prepareStatement("insert into user_roulette (uid,gentime) values(?,date_add(now(), interval 12 hour))");
+					}
+				}
+				
+				pstmt.setString(1, userid);
+				if(pstmt.executeUpdate() > 0) {
+					LogManager.writeNorLog(userid, "success_settime", cmd, "null","null", res+1);
+					
+					if(table.get(res).item.equals("ticket")) {
+						pstmt = conn.prepareStatement("update user set freeticket = freeticket + ? where uid = ?");
+					}
+					else if(table.get(res).item.equals("gem")) {
+						pstmt = conn.prepareStatement("update user set freegem = freegem + ? where uid = ?");
+					}
+					else if(table.get(res).item.equals("vote")) {
+						pstmt = conn.prepareStatement("update user set freevote = freevote + ? where uid = ?");
+					}
+					
+					pstmt.setInt(1, table.get(res).count);
+					pstmt.setString(2, userid);
+					
+					if(pstmt.executeUpdate() > 0) {
+						LogManager.writeNorLog(userid, "success_increase", cmd, "free"+table.get(res).item,"null",table.get(res).count);
+						ret.put("result", 3);
+						
+						pstmt = conn.prepareStatement("select gentime from user_roulette where uid = ?");
+						pstmt.setString(1, userid);
+						rs = pstmt.executeQuery();
+						
+						if(rs.next()) {
+							ret.put("gentime", rs.getTimestamp(1).getTime()/1000);
+							ret.put("itemidx", res+1);
+						}
+						else {
+							LogManager.writeNorLog(userid, "fail_gettime", cmd, "null","null", 0);
+							ret.put("result", 2);
+						}
+					}
+					else {
+						LogManager.writeNorLog(userid, "fail_increase", cmd, "free"+table.get(res).item,"null",table.get(res).count);
+						ret.put("result", 1);
+					}
+				}
+				else {
+					LogManager.writeNorLog(userid, "fail_settime", cmd, "null","null", 0);
+					ret.put("result", 0);
+				}
+				
+			}
+			else {
+				LogManager.writeNorLog(userid, "not_enough_time", cmd, "null","null", 0);
+				ret.put("result", 0);
+			}
 		}
 		
 		out.print(ret.toString());
