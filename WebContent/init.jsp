@@ -1780,22 +1780,29 @@
 				
 				if(service.equals("Guest")) {
 					if(alreadyflag) {
-						pstmt = conn.prepareStatement("update user_roulette set gentime = date_add(now(), interval 1 day) where uid = ?");
+						pstmt = conn.prepareStatement("update user_roulette set gentime = date_add(now(), interval 1 day), itemidx = ? where uid = ?");
+						pstmt.setInt(1, res+1);
+						pstmt.setString(2, userid);
 					}
 					else {
-						pstmt = conn.prepareStatement("insert into user_roulette (uid,gentime) values(?,date_add(now(), interval 1 day))");
+						pstmt = conn.prepareStatement("insert into user_roulette (uid,gentime,itemidx) values(?,date_add(now(), interval 1 day),?)");
+						pstmt.setString(1, userid);
+						pstmt.setInt(2, res+1);
 					}
 				}
 				else {
 					if(alreadyflag) {
-						pstmt = conn.prepareStatement("update user_roulette set gentime = date_add(now(), interval 12 hour) where uid = ?");
+						pstmt = conn.prepareStatement("update user_roulette set gentime = date_add(now(), interval 12 hour), itemidx = ? where uid = ?");
+						pstmt.setInt(1, res+1);
+						pstmt.setString(2, userid);
 					}
 					else {
-						pstmt = conn.prepareStatement("insert into user_roulette (uid,gentime) values(?,date_add(now(), interval 12 hour))");
+						pstmt = conn.prepareStatement("insert into user_roulette (uid,gentime,itemidx) values(?,date_add(now(), interval 12 hour),?)");
+						pstmt.setString(1, userid);
+						pstmt.setInt(2, res+1);
 					}
 				}
 				
-				pstmt.setString(1, userid);
 				if(pstmt.executeUpdate() > 0) {
 					LogManager.writeNorLog(userid, "success_settime", cmd, "null","null", res+1);
 					
@@ -1816,13 +1823,13 @@
 						LogManager.writeNorLog(userid, "success_increase", cmd, "free"+table.get(res).item,"null",table.get(res).count);
 						ret.put("result", 3);
 						
-						pstmt = conn.prepareStatement("select gentime from user_roulette where uid = ?");
+						pstmt = conn.prepareStatement("select gentime,itemidx from user_roulette where uid = ?");
 						pstmt.setString(1, userid);
 						rs = pstmt.executeQuery();
 						
 						if(rs.next()) {
 							ret.put("gentime", rs.getTimestamp(1).getTime()/1000);
-							ret.put("itemidx", res+1);
+							ret.put("itemidx", rs.getInt(2));
 						}
 						else {
 							LogManager.writeNorLog(userid, "fail_gettime", cmd, "null","null", 0);
@@ -1842,6 +1849,30 @@
 			}
 			else {
 				LogManager.writeNorLog(userid, "not_enough_time", cmd, "null","null", 0);
+				ret.put("result", 0);
+			}
+		}
+		
+		else if(cmd.equals("getroulette")) {
+			pstmt = conn.prepareStatement("select gentime,itemidx from user_roulette where uid = ?");
+			pstmt.setString(1, userid);
+			
+			rs = pstmt.executeQuery();
+			
+			if(rs.next()) {
+				long gentime = 0;
+				gentime = rs.getTimestamp(1).getTime()/1000;
+				
+				if(gentime > now) {
+					ret.put("result", 1);
+					ret.put("gentime", gentime);
+					ret.put("itemidx", rs.getInt(2));
+				}
+				else {
+					ret.put("result", 0);
+				}
+			}
+			else {
 				ret.put("result", 0);
 			}
 		}
