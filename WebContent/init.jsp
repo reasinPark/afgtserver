@@ -293,7 +293,7 @@
 			
 			SelectItemData.CheckStoryversion(Storyversion);
 			
-			
+			CostumeData.CheckStoryversion(Storyversion);
 			
 			JSONArray jlist = new JSONArray();
 			JSONArray elist = new JSONArray();

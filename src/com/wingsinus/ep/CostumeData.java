@@ -30,6 +30,7 @@ public class CostumeData {
 	public String HSkinname;
 	public String AFilename;
 	public String ASkinname;
+	public static int nowversion = 0;
 	
 	
 	private static ArrayList<CostumeData> list = null;
@@ -90,6 +91,15 @@ public class CostumeData {
 			list = new ArrayList<CostumeData>();
 			hash = new HashMap<Integer,CostumeData>();
 			initData();
+		}
+	}
+	
+	public static void CheckStoryversion(int chversion){
+		if(nowversion == 0){
+			nowversion = chversion;
+		}else if(nowversion < chversion){
+			nowversion = chversion;
+			CostumeDataReset();
 		}
 	}
 	
