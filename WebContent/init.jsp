@@ -1729,8 +1729,9 @@
 			long gentime = 0;
 			boolean nextflag = false;
 			boolean alreadyflag = false;
+			int count = 0;
 			
-			pstmt = conn.prepareStatement("select gentime from user_roulette where uid = ?");
+			pstmt = conn.prepareStatement("select gentime,count from user_roulette where uid = ?");
 			pstmt.setString(1, userid);
 			
 			rs = pstmt.executeQuery();
@@ -1738,6 +1739,7 @@
 			if(rs.next()) {
 				alreadyflag = true;
 				gentime = rs.getTimestamp(1).getTime()/1000;
+				count = rs.getInt(2);
 				
 				if(gentime > now) {
 					nextflag = false;
@@ -1747,6 +1749,7 @@
 				}
 			}
 			else {
+				alreadyflag = false;
 				nextflag = true;
 			}
 			
@@ -1780,7 +1783,11 @@
 				
 				if(service.equals("Guest")) {
 					if(alreadyflag) {
-						pstmt = conn.prepareStatement("update user_roulette set gentime = date_add(now(), interval 1 day), itemidx = ? where uid = ?");
+						pstmt = conn.prepareStatement("update user_roulette set gentime = date_add(now(), interval 1 day), itemidx = ?, count = count + 1 where uid = ?");
+						if(count == 1) {
+							res = 0;
+							System.out.println("2nd is bonus");	
+						}						
 						pstmt.setInt(1, res+1);
 						pstmt.setString(2, userid);
 					}
@@ -1792,7 +1799,11 @@
 				}
 				else {
 					if(alreadyflag) {
-						pstmt = conn.prepareStatement("update user_roulette set gentime = date_add(now(), interval 12 hour), itemidx = ? where uid = ?");
+						pstmt = conn.prepareStatement("update user_roulette set gentime = date_add(now(), interval 12 hour), itemidx = ?, count = count + 1 where uid = ?");
+						if(count == 1) {
+							res = 0;
+							System.out.println("2nd is bonus");
+						}
 						pstmt.setInt(1, res+1);
 						pstmt.setString(2, userid);
 					}
