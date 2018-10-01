@@ -87,6 +87,12 @@
 				<td colspan="10" align="center"> 룰렛 시간 리셋하기  <input type="submit"  value="    적용    "></td>
 			</tr>
 		</form>
+		<form target="result_frame" method="post" name="update_form" id="story_form" action="user_roulette_resetcount.jsp">
+		<input type="hidden" name="uid" value="<%=((isFound)? uid :"") %>">
+			<tr>
+				<td colspan="10" align="center"> 룰렛 카운트 리셋하기  <input type="submit"  value="    적용    "></td>
+			</tr>
+		</form>
 		<%} %>
 		<table border="1" style="border-style: solid;" width="90%">
 		<tr>
