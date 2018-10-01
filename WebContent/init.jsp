@@ -1843,6 +1843,7 @@
 						if(rs.next()) {
 							ret.put("gentime", rs.getTimestamp(1).getTime()/1000);
 							ret.put("itemidx", rs.getInt(2));
+							ret.put("nowtime", now);
 						}
 						else {
 							LogManager.writeNorLog(userid, "fail_gettime", cmd, "null","null", 0);
@@ -1880,6 +1881,7 @@
 					ret.put("result", 1);
 					ret.put("gentime", gentime);
 					ret.put("itemidx", rs.getInt(2));
+					ret.put("nowtime", now);
 				}
 				else {
 					ret.put("result", 0);
