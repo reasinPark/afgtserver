@@ -5,6 +5,7 @@
 	<frame src="menu.jsp" name="menu">
 	<frame src="user.jsp" name="content">
 	<frame src="tutorial.jsp" name="content">
+	<frame src="user_roulette_reset.jsp" name="content">
 	<frame src="storyupload.jsp" name="content">
 	<frame src="csvupload_banner.jsp" name="content">
 	<frame src="csvupload_story.jsp" name="content">

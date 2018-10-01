@@ -25,6 +25,11 @@
 	</tr>
 	<tr>
 		<td>
+			<a href="user_roulette_reset.jsp" target="content">유저 룰렛 시간 리셋</a>
+		</td>
+	</tr>
+	<tr>
+		<td>
 			<a href="storyVersion.jsp" target="content">스토리 버전 수정</a>
 		</td>
 	</tr>
