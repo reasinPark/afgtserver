@@ -1725,7 +1725,9 @@
 		}
 		
 		else if(cmd.equals("roulette")) {
-			String service = request.getParameter("service");
+			//All user is 24 hour waiting
+			//String service = request.getParameter("service");
+			String service = "Guest";
 			long gentime = 0;
 			boolean nextflag = false;
 			boolean alreadyflag = false;
