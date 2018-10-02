@@ -158,6 +158,11 @@
 			<a href="indicator_user_usegem.jsp" target="content">이야기별 패션 아이템 사용 젬 수</a>
 		</td>
 	</tr>
+	<tr>
+		<td>
+			<a href="indicator_user_selectitem.jsp" target="content">이야기별 선택지 구매 횟수</a>
+		</td>
+	</tr>
 	<tr height = 5px></tr>
 	<tr>
 		<td style="font-size: 15px; font-weight: bold;">이야기 데이터 상세</td>
