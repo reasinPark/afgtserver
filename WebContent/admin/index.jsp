@@ -30,6 +30,7 @@
 	<frame src="indicator_user_readfullrate.jsp" name="content">
 	<frame src="indicator_user_usegem.jsp" name="content">
 	<frame src="indicator_user_selectitem.jsp" name="content">
+	<frame src="indicator_user_roulettecount.jsp" name="content">
 	<frame src="question.jsp" name="content">
 </frameset>
 </HTML>
