@@ -1865,8 +1865,7 @@
 				LogManager.writeNorLog(userid, "not_enough_time", cmd, "null","null", 0);
 				ret.put("result", 0);
 			}
-		}
-		
+		}		
 		else if(cmd.equals("getroulette")) {
 			pstmt = conn.prepareStatement("select gentime,itemidx from user_roulette where uid = ?");
 			pstmt.setString(1, userid);
@@ -1890,6 +1889,18 @@
 			else {
 				ret.put("result", 0);
 			}
+		}
+		else if(cmd.equals("getinvenlist")){//인벤 풀 리스트 
+			
+		}
+		else if(cmd.equals("getmyactiverentalbook")){//모든 적용중인 대여권 목록  
+			
+		}
+		else if(cmd.equals("userentalbook")){//대여권 사용하기 
+			
+		}
+		else if(cmd.equals("checkattend")){ //출석 확인 
+			
 		}
 		
 		out.print(ret.toString());
