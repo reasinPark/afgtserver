@@ -22,6 +22,7 @@
 <%@ page import="com.wingsinus.ep.ChlistManager" %>
 <%@ page import="com.wingsinus.ep.ObdataManager" %>
 <%@ page import="com.wingsinus.ep.SoundtableManager" %>
+<%@ page import="com.wingsinus.ep.ItemDataManager" %>
 <%@ page import="com.wingsinus.ep.SelectItemData" %>
 <%@ page import="com.wingsinus.ep.TutorialList" %>
 <%@ page import="com.wingsinus.ep.RouletteTable" %>
@@ -295,6 +296,8 @@
 			
 			CostumeData.CheckStoryversion(Storyversion);
 			
+			ItemDataManager.CheckStoryversion(Storyversion);
+			
 			JSONArray jlist = new JSONArray();
 			JSONArray elist = new JSONArray();
 			JSONArray blist = new JSONArray();
@@ -304,6 +307,7 @@
 			JSONArray olist = new JSONArray();
 			JSONArray slist = new JSONArray();
 			JSONArray sellist = new JSONArray();
+			JSONArray ilist = new JSONArray(); // itemdata list
 			
 			rs = pstmt.executeQuery();
 			System.out.println("rs count "+userid);
@@ -411,6 +415,18 @@
 					data.put("epinum",smp.Epinum);
 					System.out.println("data is :"+smp.SelectId+","+smp.Epinum);
 					sellist.add(data);
+				}
+				
+				ArrayList<ItemDataManager> itmp = ItemDataManager.getDataAll();
+				for(int i=0;i<itmp.size();i++){
+					ItemDataManager imp = itmp.get(i);
+					JSONObject data = new JSONObject();
+					data.put("itemid",imp.itemid);
+					data.put("name",imp.name);
+					data.put("scope",imp.scope);
+					data.put("storyid",imp.Story_id);
+					data.put("img",imp.img);
+					ilist.add(data);
 				}
 				
 				// chdata, chlist, obdata, soundtable 를 서버에서 받아오기.
@@ -573,6 +589,53 @@
 			else {
 				LogManager.writeNorLog(userid, "fail_lastjointime", cmd, "null","null", 0);
 			}
+			
+			//기간 지난 대여권 및 기간 지난 인벤 정리 
+			pstmt = conn.prepareStatement("delete from user_rentalbook where uid = ? and starttime >= date_add(now(),interval 1 day)");
+			pstmt.setString(1,userid);
+			pstmt.executeUpdate();
+			
+			pstmt = conn.prepareStatement("delete from user_inven where uid = ? and expiretime <= now()");
+			pstmt.setString(1,userid);
+			pstmt.executeUpdate();
+			
+			//유저 대여권 정보 로드 
+			pstmt = conn.prepareStatement("select Story_id, scope, starttime, startepisode from user_rentalbook where uid = ?");
+			pstmt.setString(1, userid);
+			rs = pstmt.executeQuery();
+			JSONArray prlist = new JSONArray();
+			while(rs.next()){
+				JSONObject rdata = new JSONObject();
+				rdata.put("storyid",rs.getString(1));
+				rdata.put("scope",rs.getInt(2));
+				rdata.put("starttime",rs.getTimestamp(3).getTime()/1000);
+				rdata.put("startepisode",rs.getInt(4));
+				prlist.add(rdata);
+			}
+			
+			//유저 인벤 정보 로드 
+			pstmt = conn.prepareStatement("select idx,itemid, count, starttime, expiretime, title, message, img, userconfirm from user_inven where uid = ?");
+			pstmt.setString(1, userid);
+			rs = pstmt.executeQuery();
+			JSONArray pilist = new JSONArray();
+			while(rs.next()){
+				JSONObject idata = new JSONObject();
+				idata.put("idx",rs.getInt(1));
+				idata.put("itemid",rs.getInt(2));
+				idata.put("count",rs.getInt(3));
+				idata.put("starttime",rs.getTimestamp(4).getTime()/1000);
+				idata.put("expiretime",rs.getTime(5).getTime()/1000);
+				idata.put("title", rs.getString(6));
+				idata.put("message",rs.getString(7));
+				idata.put("img",rs.getString(8));
+				idata.put("userconfirm",rs.getInt(9));
+				pilist.add(idata);
+			}
+			
+			
+			ret.put("userinvenlist",pilist);
+			ret.put("userrentalbooklist",prlist);
+			ret.put("itemdatalist",ilist);
 			
 			ret.put("userstorylikelist", likelist);
 			ret.put("userselectlist",selectlist);
@@ -1890,14 +1953,206 @@
 				ret.put("result", 0);
 			}
 		}
-		else if(cmd.equals("getinvenlist")){//인벤 풀 리스트 
+		else if(cmd.equals("checkrentalbook")){ // 모든 대여권 및 인벤 정보
+			//인벤에서 시간 지난거 지워버리기 
+			pstmt = conn.prepareStatement("delete from user_inven where uid = ? and expiretime <= now()");
+			pstmt.setString(1,userid);
+			pstmt.executeUpdate();
 			
+			//목록 추출해서 보내기 
+			pstmt = conn.prepareStatement("select idx,itemid,count,starttime,expiretime,title,message,img,userconfirm from user_inven where uid = ?");
+			pstmt.setString(1,userid);
+			rs = pstmt.executeQuery();
+			JSONArray invenlist = new JSONArray();
+			while(rs.next()){
+				JSONObject idata = new JSONObject();
+				int idx = rs.getInt(1);
+				int itemid = rs.getInt(2);
+				int count = rs.getInt(3);
+				long starttime = rs.getTimestamp(4).getTime()/1000;
+				long expiretime = rs.getTimestamp(5).getTime()/1000;
+				String title = rs.getString(6);
+				String message = rs.getString(7);
+				String img = rs.getString(8);
+				int userconfirm = rs.getInt(9);
+				
+				idata.put("invenid",idx);
+				idata.put("itemid",itemid);
+				idata.put("count",count);
+				idata.put("starttime",starttime);
+				idata.put("expiretime",expiretime);
+				idata.put("title",title);
+				idata.put("message",message);
+				idata.put("userconfirm",userconfirm);
+				invenlist.add(idata);
+			}
+			
+			//적용중인 대여권 목록에서 시간 지나간건 지워버리기
+			pstmt = conn.prepareStatement("delete from user_rentalbook where uid = ? and starttime >= date_add(now(),interval 1 day)");
+			pstmt.setString(1,userid);
+			pstmt.executeUpdate();
+			
+			//목록 추출해서 보내기 
+			pstmt = conn.prepareStatement("select Story_id, scope, starttime, startepisode from user_rentalbook where uid = ?");
+			pstmt.setString(1,userid);
+			
+			rs = pstmt.executeQuery();
+			JSONArray rlist = new JSONArray();
+			while(rs.next()){
+				JSONObject rdata = new JSONObject();
+				String Story_id = rs.getString(1);
+				int scope = rs.getInt(2);
+				long starttime = rs.getTimestamp(3).getTime()/1000;
+				int startepisode = rs.getInt(4);
+				
+				rdata.put("storyid",Story_id);
+				rdata.put("scope",scope);
+				rdata.put("starttime",starttime);
+				rdata.put("startepisode",startepisode);
+				rlist.add(rdata);
+			}
+
+			ret.put("invenlist",invenlist);
+			ret.put("myrentalbook",rlist);	
 		}
-		else if(cmd.equals("getmyactiverentalbook")){//모든 적용중인 대여권 목록  
-			
+		else if(cmd.equals("checkinven")){//인벤 아이템 확인 
+			//pstmt = conn.prepareStatement("update user set lastjointime = now() where uid = ?");
+			pstmt = conn.prepareStatement("update user_inven set userconfirm = 0 where uid = ?");
+			pstmt.setString(1,userid);
+			pstmt.executeUpdate();
 		}
-		else if(cmd.equals("userentalbook")){//대여권 사용하기 
+		else if(cmd.equals("userentalbook")){//대여권 사용하기			
+			String storyid = request.getParameter("storyid");
+			//int costumeid = Integer.valueOf(request.getParameter("costumeid"));
+			int invenidx = Integer.valueOf(request.getParameter("invenidx")); 
+			//적용중인 대여권 시간 지나간거 지우기, 가방 시간 지난거 지우기
+			pstmt = conn.prepareStatement("delete from user_rentalbook where uid = ? and starttime >= date_add(now(),interval 1 day)");
+			pstmt.setString(1,userid);
+			pstmt.executeUpdate();
 			
+			pstmt = conn.prepareStatement("delete from user_inven where uid = ? and expiretime <= now()");
+			pstmt.setString(1,userid);
+			pstmt.executeUpdate();
+			
+			//이미 사용한 해당화의 대여권있는지 확인하고 
+			pstmt = conn.prepareStatement("select scope from user_rentalbook where uid = ? ans Story_id = ?");
+			pstmt.setString(1, userid);
+			pstmt.setString(2, storyid);
+			rs = pstmt.executeQuery();
+			boolean exist = false;
+			if(rs.next()){
+				exist = true;
+				ret.put("already",1);
+			}else{
+				int itemid = 0;
+				//일단 해당 idx에 있는걸 가져오고 
+				pstmt = conn.prepareStatement("select itemid from user_inven where uid = ? and idx = ?");
+				pstmt.setString(1, userid);
+				pstmt.setInt(2, invenidx);
+				rs = pstmt.executeQuery();
+				if(rs.next()){
+					itemid = rs.getInt(1);
+				}			
+				
+				//해당 아이템 아이디의 스토리 데이터를 가져오고, 유저가 몇화까지 봤는지도 가져온다.  
+				if(itemid > 0){
+					ItemDataManager itemdata = ItemDataManager.getData(itemid);
+					
+					pstmt = conn.prepareStatement("select Episode_num, buy_num from user_story where uid = ? and Story_id = ?");
+					pstmt.setString(1, userid);
+					pstmt.setString(2, itemdata.Story_id);
+					rs = pstmt.executeQuery();				
+					
+					if(rs.next()){
+						int epnum = rs.getInt(1);
+						int bnum = rs.getInt(2);
+						if(epnum==bnum){
+							//inven에 있는걸 지우고
+							pstmt = conn.prepareStatement("delete from user_inven where uid = ? and idx = ?");
+							pstmt.setString(1, userid);
+							pstmt.setInt(2, invenidx);
+							int check = pstmt.executeUpdate();
+							if(check==1&&itemid>0){
+								//rental에 기록하고	
+								pstmt = conn.prepareStatement("insert into user_rentalbook (uid, Story_id, scope, starttime, startepisode) values(?,?,?,now(),?)");
+								pstmt.setString(1, userid);
+								pstmt.setString(2, itemdata.Story_id);
+								pstmt.setInt(3, itemdata.scope);
+								pstmt.setInt(4, epnum);
+								int result = pstmt.executeUpdate();
+								if(result==1){
+									// 내 갱신된 인벤과 대여권 정보 전달
+
+									//목록 추출해서 보내기 
+									pstmt = conn.prepareStatement("select idx,itemid,count,starttime,expiretime,title,message,img,userconfirm from user_inven where uid = ?");
+									pstmt.setString(1,userid);
+									rs = pstmt.executeQuery();
+									JSONArray invenlist = new JSONArray();
+									while(rs.next()){
+										JSONObject idata = new JSONObject();
+										int idx = rs.getInt(1);
+										int item_id = rs.getInt(2);
+										int count = rs.getInt(3);
+										long starttime = rs.getTimestamp(4).getTime()/1000;
+										long expiretime = rs.getTimestamp(5).getTime()/1000;
+										String title = rs.getString(6);
+										String message = rs.getString(7);
+										String img = rs.getString(8);
+										int userconfirm = rs.getInt(9);
+										
+										idata.put("invenid",idx);
+										idata.put("itemid",item_id);
+										idata.put("count",count);
+										idata.put("starttime",starttime);
+										idata.put("expiretime",expiretime);
+										idata.put("title",title);
+										idata.put("message",message);
+										idata.put("userconfirm",userconfirm);
+										invenlist.add(idata);
+									}
+									
+									//목록 추출해서 보내기 
+									pstmt = conn.prepareStatement("select Story_id, scope, starttime, startepisode from user_rentalbook where uid = ?");
+									pstmt.setString(1,userid);
+									
+									rs = pstmt.executeQuery();
+									JSONArray rlist = new JSONArray();
+									while(rs.next()){
+										JSONObject rdata = new JSONObject();
+										String Story_id = rs.getString(1);
+										int scope = rs.getInt(2);
+										long starttime = rs.getTimestamp(3).getTime()/1000;
+										int startepisode = rs.getInt(4);
+										
+										rdata.put("storyid",Story_id);
+										rdata.put("scope",scope);
+										rdata.put("starttime",starttime);
+										rdata.put("startepisode",startepisode);
+										rlist.add(rdata);
+									}
+
+									ret.put("invenlist",invenlist);
+									ret.put("myrentalbook",rlist);	
+									
+									ret.put("result",1);
+								}else{
+									ret.put("result",0);
+								}
+							}else{
+								ret.put("result",0);	
+							}
+						}else{
+							ret.put("result",2);//not ready
+						}						
+					}else{
+						ret.put("result",0);
+					}
+				}else{
+					//error
+					ret.put("result",0);
+				}				
+				ret.put("already",0);
+			}	
 		}
 		else if(cmd.equals("checkattend")){ //출석 확인 
 			
