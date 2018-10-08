@@ -624,7 +624,7 @@
 				idata.put("itemid",rs.getInt(2));
 				idata.put("count",rs.getInt(3));
 				idata.put("starttime",rs.getTimestamp(4).getTime()/1000);
-				idata.put("expiretime",rs.getTime(5).getTime()/1000);
+				idata.put("expiretime",rs.getTimestamp(5).getTime()/1000);
 				idata.put("title", rs.getString(6));
 				idata.put("message",rs.getString(7));
 				idata.put("img",rs.getString(8));
