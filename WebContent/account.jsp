@@ -42,6 +42,7 @@
 			
 			String token = request.getParameter("token");
 			String service = request.getParameter("service");
+			String email = request.getParameter("email");
 			String os = request.getParameter("os");
 			if(os == null) {
 				os = "oldversion";
@@ -59,11 +60,12 @@
 				// 이전에 연동을 한 유저라면
 				String exist_uid = rs.getString(1);
 				
-				pstmt = conn.prepareStatement("update user set token = ?, service = ?, os = ? where uid = ?");
+				pstmt = conn.prepareStatement("update user set token = ?, service = ?, email = ?, os = ? where uid = ?");
 				pstmt.setString(1, token);
 				pstmt.setString(2, service);
-				pstmt.setString(3, os);
-				pstmt.setString(4, exist_uid);
+				pstmt.setString(3, email);
+				pstmt.setString(4, os);
+				pstmt.setString(5, exist_uid);
 				
 				if(pstmt.executeUpdate()>0){
 					LogManager.writeNorLog(exist_uid, "link_success_"+service, cmd, "null","null", 0);
@@ -117,11 +119,12 @@
 								LogManager.writeNorLog(uid, "make_uid_fail_" + service, cmd, "null","null", 0);
 								break;
 							}else{
-								pstmt = conn.prepareStatement("insert into user (uid,token,service,os) values(?,?,?,?)");
+								pstmt = conn.prepareStatement("insert into user (uid,token,service,email,os) values(?,?,?,?,?)");
 								pstmt.setString(1, uid);
 								pstmt.setString(2, token);
 								pstmt.setString(3, service);
-								pstmt.setString(4, os);
+								pstmt.setString(4, email);
+								pstmt.setString(5, os);
 								r = pstmt.executeUpdate();
 								if(r == 1){
 									ret.put("uid", uid);
@@ -140,11 +143,12 @@
 					
 				}else{
 					// Guest 일 때
-					pstmt = conn.prepareStatement("update user set token = ?, service = ?, os = ? where uid = ?");
+					pstmt = conn.prepareStatement("update user set token = ?, service = ?, email = ?, os = ? where uid = ?");
 					pstmt.setString(1, token);
 					pstmt.setString(2, service);
-					pstmt.setString(3, os);
-					pstmt.setString(4, userid);
+					pstmt.setString(3, email);
+					pstmt.setString(4, os);
+					pstmt.setString(5, userid);
 					
 					if(pstmt.executeUpdate()>0){
 						LogManager.writeNorLog(userid, "login_success_" + service, cmd, "null","null", 0);
