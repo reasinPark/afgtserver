@@ -14,6 +14,7 @@
 	<frame src="csvupload_costumedata.jsp" name="content">
 	<frame src="csvupload_selectitem.jsp" name="content">
 	<frame src="csvupload_shopitem.jsp" name="content">
+	<frame src="csvupload_attendevent.jsp" name="content">
 	<frame src="csvupload_assetbundleversion.jsp" name="content">
 	<frame src="indicator_user_regist.jsp" name="content">
 	<frame src="indicator_user_login.jsp" name="content">

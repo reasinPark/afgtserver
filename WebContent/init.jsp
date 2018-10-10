@@ -632,6 +632,53 @@
 				pilist.add(idata);
 			}
 			
+			//출석부 전체 데이터 로드
+			pstmt = conn.prepareStatement("select onoff from attendEvent");
+			rs = pstmt.executeQuery();
+			while(rs.next()) {
+				if(rs.getInt(1) == 1) {
+					pstmt = conn.prepareStatement("select eventName, startDate, endDate, d1itemId_1, d1count_1, d1itemId_2, d1count_2, d1itemId_3, d1count_3, " +
+												  "d2itemId_1, d2count_1, d2itemId_2, d2count_2, d2itemId_3, d2count_3, d3itemId_1, d3count_1, d3itemId_2, d3count_2, d3itemId_3, d3count_3," +
+												  "d4itemId_1, d4count_1, d4itemId_2, d4count_2, d4itemId_3, d4count_3, d5itemId_1, d5count_1, d5itemId_2, d5count_2, d5itemId_3, d5count_3," +
+												  "d6itemId_1, d6count_1, d6itemId_2, d6count_2, d6itemId_3, d6count_3, d7itemId_1, d7count_1, d7itemId_2, d7count_2, d7itemId_3, d7count_3 from attendEvent");
+					rs = pstmt.executeQuery();
+					JSONArray atlist = new JSONArray();
+					while(rs.next()) {
+						ret.put("eventName", rs.getString(1));
+						ret.put("startDate", rs.getTimestamp(2).getTime()/1000);
+						ret.put("endDate", rs.getTimestamp(3).getTime()/1000);
+						
+						for(int i=0;i<7;i++) {
+							JSONObject atdata = new JSONObject();
+							atdata.put("itemId_1", rs.getInt(4+(6*i)));
+							atdata.put("count_1", rs.getInt(5+(6*i)));
+							atdata.put("itemId_2", rs.getInt(6+(6*i)));
+							atdata.put("count_2", rs.getInt(7+(6*i)));
+							atdata.put("itemId_3", rs.getInt(8+(6*i)));
+							atdata.put("count_3", rs.getInt(9+(6*i)));
+							atlist.add(atdata);
+						}
+					}
+					ret.put("attendlist", atlist);
+					ret.put("attendonoff", 1);
+					
+					pstmt = conn.prepareStatement("select attendDate, sumAttend from user_attend where uid = ?");
+					pstmt.setString(1, userid);
+					rs = pstmt.executeQuery();
+					
+					if(rs.next()) {
+						ret.put("attendDate", rs.getTimestamp(1).getTime()/1000);
+						ret.put("sumAttend", rs.getInt(2));
+						ret.put("myattend", 1);
+					}
+					else {
+						ret.put("myattend", 0);
+					}
+				}
+				else {
+					ret.put("attendonoff", 0);
+				}
+			}
 			
 			ret.put("userinvenlist",pilist);
 			ret.put("userrentalbooklist",prlist);

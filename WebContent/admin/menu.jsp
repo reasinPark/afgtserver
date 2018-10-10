@@ -86,6 +86,11 @@
 			<a href="csvupload_shopitem.jsp" target="content">상점 데이터 적용</a>
 		</td>
 	</tr>
+	<tr>
+		<td>
+			<a href="csvupload_attendevent.jsp" target="content">출석 보상 데이터 적용</a>
+		</td>
+	</tr>
 	<tr height = 5px></tr>
 	<tr>
 		<td style="font-size: 15px; font-weight: bold;">에셋 번들 버전</td>
