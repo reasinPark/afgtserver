@@ -93,12 +93,12 @@
 					else {
 						int index = 1;
 						
-						pstmt = conn.prepareStatement("insert into attendEvent (eventName,onoff,startDate,endDate,d1itemId_1,d1count_1,d1itemId_2,d1count_2,"+
-													  "d1itemId_3,d1count_3,d2itemId_1,d2count_1,d2itemId_2,d2count_2,d2itemId_3,d2count_3,d3itemId_1,d3count_1,"+
-													  "d3itemId_2,d3count_2,d3itemId_3,d3count_3,d4itemId_1,d4count_1,d4itemId_2,d4count_2,d4itemId_3,d4count_3,"+
-													  "d5itemId_1,d5count_1,d5itemId_2,d5count_2,d5itemId_3,d5count_3,d6itemId_1,d6count_1,d6itemId_2,d6count_2,"+
-													  "d6itemId_3,d6count_3,d7itemId_1,d7count_1,d7itemId_2,d7count_2,d7itemId_3,d7count_3) values(?,?,?,?,?,?,?,?,?,?,"+
-													  "?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
+						pstmt = conn.prepareStatement("insert into attendEvent (eventName,onoff,startDate,endDate,d1itemId_1,d1count_1,d1itemId_2,d1count_2,d1itemId_3,d1count_3,"+
+													  "d1itemId_4,d1count_4,d2itemId_1,d2count_1,d2itemId_2,d2count_2,d2itemId_3,d2count_3,d2itemId_4,d2count_4,d3itemId_1,d3count_1,"+
+													  "d3itemId_2,d3count_2,d3itemId_3,d3count_3,d3itemId_4,d3count_4,d4itemId_1,d4count_1,d4itemId_2,d4count_2,d4itemId_3,d4count_3,"+
+													  "d4itemId_4,d4count_4,d5itemId_1,d5count_1,d5itemId_2,d5count_2,d5itemId_3,d5count_3,d5itemId_4,d5count_4,d6itemId_1,d6count_1,"+
+													  "d6itemId_2,d6count_2,d6itemId_3,d6count_3,d6itemId_4,d6count_4,d7itemId_1,d7count_1,d7itemId_2,d7count_2,d7itemId_3,d7count_3,"+
+													  "d7itemId_4,d7count_4) values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
 						
 						
 						for (String output: token) {

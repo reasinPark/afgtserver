@@ -10,6 +10,9 @@ public class Module {
 		else if(name == 100002) {
 			ret = "젬";
 		}
+		else if(name == 0) {
+			ret = "-";
+		}
 		else {
 			ret = String.valueOf(name);
 		}

@@ -35,13 +35,13 @@
 		Module module = new Module();
 		Connection conn = ConnectionProvider.getConnection("afgt");
 		PreparedStatement pstmt = conn.prepareStatement("select eventName, onoff, DATE_FORMAT(startDate,'%Y-%m-%d %H:%i:%s'), DATE_FORMAT(endDate,'%Y-%m-%d %H:%i:%s'), " +
-														"d1itemId_1, d1itemId_2, d1itemId_3, d2itemId_1, d2itemId_2, d2itemId_3," +
-														"d3itemId_1, d3itemId_2, d3itemId_3, d4itemId_1, d4itemId_2, d4itemId_3," +
-														"d5itemId_1, d5itemId_2, d5itemId_3, d6itemId_1, d6itemId_2, d6itemId_3," +
-														"d7itemId_1, d7itemId_2, d7itemId_3, d1count_1, d1count_2, d1count_3," +
-														"d2count_1, d2count_2, d2count_3, d3count_1, d3count_2, d3count_3," +
-														"d4count_1, d4count_2, d4count_3, d5count_1, d5count_2, d5count_3," +
-														"d6count_1, d6count_2, d6count_3, d7count_1, d7count_2, d7count_3 from attendEvent");
+														"d1itemId_1, d1itemId_2, d1itemId_3, d1itemId_4, d2itemId_1, d2itemId_2, d2itemId_3, d2itemId_4," +
+														"d3itemId_1, d3itemId_2, d3itemId_3, d3itemId_4, d4itemId_1, d4itemId_2, d4itemId_3, d4itemId_4," +
+														"d5itemId_1, d5itemId_2, d5itemId_3, d5itemId_4, d6itemId_1, d6itemId_2, d6itemId_3, d6itemId_4," +
+														"d7itemId_1, d7itemId_2, d7itemId_3, d7itemId_4, d1count_1, d1count_2, d1count_3, d1count_4," +
+														"d2count_1, d2count_2, d2count_3, d2count_4, d3count_1, d3count_2, d3count_3, d3count_4," +
+														"d4count_1, d4count_2, d4count_3, d4count_4, d5count_1, d5count_2, d5count_3, d5count_4," +
+														"d6count_1, d6count_2, d6count_3, d6count_4, d7count_1, d7count_2, d7count_3, d7count_4 from attendEvent");
 		ResultSet rs = pstmt.executeQuery();
 				
 		%>
@@ -66,13 +66,13 @@
 		<table border="1" style="border-style:solid;">
 			<tr>
 				<td>회차</td>
-				<td colspan = "3">1회</td>
-				<td colspan = "3">2회</td>
-				<td colspan = "3">3회</td>
-				<td colspan = "3">4회</td>
-				<td colspan = "3">5회</td>
-				<td colspan = "3">6회</td>
-				<td colspan = "3">7회</td>
+				<td colspan = "4">1회</td>
+				<td colspan = "4">2회</td>
+				<td colspan = "4">3회</td>
+				<td colspan = "4">4회</td>
+				<td colspan = "4">5회</td>
+				<td colspan = "4">6회</td>
+				<td colspan = "4">7회</td>
 			</tr>
 			<tr>
 				<td>아이템</td>
@@ -100,18 +100,18 @@
 				<td><%=module.itemNameCheck(rs.getInt(23))%></td>
 				<td><%=module.itemNameCheck(rs.getInt(24))%></td>
 				<td><%=module.itemNameCheck(rs.getInt(25))%></td>
+				<td><%=module.itemNameCheck(rs.getInt(26))%></td>
+				<td><%=module.itemNameCheck(rs.getInt(27))%></td>
+				<td><%=module.itemNameCheck(rs.getInt(28))%></td>
+				<td><%=module.itemNameCheck(rs.getInt(29))%></td>
+				<td><%=module.itemNameCheck(rs.getInt(30))%></td>
+				<td><%=module.itemNameCheck(rs.getInt(31))%></td>
+				<td><%=module.itemNameCheck(rs.getInt(32))%></td>
 			<%
 			%>
 			</tr>
 			<tr>
 				<td>지급수량</td>
-				<td><%=String.valueOf(rs.getInt(26))%></td>
-				<td><%=String.valueOf(rs.getInt(27))%></td>
-				<td><%=String.valueOf(rs.getInt(28))%></td>
-				<td><%=String.valueOf(rs.getInt(29))%></td>
-				<td><%=String.valueOf(rs.getInt(30))%></td>
-				<td><%=String.valueOf(rs.getInt(31))%></td>
-				<td><%=String.valueOf(rs.getInt(32))%></td>
 				<td><%=String.valueOf(rs.getInt(33))%></td>
 				<td><%=String.valueOf(rs.getInt(34))%></td>
 				<td><%=String.valueOf(rs.getInt(35))%></td>
@@ -126,6 +126,20 @@
 				<td><%=String.valueOf(rs.getInt(44))%></td>
 				<td><%=String.valueOf(rs.getInt(45))%></td>
 				<td><%=String.valueOf(rs.getInt(46))%></td>
+				<td><%=String.valueOf(rs.getInt(47))%></td>
+				<td><%=String.valueOf(rs.getInt(48))%></td>
+				<td><%=String.valueOf(rs.getInt(49))%></td>
+				<td><%=String.valueOf(rs.getInt(50))%></td>
+				<td><%=String.valueOf(rs.getInt(51))%></td>
+				<td><%=String.valueOf(rs.getInt(52))%></td>
+				<td><%=String.valueOf(rs.getInt(53))%></td>
+				<td><%=String.valueOf(rs.getInt(54))%></td>
+				<td><%=String.valueOf(rs.getInt(55))%></td>
+				<td><%=String.valueOf(rs.getInt(56))%></td>
+				<td><%=String.valueOf(rs.getInt(57))%></td>
+				<td><%=String.valueOf(rs.getInt(58))%></td>
+				<td><%=String.valueOf(rs.getInt(59))%></td>
+				<td><%=String.valueOf(rs.getInt(60))%></td>
 			</tr>
 		<%
 		}
