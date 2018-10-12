@@ -26,6 +26,9 @@
 <%@ page import="com.wingsinus.ep.SelectItemData" %>
 <%@ page import="com.wingsinus.ep.TutorialList" %>
 <%@ page import="com.wingsinus.ep.RouletteTable" %>
+<%@ page import="com.wingsinus.ep.Module" %>
+<%@ page import="com.wingsinus.ep.AttendRewardInfo" %>
+
 <%@ include file="GameVariable.jsp" %>
 <%
 
@@ -36,6 +39,7 @@
 	Connection conn = ConnectionProvider.getConnection("afgt");
 	ResultSet rs = null;
 	int Storyversion = 0;
+	Module module = new Module();
 	try{
 			
 		long now = 0;
@@ -2265,8 +2269,219 @@
 				ret.put("already",0);
 			}	
 		}
-		else if(cmd.equals("checkattend")){ //출석 확인 
+		else if(cmd.equals("checkattend")) {//출석 확인
+			int nowattend = 0;
+			long startdate = 0;
+			long nowdate = 0;
+			long myattenddate = 0;
+			int myattend = 0;
+			boolean nextstep = false;
 			
+			pstmt = conn.prepareStatement("select onoff,startDate,endDate,now() from attendEvent");
+			rs = pstmt.executeQuery();
+			
+			if(rs.next()) {
+				// 1) on/off 확인
+				if(rs.getInt(1) == 1) {
+					// 2) 이벤트 일정 이내인지 확인
+					if((rs.getTimestamp(2).getTime() < rs.getTimestamp(4).getTime()) && (rs.getTimestamp(3).getTime() > rs.getTimestamp(4).getTime())) {
+						startdate = rs.getTimestamp(2).getTime()/1000;
+						nowdate = rs.getTimestamp(4).getTime()/1000;
+						
+						for(int i=0;i<7;i++) {
+							if(startdate+(i*86400) < nowdate) {
+								nowattend++;
+							}
+							else {
+								break;
+							}
+						}
+						
+						// 3) 이미 받았는지 안받았는지 체크
+						pstmt = conn.prepareStatement("select attendDate, sumAttend from user_attend where uid = ?");
+						pstmt.setString(1, userid);
+						rs = pstmt.executeQuery();
+						
+						if(rs.next()) {
+							System.out.println("i have attend info");
+							myattenddate = rs.getTimestamp(1).getTime()/1000;
+							myattend = rs.getInt(2);
+							
+							// 현재 보상 회차보다 회차가 작고, 그 회차 내에 보상을 받았는지
+							if((nowattend > myattend) && (startdate+((nowattend-1)*86400) > myattenddate)) {
+
+								pstmt = conn.prepareStatement("update user_attend set attendDate = now(), sumAttend = ? where uid = ?");
+								pstmt.setInt(1,myattend+1);
+								pstmt.setString(2,userid);
+								
+								if(pstmt.executeUpdate()==1){
+									LogManager.writeNorLog(userid, "success_attend", cmd, "null", "null", myattend+1);
+									nextstep = true;
+								}
+								else {
+									//error
+									System.out.println("attend event update error");
+									ret.put("result", -1);
+								}
+							}
+							else {
+								//error
+								System.out.println("already get attend reward");
+								ret.put("result", -2);
+							}
+						}
+						else {
+							System.out.println("i don't have attend info");
+							pstmt = conn.prepareStatement("insert into user_attend (uid, attendDate, sumAttend) values(?,now(),?)");
+							pstmt.setString(1, userid);
+							pstmt.setInt(2, myattend+1);
+							
+							if(pstmt.executeUpdate()==1){
+								LogManager.writeNorLog(userid, "success_attend", cmd, "null", "null", myattend+1);
+								nextstep = true;
+							}
+							else {
+								//error
+								System.out.println("attend event insert error");
+								ret.put("result", -1);
+							}
+						}
+					}
+					else {
+						System.out.println("Event OFF");
+						ret.put("result", 0);
+					}
+				}
+				else {
+					System.out.println("Event OFF");
+					ret.put("result", 0);
+				}
+			}
+			else {
+				//error
+				System.out.println("attend event error");
+				ret.put("result", -1);
+			}
+			
+			// 유저 출석 정보 올리고 난 후 동작.
+			if(nextstep) {
+				pstmt = conn.prepareStatement("select " + module.attendReward(myattend+1) +" from attendEvent");
+				rs = pstmt.executeQuery();
+				
+				if(rs.next()) {
+					ArrayList<AttendRewardInfo> rewardlist = new ArrayList<AttendRewardInfo>();
+					int idx = 1;
+					for(int i=0;i<4;i++) {
+						AttendRewardInfo data = new AttendRewardInfo();
+						data.itemid = rs.getInt(idx);
+						idx++;
+						data.count = rs.getInt(idx);
+						idx++;
+						rewardlist.add(data);
+					}
+					
+					for(int i=0;i<rewardlist.size();i++) {
+						System.out.println("reward:"+rewardlist.get(i).itemid+"/"+rewardlist.get(i).count);
+					}
+					
+					for(int i=0;i<rewardlist.size();i++) {
+						if(rewardlist.get(i).itemid != 0) {
+							if(rewardlist.get(i).itemid == 100001) {
+								pstmt = conn.prepareStatement("update user set freeticket = freeticket + ? where uid = ?");
+								pstmt.setInt(1, rewardlist.get(i).count);
+								pstmt.setString(2, userid);
+								
+								if(pstmt.executeUpdate()==1){
+									LogManager.writeNorLog(userid, "success_increase", cmd, "freeticket", "null", rewardlist.get(i).count);
+									LogManager.writeNorLog(userid, "success_reward", cmd, String.valueOf(rewardlist.get(i).itemid), "null", rewardlist.get(i).count);
+								}
+								else {
+									LogManager.writeNorLog(userid, "fail_increase", cmd, "freeticket", "null", rewardlist.get(i).count);
+									LogManager.writeNorLog(userid, "fail_reward", cmd, String.valueOf(rewardlist.get(i).itemid), "null", rewardlist.get(i).count);
+								}
+							}
+							else if(rewardlist.get(i).itemid == 100002) {
+								pstmt = conn.prepareStatement("update user set freegem = freegem + ? where uid = ?");
+								pstmt.setInt(1, rewardlist.get(i).count);
+								pstmt.setString(2, userid);
+								
+								if(pstmt.executeUpdate()==1){
+									LogManager.writeNorLog(userid, "success_increase", cmd, "freegem", "null", rewardlist.get(i).count);
+									LogManager.writeNorLog(userid, "success_reward", cmd, String.valueOf(rewardlist.get(i).itemid), "null", rewardlist.get(i).count);
+								}
+								else {
+									LogManager.writeNorLog(userid, "fail_increase", cmd, "freegem", "null", rewardlist.get(i).count);
+									LogManager.writeNorLog(userid, "fail_reward", cmd, String.valueOf(rewardlist.get(i).itemid), "null", rewardlist.get(i).count);
+								}
+							}
+							else {
+								// 젬과 티켓이 아닐 때
+								pstmt = conn.prepareStatement("insert into user_inven (uid,itemid,count,starttime,expiretime,title,message,img) "+
+															  "values(?,?,?,now(),date_add(now(),interval 7 day),?,?,?)");
+								pstmt.setString(1, userid);
+								pstmt.setInt(2,rewardlist.get(i).itemid);
+								pstmt.setInt(3,rewardlist.get(i).count);
+								pstmt.setString(4,ItemDataManager.getData(rewardlist.get(i).itemid).name);
+								pstmt.setString(5,"출석 보상 대여권입니다.");
+								pstmt.setString(6,ItemDataManager.getData(rewardlist.get(i).itemid).img);
+								
+								if(pstmt.executeUpdate()==1){
+									LogManager.writeNorLog(userid, "success_reward", cmd, String.valueOf(rewardlist.get(i).itemid), "null", rewardlist.get(i).count);
+								}
+								else {
+									LogManager.writeNorLog(userid, "fail_reward", cmd, String.valueOf(rewardlist.get(i).itemid), "null", rewardlist.get(i).count);
+								}
+							}
+						}
+					}
+					
+					//유저 인벤 정보 로드 
+					pstmt = conn.prepareStatement("select idx,itemid, count, starttime, expiretime, title, message, img, userconfirm from user_inven where uid = ?");
+					pstmt.setString(1, userid);
+					rs = pstmt.executeQuery();
+					JSONArray pilist = new JSONArray();
+					while(rs.next()){
+						JSONObject idata = new JSONObject();
+						idata.put("idx",rs.getInt(1));
+						idata.put("itemid",rs.getInt(2));
+						idata.put("count",rs.getInt(3));
+						idata.put("starttime",rs.getTimestamp(4).getTime()/1000);
+						idata.put("expiretime",rs.getTimestamp(5).getTime()/1000);
+						idata.put("title", rs.getString(6));
+						idata.put("message",rs.getString(7));
+						idata.put("img",rs.getString(8));
+						idata.put("userconfirm",rs.getInt(9));
+						pilist.add(idata);
+					}
+
+					ret.put("userinvenlist",pilist);
+					
+					//유저 재화 정보 로드
+					pstmt = conn.prepareStatement("select freeticket,cashticket,freegem,cashgem from user where uid = ?");
+					pstmt.setString(1,userid);
+					rs = pstmt.executeQuery();
+					if(rs.next()){
+						ret.put("gem",(rs.getInt(3)+rs.getInt(4)));
+						ret.put("ticket",(rs.getInt(1)+rs.getInt(2)));
+					}
+					
+					//유저 출석 정보 로드
+					pstmt = conn.prepareStatement("select attendDate, sumAttend from user_attend where uid = ?");
+					pstmt.setString(1, userid);
+					rs = pstmt.executeQuery();
+					if(rs.next()) {
+						ret.put("attendDate", rs.getTimestamp(1).getTime()/1000);
+						ret.put("sumAttend", rs.getInt(2));
+					}
+					
+					ret.put("result", 1);
+				}
+				else {
+					//error
+					System.out.println("attend event select error");
+					ret.put("result", -1);
+				}
+			}
 		}
 		
 		out.print(ret.toString());
