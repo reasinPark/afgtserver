@@ -30,6 +30,11 @@
 	</tr>
 	<tr>
 		<td>
+			<a href="user_attend_reset.jsp" target="content">유저 출석 시간 리셋</a>
+		</td>
+	</tr>
+	<tr>
+		<td>
 			<a href="storyVersion.jsp" target="content">스토리 버전 수정</a>
 		</td>
 	</tr>
@@ -94,6 +99,11 @@
 	<tr>
 		<td>
 			<a href="csvupload_attendevent.jsp" target="content">출석 보상 데이터 적용</a>
+		</td>
+	</tr>
+	<tr>
+		<td>
+			<a href="csvupload_item.jsp" target="content">아이템 데이터 적용</a>
 		</td>
 	</tr>
 	<tr height = 5px></tr>
