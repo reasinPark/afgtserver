@@ -618,7 +618,7 @@
 			}
 			
 			//유저 인벤 정보 로드 
-			pstmt = conn.prepareStatement("select idx,itemid, count, starttime, expiretime, title, message, img, userconfirm from user_inven where uid = ?");
+			pstmt = conn.prepareStatement("select idx,itemid, count, starttime, expiretime, title, message, img, userconfirm,DATE_FORMAT(expiretime,'%Y-%m-%d') from user_inven where uid = ?");
 			pstmt.setString(1, userid);
 			rs = pstmt.executeQuery();
 			JSONArray pilist = new JSONArray();
@@ -633,6 +633,7 @@
 				idata.put("message",rs.getString(7));
 				idata.put("img",rs.getString(8));
 				idata.put("userconfirm",rs.getInt(9));
+				idata.put("expiredate",rs.getString(10));
 				pilist.add(idata);
 			}
 			
@@ -2013,7 +2014,7 @@
 			pstmt.executeUpdate();
 			
 			//목록 추출해서 보내기 
-			pstmt = conn.prepareStatement("select idx,itemid,count,starttime,expiretime,title,message,img,userconfirm from user_inven where uid = ?");
+			pstmt = conn.prepareStatement("select idx,itemid,count,starttime,expiretime,title,message,img,userconfirm,DATE_FORMAT(expiretime,'%Y-%m-%d') from user_inven where uid = ?");
 			pstmt.setString(1,userid);
 			rs = pstmt.executeQuery();
 			JSONArray invenlist = new JSONArray();
@@ -2028,6 +2029,7 @@
 				String message = rs.getString(7);
 				String img = rs.getString(8);
 				int userconfirm = rs.getInt(9);
+				String expiredate = rs.getString(10);
 				
 				idata.put("invenid",idx);
 				idata.put("itemid",itemid);
@@ -2037,6 +2039,7 @@
 				idata.put("title",title);
 				idata.put("message",message);
 				idata.put("userconfirm",userconfirm);
+				idata.put("expiredate",expiredate);
 				invenlist.add(idata);
 			}
 			
@@ -2086,7 +2089,7 @@
 			pstmt.executeUpdate();
 			
 			//inven 목록 추출해서 보내기 
-			pstmt = conn.prepareStatement("select idx,itemid,count,starttime,expiretime,title,message,img,userconfirm from user_inven where uid = ?");
+			pstmt = conn.prepareStatement("select idx,itemid,count,starttime,expiretime,title,message,img,userconfirm,DATE_FORMAT(expiretime,'%Y-%m-%d') from user_inven where uid = ?");
 			pstmt.setString(1,userid);
 			rs = pstmt.executeQuery();
 			JSONArray invenlist = new JSONArray();
@@ -2101,6 +2104,7 @@
 				String message = rs.getString(7);
 				String img = rs.getString(8);
 				int userconfirm = rs.getInt(9);
+				String expiredate = rs.getString(10);
 				
 				idata.put("invenid",idx);
 				idata.put("itemid",itemid);
@@ -2110,6 +2114,7 @@
 				idata.put("title",title);
 				idata.put("message",message);
 				idata.put("userconfirm",userconfirm);
+				idata.put("expiredate",expiredate);
 				invenlist.add(idata);
 			}
 			
@@ -2199,7 +2204,7 @@
 									// 내 갱신된 인벤과 대여권 정보 전달
 
 									//목록 추출해서 보내기 
-									pstmt = conn.prepareStatement("select idx,itemid,count,starttime,expiretime,title,message,img,userconfirm from user_inven where uid = ?");
+									pstmt = conn.prepareStatement("select idx,itemid,count,starttime,expiretime,title,message,img,userconfirm,DATE_FORMAT(expiretime,'%Y-%m-%d') from user_inven where uid = ?");
 									pstmt.setString(1,userid);
 									rs = pstmt.executeQuery();
 									JSONArray invenlist = new JSONArray();
@@ -2214,6 +2219,7 @@
 										String message = rs.getString(7);
 										String img = rs.getString(8);
 										int userconfirm = rs.getInt(9);
+										String expiredate = rs.getString(10);
 										
 										idata.put("invenid",idx);
 										idata.put("itemid",item_id);
@@ -2223,6 +2229,7 @@
 										idata.put("title",title);
 										idata.put("message",message);
 										idata.put("userconfirm",userconfirm);
+										idata.put("expiredate",expiredate);
 										invenlist.add(idata);
 									}
 									
@@ -2441,7 +2448,7 @@
 					pstmt.executeUpdate();
 					
 					//유저 인벤 정보 로드 
-					pstmt = conn.prepareStatement("select idx,itemid, count, starttime, expiretime, title, message, img, userconfirm from user_inven where uid = ?");
+					pstmt = conn.prepareStatement("select idx,itemid, count, starttime, expiretime, title, message, img, userconfirm,DATE_FORMAT(expiretime,'%Y-%m-%d') from user_inven where uid = ?");
 					pstmt.setString(1, userid);
 					rs = pstmt.executeQuery();
 					JSONArray pilist = new JSONArray();
@@ -2456,6 +2463,7 @@
 						idata.put("message",rs.getString(7));
 						idata.put("img",rs.getString(8));
 						idata.put("userconfirm",rs.getInt(9));
+						idata.put("expiredate",rs.getString(10));
 						pilist.add(idata);
 					}
 
