@@ -604,7 +604,7 @@
 			pstmt.executeUpdate();
 			
 			//유저 대여권 정보 로드 
-			pstmt = conn.prepareStatement("select Story_id, scope, starttime, startepisode from user_rentalbook where uid = ?");
+			pstmt = conn.prepareStatement("select Story_id, scope, starttime, startepisode,date_add(starttime,interval 1 day) from user_rentalbook where uid = ?");
 			pstmt.setString(1, userid);
 			rs = pstmt.executeQuery();
 			JSONArray prlist = new JSONArray();
@@ -614,6 +614,7 @@
 				rdata.put("scope",rs.getInt(2));
 				rdata.put("starttime",rs.getTimestamp(3).getTime()/1000);
 				rdata.put("startepisode",rs.getInt(4));
+				rdata.put("expiretime",rs.getTimestamp(5).getTime()/1000);
 				prlist.add(rdata);
 			}
 			
@@ -2049,7 +2050,7 @@
 			pstmt.executeUpdate();
 			
 			//목록 추출해서 보내기 
-			pstmt = conn.prepareStatement("select Story_id, scope, starttime, startepisode from user_rentalbook where uid = ?");
+			pstmt = conn.prepareStatement("select Story_id, scope, starttime, startepisode,date_add(starttime,interval 1 day) from user_rentalbook where uid = ?");
 			pstmt.setString(1,userid);
 			
 			rs = pstmt.executeQuery();
@@ -2060,11 +2061,13 @@
 				int scope = rs.getInt(2);
 				long starttime = rs.getTimestamp(3).getTime()/1000;
 				int startepisode = rs.getInt(4);
+				long expiretime = rs.getTimestamp(5).getTime()/1000;
 				
 				rdata.put("storyid",Story_id);
 				rdata.put("scope",scope);
 				rdata.put("starttime",starttime);
 				rdata.put("startepisode",startepisode);
+				rdata.put("expiretime",expiretime);
 				rlist.add(rdata);
 			}
 
@@ -2119,7 +2122,7 @@
 			}
 			
 			//rental book 목록 추출해서 보내기 
-			pstmt = conn.prepareStatement("select Story_id, scope, starttime, startepisode from user_rentalbook where uid = ?");
+			pstmt = conn.prepareStatement("select Story_id, scope, starttime, startepisode,date_add(starttime,interval 1 day) from user_rentalbook where uid = ?");
 			pstmt.setString(1,userid);
 			
 			rs = pstmt.executeQuery();
@@ -2130,11 +2133,13 @@
 				int scope = rs.getInt(2);
 				long starttime = rs.getTimestamp(3).getTime()/1000;
 				int startepisode = rs.getInt(4);
+				long expiretime = rs.getTimestamp(5).getTime()/1000;
 				
 				rdata.put("storyid",Story_id);
 				rdata.put("scope",scope);
 				rdata.put("starttime",starttime);
 				rdata.put("startepisode",startepisode);
+				rdata.put("expiretime",expiretime);
 				rlist.add(rdata);
 			}
 
@@ -2234,7 +2239,7 @@
 									}
 									
 									//목록 추출해서 보내기 
-									pstmt = conn.prepareStatement("select Story_id, scope, starttime, startepisode from user_rentalbook where uid = ?");
+									pstmt = conn.prepareStatement("select Story_id, scope, starttime, startepisode,date_add(starttime,interval 1 day) from user_rentalbook where uid = ?");
 									pstmt.setString(1,userid);
 									
 									rs = pstmt.executeQuery();
@@ -2245,11 +2250,13 @@
 										int scope = rs.getInt(2);
 										long starttime = rs.getTimestamp(3).getTime()/1000;
 										int startepisode = rs.getInt(4);
+										long expiretime = rs.getTimestamp(5).getTime()/1000;
 										
 										rdata.put("storyid",Story_id);
 										rdata.put("scope",scope);
 										rdata.put("starttime",starttime);
 										rdata.put("startepisode",startepisode);
+										rdata.put("expiretime",expiretime);
 										rlist.add(rdata);
 									}
 
