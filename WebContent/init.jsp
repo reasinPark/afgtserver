@@ -619,7 +619,7 @@
 			}
 			
 			//유저 인벤 정보 로드 
-			pstmt = conn.prepareStatement("select idx,itemid, count, starttime, expiretime, title, message, img, userconfirm,DATE_FORMAT(expiretime,'%Y-%m-%d') from user_inven where uid = ?");
+			pstmt = conn.prepareStatement("select idx,itemid, count, starttime, expiretime, title, message, img, userconfirm,DATE_FORMAT(expiretime,'%Y-%m-%d') from user_inven where uid = ? order by expiretime");
 			pstmt.setString(1, userid);
 			rs = pstmt.executeQuery();
 			JSONArray pilist = new JSONArray();
@@ -2015,7 +2015,7 @@
 			pstmt.executeUpdate();
 			
 			//목록 추출해서 보내기 
-			pstmt = conn.prepareStatement("select idx,itemid,count,starttime,expiretime,title,message,img,userconfirm,DATE_FORMAT(expiretime,'%Y-%m-%d') from user_inven where uid = ?");
+			pstmt = conn.prepareStatement("select idx,itemid,count,starttime,expiretime,title,message,img,userconfirm,DATE_FORMAT(expiretime,'%Y-%m-%d') from user_inven where uid = ? order by expiretime");
 			pstmt.setString(1,userid);
 			rs = pstmt.executeQuery();
 			JSONArray invenlist = new JSONArray();
@@ -2092,7 +2092,7 @@
 			pstmt.executeUpdate();
 			
 			//inven 목록 추출해서 보내기 
-			pstmt = conn.prepareStatement("select idx,itemid,count,starttime,expiretime,title,message,img,userconfirm,DATE_FORMAT(expiretime,'%Y-%m-%d') from user_inven where uid = ?");
+			pstmt = conn.prepareStatement("select idx,itemid,count,starttime,expiretime,title,message,img,userconfirm,DATE_FORMAT(expiretime,'%Y-%m-%d') from user_inven where uid = ? order by expiretime");
 			pstmt.setString(1,userid);
 			rs = pstmt.executeQuery();
 			JSONArray invenlist = new JSONArray();
@@ -2209,7 +2209,7 @@
 									// 내 갱신된 인벤과 대여권 정보 전달
 
 									//목록 추출해서 보내기 
-									pstmt = conn.prepareStatement("select idx,itemid,count,starttime,expiretime,title,message,img,userconfirm,DATE_FORMAT(expiretime,'%Y-%m-%d') from user_inven where uid = ?");
+									pstmt = conn.prepareStatement("select idx,itemid,count,starttime,expiretime,title,message,img,userconfirm,DATE_FORMAT(expiretime,'%Y-%m-%d') from user_inven where uid = ? order by expiretime");
 									pstmt.setString(1,userid);
 									rs = pstmt.executeQuery();
 									JSONArray invenlist = new JSONArray();
@@ -2455,7 +2455,7 @@
 					pstmt.executeUpdate();
 					
 					//유저 인벤 정보 로드 
-					pstmt = conn.prepareStatement("select idx,itemid, count, starttime, expiretime, title, message, img, userconfirm,DATE_FORMAT(expiretime,'%Y-%m-%d') from user_inven where uid = ?");
+					pstmt = conn.prepareStatement("select idx,itemid, count, starttime, expiretime, title, message, img, userconfirm,DATE_FORMAT(expiretime,'%Y-%m-%d') from user_inven where uid = ? order by expiretime");
 					pstmt.setString(1, userid);
 					rs = pstmt.executeQuery();
 					JSONArray pilist = new JSONArray();
