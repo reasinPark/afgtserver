@@ -9,7 +9,12 @@
 <section>
 	<H3 style="font-size:100">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;출석 보상 데이터</H3>
 </section>
-
+<form target="result_frame" method="post" name="update_form" id="story_form" action="csvupload_attendevent_reset.jsp">
+<input type="hidden" name="uid" value="">
+		<tr>
+			<td colspan="10" align="center"> 출석 카운트 리셋하기 <input type="submit"  value="    적용    "></td>
+		</tr>
+</form>
 <form target="result_frame" action="csvupload_attendevent_update.jsp" method="post" id="item_form" enctype="Multipart/form-data">
 	<table border = "1" style="border-style:solid;">
 		<tr>
