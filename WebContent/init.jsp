@@ -2435,6 +2435,11 @@
 						}
 					}
 					
+					//인벤에서 시간 지난거 지워버리기 
+					pstmt = conn.prepareStatement("delete from user_inven where uid = ? and expiretime <= now()");
+					pstmt.setString(1,userid);
+					pstmt.executeUpdate();
+					
 					//유저 인벤 정보 로드 
 					pstmt = conn.prepareStatement("select idx,itemid, count, starttime, expiretime, title, message, img, userconfirm from user_inven where uid = ?");
 					pstmt.setString(1, userid);
