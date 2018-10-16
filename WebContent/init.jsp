@@ -2150,7 +2150,7 @@
 			pstmt.executeUpdate();
 			
 			//이미 사용한 해당화의 대여권있는지 확인하고 
-			pstmt = conn.prepareStatement("select scope from user_rentalbook where uid = ? ans Story_id = ?");
+			pstmt = conn.prepareStatement("select scope from user_rentalbook where uid = ? and Story_id = ?");
 			pstmt.setString(1, userid);
 			pstmt.setString(2, storyid);
 			rs = pstmt.executeQuery();
@@ -2181,7 +2181,7 @@
 					if(rs.next()){
 						int epnum = rs.getInt(1);
 						int bnum = rs.getInt(2);
-						if(epnum==bnum){
+						if(epnum>=bnum){
 							//inven에 있는걸 지우고
 							pstmt = conn.prepareStatement("delete from user_inven where uid = ? and idx = ?");
 							pstmt.setString(1, userid);
