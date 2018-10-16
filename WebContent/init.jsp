@@ -2322,7 +2322,7 @@
 							myattend = rs.getInt(2);
 							
 							// 현재 보상 회차보다 회차가 작고, 그 회차 내에 보상을 받았는지
-							if((nowattend > myattend) && (startdate+((nowattend-1)*86400) > myattenddate)) {
+							if((nowattend > myattend) && (startdate+((nowattend-1)*86400) > myattenddate) && (myattend <= 7)) {
 
 								pstmt = conn.prepareStatement("update user_attend set attendDate = now(), sumAttend = ? where uid = ?");
 								pstmt.setInt(1,myattend+1);
