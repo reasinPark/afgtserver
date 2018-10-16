@@ -35,6 +35,11 @@
 	</tr>
 	<tr>
 		<td>
+			<a href="sendRentalBook.jsp" target="content">대여권 보내기</a>
+		</td>
+	</tr>
+	<tr>
+		<td>
 			<a href="tutorial.jsp" target="content">튜토리얼 작품 수정</a>
 		</td>
 	</tr>
