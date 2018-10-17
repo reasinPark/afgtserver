@@ -507,6 +507,22 @@
 			
 			System.out.println("start user story in login");
 			
+			//기간이 지난 대여권 사용 이야기가 있는지 확인해서 있다면 maxepinum 을 buynum으로 맞춰준다. 
+			pstmt = conn.prepareStatement("select Story_id from user_rentalbook where uid = ? and starttime <= date_add(now(),interval -1 day)");
+			pstmt.setString(1,userid);
+			List<String> storyList = new ArrayList<String>();
+			rs = pstmt.executeQuery();
+			while(rs.next()){
+				storyList.add(rs.getString(1));
+			}
+			
+			for(int i=0;i<storyList.size();i++){
+				pstmt = conn.prepareStatement("update user_story set Episode_num = buy_num where uid = ? and Story_id = ?");
+				pstmt.setString(1, userid);
+				pstmt.setString(2,storyList.get(i));
+				pstmt.executeUpdate();
+			}
+			
 			// 유저 이야기 읽은 정보 로드
 			pstmt = conn.prepareStatement("select Story_id,Episode_num,lately_num,buy_num,likestory from user_story where UID = ?");
 			pstmt.setString(1,userid);
@@ -595,7 +611,7 @@
 			}
 			
 			//기간 지난 대여권 및 기간 지난 인벤 정리 
-			pstmt = conn.prepareStatement("delete from user_rentalbook where uid = ? and starttime >= date_add(now(),interval 1 day)");
+			pstmt = conn.prepareStatement("delete from user_rentalbook where uid = ? and starttime < date_add(now(),interval -1 day)");
 			pstmt.setString(1,userid);
 			pstmt.executeUpdate();
 			
@@ -2045,7 +2061,7 @@
 			}
 			
 			//적용중인 대여권 목록에서 시간 지나간건 지워버리기
-			pstmt = conn.prepareStatement("delete from user_rentalbook where uid = ? and starttime >= date_add(now(),interval 1 day)");
+			pstmt = conn.prepareStatement("delete from user_rentalbook where uid = ? and starttime < date_add(now(),interval -1 day)");
 			pstmt.setString(1,userid);
 			pstmt.executeUpdate();
 			
@@ -2082,7 +2098,7 @@
 			pstmt.executeUpdate();
 
 			//적용중인 대여권 목록에서 시간 지나간건 지워버리기
-			pstmt = conn.prepareStatement("delete from user_rentalbook where uid = ? and starttime >= date_add(now(),interval 1 day)");
+			pstmt = conn.prepareStatement("delete from user_rentalbook where uid = ? and starttime < date_add(now(),interval -1 day)");
 			pstmt.setString(1,userid);
 			pstmt.executeUpdate();
 			
@@ -2151,7 +2167,7 @@
 			//int costumeid = Integer.valueOf(request.getParameter("costumeid"));
 			int invenidx = Integer.valueOf(request.getParameter("invenidx")); 
 			//적용중인 대여권 시간 지나간거 지우기, 가방 시간 지난거 지우기
-			pstmt = conn.prepareStatement("delete from user_rentalbook where uid = ? and starttime >= date_add(now(),interval 1 day)");
+			pstmt = conn.prepareStatement("delete from user_rentalbook where uid = ? and starttime < date_add(now(),interval -1 day)");
 			pstmt.setString(1,userid);
 			pstmt.executeUpdate();
 			
