@@ -2318,13 +2318,8 @@
 						startdate = rs.getTimestamp(2).getTime()/1000;
 						nowdate = rs.getTimestamp(4).getTime()/1000;
 						
-						for(int i=0;i<7;i++) {
-							if(startdate+(i*86400) < nowdate) {
-								nowattend++;
-							}
-							else {
-								break;
-							}
+						while(startdate+(nowattend*86400) < nowdate) {
+							nowattend++;
 						}
 						
 						// 3) 이미 받았는지 안받았는지 체크
@@ -2338,7 +2333,7 @@
 							myattend = rs.getInt(2);
 							
 							// 현재 보상 회차보다 회차가 작고, 그 회차 내에 보상을 받았는지
-							if((nowattend > myattend) && (startdate+((nowattend-1)*86400) > myattenddate) && (myattend <= 7)) {
+							if((nowattend > myattend) && (startdate+((nowattend-1)*86400) > myattenddate) && (myattend <= 6)) {
 
 								pstmt = conn.prepareStatement("update user_attend set attendDate = now(), sumAttend = ? where uid = ?");
 								pstmt.setInt(1,myattend+1);
